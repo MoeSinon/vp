@@ -203,9 +203,9 @@ clean_env() {
     echo "nameserver 127.0.0.1" >/etc/resolvconf/resolv.conf.d/base
     resolvconf -u
   fi
-  # cd
-  # rm -rf /root/*.sh
-  # rm -rf /usr/share/nginx/*.sh
+  cd
+  rm -rf /root/*.sh
+  rm -rf /usr/share/nginx/*.sh
   clear
 }
 
@@ -246,7 +246,7 @@ initialize() {
   cat /etc/apt/sources.list | grep aliyun &>/dev/null
 
   if [[ $? == 0 ]] || [[ -d /usr/local/aegis ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/TP-LINK/vpstoolbox/master/install/uninstall-aegis.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/uninstall-aegis.sh
     source uninstall-aegis.sh
     uninstall_aegis
   fi
@@ -292,151 +292,153 @@ install_base() {
 
 ## 安装具体软件
 install_moudles() {
-  # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/bbr.sh
+  curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/bbr.sh
   source bbr.sh
   install_bbr
   if [[ ${install_docker} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/docker.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/docker.sh
     source docker.sh
     install_docker
   fi
   if [[ ${install_php} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/php.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/php.sh
     source php.sh
     install_php
   fi
   if [[ ${install_mariadb} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/mariadb.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/mariadb.sh
     source mariadb.sh
     install_mariadb
   fi
   if [[ ${install_redis} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/redis.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/redis.sh
     source redis.sh
     install_redis
   fi
   if [[ ${install_mongodb} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/mongodb.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/mongodb.sh
     source mongodb.sh
     install_mongodb
   fi
   if [[ ${install_grpc} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/grpc.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/grpc.sh
     source grpc.sh
     install_grpc
   fi
   if [[ ${install_ss_rust} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/ss-rust.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/ss-rust.sh
     source ss-rust.sh
     install_ss_rust
   fi
   if [[ ${install_aria} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/aria2.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/aria2.sh
     source aria2.sh
     install_aria2
   fi
   if [[ ${install_qbt_o} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/qbt_origin.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/qbt_origin.sh
     source qbt_origin.sh
     install_qbt_o
   fi
   if [[ ${install_qbt_e} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/qbt.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/qbt.sh
     source qbt.sh
     install_qbt_e
   fi
   if [[ ${install_jellyfin} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/jellyfin.sh
+    # curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/jellyfin.sh
     #source jellyfin.sh
     #install_jellyfin
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/emby.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/emby.sh
     source emby.sh
     install_emby
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/sonarr.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/sonarr.sh
     source sonarr.sh
     install_sonarr
   fi
   if [[ ${install_fail2ban} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/fail2ban.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/fail2ban.sh
     source fail2ban.sh
     install_fail2ban
   fi
   if [[ ${install_filebrowser} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/filebrowser.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/filebrowser.sh
     source filebrowser.sh
     install_filebrowser
   fi
   if [[ ${install_mail} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/mail.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/mail.sh
     source mail.sh
     install_mail
   fi
   if [[ ${install_nextcloud} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/nextcloud.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/nextcloud.sh
     source nextcloud.sh
     install_nextcloud
   fi
   if [[ ${install_rocketchat} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/rocketchat.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/rocketchat.sh
     source rocketchat.sh
     install_rocketchat
   fi
   if [[ ${install_rss} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/rss.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/rss.sh
     source rss.sh
     install_rss
   fi
   if [[ ${install_speedtest} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/speedtest.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/speedtest.sh
     source speedtest.sh
     install_speedtest
   fi
   if [[ ${install_tor} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/tor.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/tor.sh
     source tor.sh
     install_tor
   fi
   if [[ ${install_tracker} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/tracker.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/tracker.sh
     source tracker.sh
     install_tracker
   fi
   if [[ ${install_rclone} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/rclone.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/rclone.sh
     source rclone.sh
     install_rclone
   fi
   if [[ ${install_typecho} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/typecho.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/typecho.sh
     source typecho.sh
     install_typecho
   fi
-  # if [[ ${install_onedrive} == 1 ]]; then
-  # curl -Ss https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/rclone_config.sh | sudo bash
-  # fi
+  if [[ ${install_onedrive} == 1 ]]; then
+    curl -Ss https://raw.githubusercontent.com/MoeSinon/vp/master/install/rclone_config.sh | sudo bash
+    # source rclone_config.sh
+    # install_typecho
+  fi
   if [[ ${install_netdata} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/netdata.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/netdata.sh
     source netdata.sh
     install_netdata
   fi
   if [[ ${install_hexo} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/hexo.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/hexo.sh
     source hexo.sh
     install_hexo
   fi
   if [[ ${install_alist} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/alist.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/alist.sh
     source alist.sh
     install_alist
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/nodejs.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/nodejs.sh
     source nodejs.sh
     install_nodejs
   fi
-  ## Install Trojan-gfw
-  # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/trojan.sh
+  # Install Trojan-gfw
+  curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/trojan.sh
   source trojan.sh
   install_trojan
-  # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/route.sh
+  curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/route.sh
   source route.sh
   route_test
 }
@@ -457,17 +459,17 @@ MasterMenu() {
     echo "nameserver 1.1.1.1" >/etc/resolv.conf
     echo "nameserver 1.0.0.1" >>/etc/resolv.conf
     ## 用户输入
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/userinput.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/userinput.sh
     source userinput.sh
     userinput_standard
     ## 检测证书是否已存在
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/detectcert.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/detectcert.sh
     source detectcert.sh
     detectcert
     ## 开始安装
     TERM=ansi whiptail --title "开始安装" --infobox "安装开始,请不要按任何按键直到安装完成(Please do not press any button until the installation is completed)!" 7 68
     colorEcho ${INFO} "安装开始,请不要按任何按键直到安装完成(Please do not press any button until the installation is completed)!"
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/system-upgrade.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/system-upgrade.sh
     source system-upgrade.sh
     upgrade_system
     ## 基础软件安装
@@ -475,19 +477,19 @@ MasterMenu() {
     ## 开启防火墙
     echo "nameserver 1.1.1.1" >/etc/resolv.conf
     echo "nameserver 1.0.0.1" >>/etc/resolv.conf
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/firewall.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/firewall.sh
     source firewall.sh
     openfirewall
     ## 安装NGINX
     echo "nameserver 1.1.1.1" >/etc/resolv.conf
     echo "nameserver 1.0.0.1" >>/etc/resolv.conf
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/nginx.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/nginx.sh
     source nginx.sh
     install_nginx
     ## 证书签发
     echo "nameserver 1.1.1.1" >/etc/resolv.conf
     echo "nameserver 1.0.0.1" >>/etc/resolv.conf
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/issuecert.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/issuecert.sh
     source issuecert.sh
     ## HTTP证书签发
     if [[ ${httpissue} == 1 ]]; then
@@ -501,17 +503,17 @@ MasterMenu() {
     install_moudles
     echo "nameserver 1.1.1.1" >/etc/resolv.conf
     echo "nameserver 1.0.0.1" >>/etc/resolv.conf
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/nginx-config.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/nginx-config.sh
     source nginx-config.sh
     nginx_config
     clean_env
     echo "nameserver 1.1.1.1" >/etc/resolv.conf
     echo "nameserver 1.0.0.1" >>/etc/resolv.conf
     ## 输出结果
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/output.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/output.sh
     source output.sh
     prase_output
-    # rm output.sh
+    rm output.sh
     exit 0
     ;;
   ## 扩展安装
@@ -521,18 +523,18 @@ MasterMenu() {
     echo "nameserver 1.1.1.1" >/etc/resolv.conf
     echo "nameserver 1.0.0.1" >>/etc/resolv.conf
     ## 用户输入
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/userinput.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/userinput.sh
     source userinput.sh
     userinput_full
     prasejson
     ## 检测证书是否已有
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/detectcert.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/detectcert.sh
     source detectcert.sh
     detectcert
     ## 开始安装
     TERM=ansi whiptail --title "开始安装" --infobox "安装开始,请不要按任何按键直到安装完成(Please do not press any button until the installation is completed)!" 7 68
     colorEcho ${INFO} "安装开始,请不要按任何按键直到安装完成(Please do not press any button until the installation is completed)!"
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/system-upgrade.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/system-upgrade.sh
     source system-upgrade.sh
     upgrade_system
     ## 基础软件安装
@@ -540,17 +542,17 @@ MasterMenu() {
     echo "nameserver 1.1.1.1" >/etc/resolv.conf
     echo "nameserver 1.0.0.1" >>/etc/resolv.conf
     ## 开启防火墙
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/firewall.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/firewall.sh
     source firewall.sh
     openfirewall
     ## 安装NGINX
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/nginx.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/nginx.sh
     source nginx.sh
     install_nginx
     ## 证书签发
     echo "nameserver 1.1.1.1" >/etc/resolv.conf
     echo "nameserver 1.0.0.1" >>/etc/resolv.conf
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/issuecert.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/issuecert.sh
     source issuecert.sh
     ## HTTP证书签发
     if [[ ${httpissue} == 1 ]]; then
@@ -564,7 +566,7 @@ MasterMenu() {
     install_moudles
     echo "nameserver 1.1.1.1" >/etc/resolv.conf
     echo "nameserver 1.0.0.1" >>/etc/resolv.conf
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/nginx-config.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/nginx-config.sh
     source nginx-config.sh
     nginx_config
     clean_env
@@ -588,10 +590,10 @@ MasterMenu() {
     ## 输出结果
     echo "nameserver 1.1.1.1" >/etc/resolv.conf
     echo "nameserver 1.0.0.1" >>/etc/resolv.conf
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/output.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/output.sh
     source output.sh
     prase_output
-    # rm output.sh
+    rm output.sh
     exit 0
     ;;
   Benchmark)
@@ -608,7 +610,7 @@ MasterMenu() {
     exit 0
     ;;
   Uninstall)
-    # curl --retry 5 -LO https://raw.githubusercontent.com/johnrosen1/vpstoolbox/master/install/uninstall.sh
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/install/uninstall.sh
     source uninstall.sh
     uninstall
     exit 0
