@@ -22,13 +22,13 @@ userinput_standard() {
     check_dns="off"
   fi
   if [[ -z ${check_speed} ]]; then
-    check_speed="on"
+    check_speed="off"
   fi
   if [[ -z ${check_cloud} ]]; then
-    check_cloud="off"
+    check_cloud="on"
   fi
   if [[ -z ${check_rss} ]]; then
-    check_rss="off"
+    check_rss="on"
   fi
   if [[ -z ${check_fail2ban} ]]; then
     check_fail2ban="on"
@@ -41,18 +41,18 @@ userinput_standard() {
   fi
 
   whiptail --clear --ok-button "下一步" --backtitle "Hi,请按空格以及方向键来选择需要安装/更新的软件,请自行下拉以查看更多(Please press space and Arrow keys to choose)" --title "Install checklist" --checklist --separate-output --nocancel "请按空格及方向键来选择需要安装/更新的软件。" 18 65 10 \
-  "Back" "返回上级菜单(Back to main menu)" off \
-  "trojan" "Trojan-GFW+TCP-BBR" on \
-  "grpc" "Vless+gRPC(支持CDN)" on \
-  "alist" "alist网盘管理器" on \
-  "speed" "Speedtest(测试本地网络到VPS的延迟及带宽)" ${check_speed} \
-  "port" "自定义Trojan-GFW/Vless(grpc)端口" off \
-  "hexo" "Hexo Blog" off \
-  "ss" "shadowsocks-rust(不支持CDN)" ${check_ss} \
-  "nextcloud" "Nextcloud(私人网盘)" ${check_cloud} \
-  "rss" "RSSHUB + Miniflux(RSS生成器+RSS阅读器)" ${check_rss} \
-  "fail2ban" "Fail2ban(防SSH爆破用)" ${check_fail2ban} \
-  "net" "Netdata(监测伺服器运行状态)" off 2>results
+    "Back" "返回上级菜单(Back to main menu)" off \
+    "trojan" "Trojan-GFW+TCP-BBR" on \
+    "grpc" "Vless+gRPC(支持CDN)" off \
+    "alist" "alist网盘管理器" off \
+    "speed" "Speedtest(测试本地网络到VPS的延迟及带宽)" ${check_speed} \
+    "port" "自定义Trojan-GFW/Vless(grpc)端口" off \
+    "hexo" "Hexo Blog" on \
+    "ss" "shadowsocks-rust(不支持CDN)" ${check_ss} \
+    "nextcloud" "Nextcloud(私人网盘)" ${check_cloud} \
+    "rss" "RSSHUB + Miniflux(RSS生成器+RSS阅读器)" ${check_rss} \
+    "fail2ban" "Fail2ban(防SSH爆破用)" ${check_fail2ban} \
+    "net" "Netdata(监测伺服器运行状态)" off 2>results
 
   while read choice; do
     case $choice in
@@ -146,10 +146,10 @@ userinput_standard() {
       fi
     done
     while [[ -z ${password2} ]]; do
-        password2=$(
-          head /dev/urandom | tr -dc a-z0-9 | head -c 6
-          echo ''
-        )
+      password2=$(
+        head /dev/urandom | tr -dc a-z0-9 | head -c 6
+        echo ''
+      )
     done
   fi
   if [[ ${password1} == ${password2} ]]; then
@@ -188,7 +188,7 @@ userinput_full() {
     check_dns="off"
   fi
   if [[ -z ${check_rss} ]]; then
-    check_rss="off"
+    check_rss="on"
   fi
   if [[ -z ${check_chat} ]]; then
     check_chat="off"
@@ -197,13 +197,13 @@ userinput_full() {
     check_qbt="off"
   fi
   if [[ -z ${check_aria} ]]; then
-    check_aria="off"
+    check_aria="on"
   fi
   if [[ -z ${check_file} ]]; then
     check_file="off"
   fi
   if [[ -z ${check_speed} ]]; then
-    check_speed="on"
+    check_speed="off"
   fi
   if [[ -z ${check_mariadb} ]]; then
     check_mariadb="off"
@@ -240,34 +240,34 @@ userinput_full() {
   fi
 
   whiptail --clear --ok-button "下一步" --backtitle "Hi,请按空格以及方向键来选择需要安装/更新的软件,请自行下拉以查看更多(Please press space and Arrow keys to choose)" --title "Install checklist" --checklist --separate-output --nocancel "请按空格及方向键来选择需要安装/更新的软件。" 24 65 16 \
-  "Back" "返回上级菜单(Back to main menu)" off \
-  "基础" "基础" off \
-  "trojan" "Trojan-GFW+TCP-BBR" on \
-  "grpc" "Vless+gRPC+TLS(支持CDN)" on \
-  "alist" "alist网盘管理器" on \
-  "speed" "Speedtest(测试本地网络到VPS的延迟及带宽)" ${check_speed} \
-  "port" "自定义Trojan-GFW/Vless(grpc)端口" off \
-  "hexo" "Hexo Blog" off \
-  "ss" "shadowsocks-rust(不支持CDN)" ${check_ss} \
-  "影音" "影音" off \
-  "media" "Emby Sonarr Radarr Lidarr Prowlarr Qbt" off \
-  "网盘" "网盘" off \
-  "nextcloud" "Nextcloud(私人网盘)" ${check_cloud} \
-  "rss" "RSSHUB + Miniflux(RSS生成器+RSS阅读器)" ${check_rss} \
-  "rclone" "Rclone" ${check_rclone} \
-  "aria" "Aria2+AriaNG+Filebrowser" ${check_aria} \
-  "onedrive" "Rclone Onedrive" ${check_rclone} \
-  "下载" "下载" off \
-  "qbt" "Qbittorrent增强版+高性能Tracker+Filebrowser" ${check_qbt} \
-  "通讯" "通讯" off \
-  "chat" "Rocket Chat" ${check_chat} \
-  "mail" "Mail service(邮箱服务)" ${check_mail} \
-  "安全" "安全" off \
-  "fail2ban" "Fail2ban(防SSH爆破用)" ${check_fail2ban} \
-  "其他" "其他软件及选项" off \
-  "net" "Netdata(监测伺服器运行状态)" off \
-  "typecho" "Typecho" ${check_echo} \
-  "13" "Qbt原版+高性能Tracker+Filebrowser" off 2>results
+    "Back" "返回上级菜单(Back to main menu)" off \
+    "基础" "基础" on \
+    "trojan" "Trojan-GFW+TCP-BBR" on \
+    "grpc" "Vless+gRPC+TLS(支持CDN)" off \
+    "alist" "alist网盘管理器" off \
+    "speed" "Speedtest(测试本地网络到VPS的延迟及带宽)" ${check_speed} \
+    "port" "自定义Trojan-GFW/Vless(grpc)端口" off \
+    "hexo" "Hexo Blog" on \
+    "ss" "shadowsocks-rust(不支持CDN)" ${check_ss} \
+    "影音" "影音" off \
+    "media" "Emby Sonarr Radarr Lidarr Prowlarr Qbt" off \
+    "网盘" "网盘" off \
+    "nextcloud" "Nextcloud(私人网盘)" ${check_cloud} \
+    "rss" "RSSHUB + Miniflux(RSS生成器+RSS阅读器)" ${check_rss} \
+    "rclone" "Rclone" ${check_rclone} \
+    "aria" "Aria2+AriaNG+Filebrowser" ${check_aria} \
+    "onedrive" "Rclone Onedrive" ${check_rclone} \
+    "下载" "下载" off \
+    "qbt" "Qbittorrent增强版+高性能Tracker+Filebrowser" ${check_qbt} \
+    "通讯" "通讯" off \
+    "chat" "Rocket Chat" ${check_chat} \
+    "mail" "Mail service(邮箱服务)" ${check_mail} \
+    "安全" "安全" off \
+    "fail2ban" "Fail2ban(防SSH爆破用)" ${check_fail2ban} \
+    "其他" "其他软件及选项" off \
+    "net" "Netdata(监测伺服器运行状态)" off \
+    "typecho" "Typecho" ${check_echo} \
+    "13" "Qbt原版+高性能Tracker+Filebrowser" off 2>results
 
   while read choice; do
     case $choice in
@@ -411,8 +411,8 @@ userinput_full() {
   #echo "$(jq -r '.ip' "/root/.trojan/ip.json") ${domain}" >> /etc/hosts
   if [[ ${install_trojan} = 1 ]]; then
     while [[ -z ${password1} ]] || [[ ${n} > 30 ]]; do
-        password1=$(whiptail --passwordbox --nocancel "VPSToolBox系统主密码 (**最长30字符，请勿添加特殊符号**)" 8 68 --title "设置主系统密码" 3>&1 1>&2 2>&3)
-        n=${#password1}
+      password1=$(whiptail --passwordbox --nocancel "VPSToolBox系统主密码 (**最长30字符，请勿添加特殊符号**)" 8 68 --title "设置主系统密码" 3>&1 1>&2 2>&3)
+      n=${#password1}
       if [[ ${n} == 0 ]]; then
         password1=$(
           head /dev/urandom | tr -dc a-z0-9 | head -c 6
@@ -424,10 +424,10 @@ userinput_full() {
       fi
     done
     while [[ -z ${password2} ]]; do
-        password2=$(
-          head /dev/urandom | tr -dc a-z0-9 | head -c 6
-          echo ''
-        )
+      password2=$(
+        head /dev/urandom | tr -dc a-z0-9 | head -c 6
+        echo ''
+      )
     done
   fi
   if [[ ${password1} == ${password2} ]]; then
