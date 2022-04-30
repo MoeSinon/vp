@@ -10,7 +10,7 @@ config_rclone_onedrive() {
   ## 本选项用于防止档案名称冲突
   rname=$(whiptail --inputbox --nocancel "请输入Rclone档案名称,默认即可,不需要修改" 8 68 onedrive --title "rclone name input" 3>&1 1>&2 2>&3)
   if [[ -z ${rname} ]]; then
-    rname="onedrive"
+    rname="drive"
   fi
 
   if [[ ! -f /usr/bin/rclone ]]; then
