@@ -283,7 +283,7 @@ install_initial() {
 install_base() {
   set +e
   TERM=ansi whiptail --title "安装中" --infobox "安装基础软件中..." 7 68
-  apt-get update
+  apt upgrade -y
   colorEcho ${INFO} "Installing all necessary Software"
   apt-get install sudo git curl xz-utils wget apt-transport-https gnupg lsb-release unzip resolvconf ntpdate systemd dbus ca-certificates locales iptables software-properties-common cron e2fsprogs less neofetch -y
   sh -c 'echo "y\n\ny\ny\n" | DEBIAN_FRONTEND=noninteractive apt-get install ntp -q -y'
