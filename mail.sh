@@ -2,11 +2,11 @@
 
 ## 邮箱模组 Mail moudle
 
-  set +e
+set +e
 
-install_mail(){
+install_mail() {
   clear
-TERM=ansi whiptail --title "安装中" --infobox "安装邮件服务中..." 7 68
+  TERM=ansi whiptail --title "安装中" --infobox "安装邮件服务中..." 7 68
   colorEcho ${INFO} "Install Mail Service ing"
   apt-get install postfix postfix-pcre -y
   apt-get install postfix-policyd-spf-python -y
@@ -19,8 +19,8 @@ TERM=ansi whiptail --title "安装中" --infobox "安装邮件服务中..." 7 68
   chmod 750 /var/spool/postfix/opendmarc/ -R
   adduser postfix opendmarc
   systemctl restart opendmarc
-  echo ${domain} > /etc/mailname
-  cat > '/etc/postfix/main.cf' << EOF
+  echo ${domain} >/etc/mailname
+  cat >'/etc/postfix/main.cf' <<EOF
 home_mailbox = Maildir/
 smtpd_banner = \$myhostname ESMTP \$mail_name (Debian/GNU)
 biff = no
@@ -87,16 +87,16 @@ smtpd_tls_auth_only = no
 #postscreen_access_list = permit_mynetworks cidr:/etc/postfix/postscreen_access.cidr
 #postscreen_blacklist_action = drop
 EOF
-  cat > '/etc/postfix/postscreen_access.cidr' << EOF
+  cat >'/etc/postfix/postscreen_access.cidr' <<EOF
 #permit my own IP addresses.
 ${myip}/32             permit
 EOF
-  cat > '/etc/aliases' << EOF
+  cat >'/etc/aliases' <<EOF
 # See man 5 aliases for format
 postmaster:    root
 root:   ${mailuser}
 EOF
-  cat > '/etc/postfix/master.cf' << EOF
+  cat >'/etc/postfix/master.cf' <<EOF
 #
 # Postfix master process configuration file.  For details on the format
 # of the file, see the master(5) manual page (command: "man 5 master" or
@@ -221,22 +221,22 @@ mailman   unix  -       n       n       -       -       pipe
 policyd-spf  unix  -       n       n       -       0       spawn
     user=policyd-spf argv=/usr/bin/policyd-spf
 EOF
-newaliases
-echo "/^Received: .*/     IGNORE" > /etc/postfix/smtp_header_checks
-echo "/^User-Agent.*Roundcube Webmail/            IGNORE" >> /etc/postfix/smtp_header_checks
-curl https://repo.dovecot.org/DOVECOT-REPO-GPG | gpg --import
-gpg --export ED409DA1 > /etc/apt/trusted.gpg.d/dovecot.gpg
-echo "deb https://repo.dovecot.org/ce-2.3-latest/${dist}/$(lsb_release -cs) $(lsb_release -cs) main" > /etc/apt/sources.list.d/dovecot.list
-apt-get update
-apt-get install dovecot-core dovecot-imapd dovecot-lmtpd dovecot-sieve -y
-adduser dovecot mail
-adduser netdata mail
-systemctl enable dovecot
-apt-get install spamassassin spamc spamass-milter -y
-adduser debian-spamd mail
-adduser spamass-milter mail
-sed -i 's/CRON=0/CRON=1/' /etc/default/spamassassin
-  cat > '/etc/default/spamass-milter' << EOF
+  newaliases
+  echo "/^Received: .*/     IGNORE" >/etc/postfix/smtp_header_checks
+  echo "/^User-Agent.*Roundcube Webmail/            IGNORE" >>/etc/postfix/smtp_header_checks
+  curl https://repo.dovecot.org/DOVECOT-REPO-GPG | gpg --import
+  gpg --export ED409DA1 >/etc/apt/trusted.gpg.d/dovecot.gpg
+  echo "deb https://repo.dovecot.org/ce-2.3-latest/${dist}/$(lsb_release -cs) $(lsb_release -cs) main" >/etc/apt/sources.list.d/dovecot.list
+  apt-get update
+  apt-get install dovecot-core dovecot-imapd dovecot-lmtpd dovecot-sieve -y
+  adduser dovecot mail
+  adduser netdata mail
+  systemctl enable dovecot
+  apt-get install spamassassin spamc spamass-milter -y
+  adduser debian-spamd mail
+  adduser spamass-milter mail
+  sed -i 's/CRON=0/CRON=1/' /etc/default/spamassassin
+  cat >'/etc/default/spamass-milter' <<EOF
 # spamass-milt startup defaults
 
 # OPTIONS are passed directly to spamass-milter.
@@ -266,11 +266,11 @@ SOCKETOWNER="postfix:postfix"
 SOCKETMODE="0660"
 ######################################
 EOF
-systemctl enable spamassassin
-systemctl restart spamassassin
-cd /usr/share/nginx/
-mailver=$(curl -s "https://api.github.com/repos/roundcube/roundcubemail/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-if [[ -d /usr/share/nginx/roundcubemail ]]; then
+  systemctl enable spamassassin
+  systemctl restart spamassassin
+  cd /usr/share/nginx/
+  mailver=$(curl -s "https://api.github.com/repos/roundcube/roundcubemail/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+  if [[ -d /usr/share/nginx/roundcubemail ]]; then
     TERM=ansi whiptail --title "安装中" --infobox "更新roundcube中..." 7 68
     wget --no-check-certificate https://github.com/roundcube/roundcubemail/releases/download/${mailver}/roundcubemail-${mailver}-complete.tar.gz
     tar -xvf roundcubemail*.tar.gz
@@ -299,11 +299,11 @@ if [[ -d /usr/share/nginx/roundcubemail ]]; then
     mysql -u root -e "CREATE USER roundcube@localhost IDENTIFIED BY '${password1}';"
     mysql -u root -e "GRANT ALL PRIVILEGES ON roundcubemail.* TO roundcube@localhost;"
     mysql -u root -e "flush privileges;"
-    mysql -u roundcube -p"${password1}" -D roundcubemail < /usr/share/nginx/roundcubemail/SQL/mysql.initial.sql  
-fi
-mkdir /usr/share/nginx/pgp/
-deskey=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9-_#&!*%?' | fold -w 24 | head -n 1)
-  cat > '/usr/share/nginx/roundcubemail/config/config.inc.php' << EOF
+    mysql -u roundcube -p"${password1}" -D roundcubemail </usr/share/nginx/roundcubemail/SQL/mysql.initial.sql
+  fi
+  mkdir /usr/share/nginx/pgp/
+  deskey=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9-_#&!*%?' | fold -w 24 | head -n 1)
+  cat >'/usr/share/nginx/roundcubemail/config/config.inc.php' <<EOF
 <?php
 
 \$config['language'] = 'zh_CN';
@@ -333,21 +333,20 @@ deskey=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9-_#&!*%?' | fold -w 24 | head -n 1)
 \$config['enigma_password_time'] = 5;
 EOF
 
-# sed -i '${domain} 127.0.0.1' /etc/hosts
-# echo "${domain} 127.0.0.1" >> /etc/hosts
+  # sed -i '${domain} 127.0.0.1' /etc/hosts
+  # echo "${domain} 127.0.0.1" >> /etc/hosts
 
-if grep -q "MAILTO" /etc/crontab
-then
-  :
-else
-echo 'MAILTO=""' >> /etc/crontab
-fi
+  if grep -q "MAILTO" /etc/crontab; then
+    :
+  else
+    echo 'MAILTO=""' >>/etc/crontab
+  fi
 
-useradd -m -s /sbin/nologin ${mailuser}
-echo -e "${password1}\n${password1}" | passwd ${mailuser}
-apt-get install opendkim opendkim-tools -y
-gpasswd -a postfix opendkim
-  cat > '/etc/opendkim.conf' << EOF
+  useradd -m -s /sbin/nologin ${mailuser}
+  echo -e "${password1}\n${password1}" | passwd ${mailuser}
+  apt-get install opendkim opendkim-tools -y
+  gpasswd -a postfix opendkim
+  cat >'/etc/opendkim.conf' <<EOF
 Syslog      yes
 UMask     007
 Canonicalization  relaxed/simple
@@ -369,7 +368,7 @@ ExternalIgnoreList  /etc/opendkim/trusted.hosts
 InternalHosts       /etc/opendkim/trusted.hosts
 Nameservers 127.0.0.1
 EOF
-  cat > '/etc/default/opendkim' << EOF
+  cat >'/etc/default/opendkim' <<EOF
 RUNDIR=/var/run/opendkim
 SOCKET="local:/var/spool/postfix/opendkim/opendkim.sock"
 USER=opendkim
@@ -377,13 +376,13 @@ GROUP=opendkim
 PIDFILE=\$RUNDIR/\$NAME.pid
 EXTRAAFTER=
 EOF
-mkdir /etc/opendkim/
-mkdir /etc/opendkim/keys/
-chown -R opendkim:opendkim /etc/opendkim
-chmod go-rw /etc/opendkim/keys
-echo "*@${domain}    default._domainkey.${domain}" > /etc/opendkim/signing.table
-echo "default._domainkey.${domain}     ${domain}:default:/etc/opendkim/keys/${domain}/default.private" > /etc/opendkim/key.table
-  cat > '/etc/opendkim/trusted.hosts' << EOF
+  mkdir /etc/opendkim/
+  mkdir /etc/opendkim/keys/
+  chown -R opendkim:opendkim /etc/opendkim
+  chmod go-rw /etc/opendkim/keys
+  echo "*@${domain}    default._domainkey.${domain}" >/etc/opendkim/signing.table
+  echo "default._domainkey.${domain}     ${domain}:default:/etc/opendkim/keys/${domain}/default.private" >/etc/opendkim/key.table
+  cat >'/etc/opendkim/trusted.hosts' <<EOF
 127.0.0.1
 localhost
 10.0.0.0/8
@@ -392,21 +391,21 @@ localhost
 
 *.${domain}
 EOF
-mkdir /etc/opendkim/keys/${domain}/
-opendkim-genkey -b 2048 -d ${domain} -D /etc/opendkim/keys/${domain} -s default -v
-chown opendkim:opendkim /etc/opendkim/keys/${domain}/default.private
-mkdir /var/spool/postfix/opendkim/
-chown opendkim:postfix /var/spool/postfix/opendkim
-systemctl restart opendkim
-usermod -a -G dovecot netdata
-usermod -a -G mail postfix
-  cat > '/etc/dovecot/conf.d/10-auth.conf' << EOF
+  mkdir /etc/opendkim/keys/${domain}/
+  opendkim-genkey -b 2048 -d ${domain} -D /etc/opendkim/keys/${domain} -s default -v
+  chown opendkim:opendkim /etc/opendkim/keys/${domain}/default.private
+  mkdir /var/spool/postfix/opendkim/
+  chown opendkim:postfix /var/spool/postfix/opendkim
+  systemctl restart opendkim
+  usermod -a -G dovecot netdata
+  usermod -a -G mail postfix
+  cat >'/etc/dovecot/conf.d/10-auth.conf' <<EOF
 auth_username_format = %Ln
 disable_plaintext_auth = no
 auth_mechanisms = plain
 !include auth-system.conf.ext
 EOF
-  cat > '/etc/dovecot/conf.d/10-ssl.conf' << EOF
+  cat >'/etc/dovecot/conf.d/10-ssl.conf' <<EOF
 ssl = required
 ssl_cert = </etc/certs/${domain}_ecc/fullchain.cer
 ssl_key = </etc/certs/${domain}_ecc/${domain}.key
@@ -415,7 +414,7 @@ ssl_min_protocol = TLSv1.2
 ssl_prefer_server_ciphers = yes
 ssl_options = no_ticket
 EOF
-  cat > '/etc/dovecot/conf.d/10-master.conf' << EOF
+  cat >'/etc/dovecot/conf.d/10-master.conf' <<EOF
 service imap-login {
   inet_listener imap {
     #port = 143
@@ -483,7 +482,7 @@ service stats {
   }
 }
 EOF
-  cat > '/etc/dovecot/conf.d/10-mail.conf' << EOF
+  cat >'/etc/dovecot/conf.d/10-mail.conf' <<EOF
 
 mail_location = maildir:~/Maildir
 
@@ -497,7 +496,7 @@ protocol !indexer-worker {
   #mail_vsize_bg_after_count = 0
 }
 EOF
-  cat > '/etc/dovecot/conf.d/15-mailboxes.conf' << EOF
+  cat >'/etc/dovecot/conf.d/15-mailboxes.conf' <<EOF
 namespace inbox {
   mailbox Archive {
     auto = subscribe
@@ -523,25 +522,25 @@ namespace inbox {
   }
 }
 EOF
-  cat > '/etc/dovecot/conf.d/15-lda.conf' << EOF
+  cat >'/etc/dovecot/conf.d/15-lda.conf' <<EOF
 protocol lda {
   # Space separated list of plugins to load (default is global mail_plugins).
   mail_plugins = \$mail_plugins sieve
 }
 EOF
-  cat > '/etc/dovecot/conf.d/20-lmtp.conf' << EOF
+  cat >'/etc/dovecot/conf.d/20-lmtp.conf' <<EOF
 protocol lmtp {
   # Space separated list of plugins to load (default is global mail_plugins).
   mail_plugins = \$mail_plugins quota sieve
 }
 EOF
-  cat > '/etc/dovecot/conf.d/90-sieve.conf' << EOF
+  cat >'/etc/dovecot/conf.d/90-sieve.conf' <<EOF
 plugin {
   sieve = file:~/sieve;active=~/.dovecot.sieve
   sieve_before = /var/mail/SpamToJunk.sieve
 }
 EOF
-  cat > '/var/mail/SpamToJunk.sieve' << EOF
+  cat >'/var/mail/SpamToJunk.sieve' <<EOF
 require "fileinto";
 
 if header :contains "X-Spam-Flag" "YES"
@@ -550,27 +549,26 @@ if header :contains "X-Spam-Flag" "YES"
    stop;
 }
 EOF
-  cat > '/etc/fail2ban/filter.d/dovecot-pop3imap.conf' << EOF
+  cat >'/etc/fail2ban/filter.d/dovecot-pop3imap.conf' <<EOF
 [Definition]
-failregex = (?: pop3-login|imap-login): .*(?:Authentication failure|Aborted login \(auth failed|Aborted login \(tried to use disabled|Disconnected \(auth failed|Aborted login \(\d+ authentication attempts).*rip=`<HOST>`
+failregex = (?: pop3-login|imap-login): .*(?:Authentication failure|Aborted login \(auth failed|Aborted login \(tried to use disabled|Disconnected \(auth failed|Aborted login \(\d+ authentication attempts).*rip=
 EOF
 
-if grep -q "dovecot-pop3imap" /etc/fail2ban/jail.conf
-then
-:
-else
-echo "[dovecot-pop3imap]" >> /etc/fail2ban/jail.conf
-echo "enabled = true" >> /etc/fail2ban/jail.conf
-echo "filter = dovecot-pop3imap" >> /etc/fail2ban/jail.conf
-echo "action = iptables-multiport[name=dovecot-pop3imap, port="pop3,imap", protocol=tcp]" >> /etc/fail2ban/jail.conf
-echo "logpath = /var/log/mail.log" >> /etc/fail2ban/jail.conf
-echo "maxretry = 8" >> /etc/fail2ban/jail.conf
-echo "findtime = 1200" >> /etc/fail2ban/jail.conf
-echo "bantime = 1200" >> /etc/fail2ban/jail.conf
-fi
-systemctl restart fail2ban
-sievec /var/mail/SpamToJunk.sieve
-chown -R mail:mail /var/mail/*
-systemctl restart postfix dovecot
-clear
+  if grep -q "dovecot-pop3imap" /etc/fail2ban/jail.conf; then
+    :
+  else
+    echo "[dovecot-pop3imap]" >>/etc/fail2ban/jail.conf
+    echo "enabled = true" >>/etc/fail2ban/jail.conf
+    echo "filter = dovecot-pop3imap" >>/etc/fail2ban/jail.conf
+    echo "action = iptables-multiport[name=dovecot-pop3imap, port="pop3,imap", protocol=tcp]" >>/etc/fail2ban/jail.conf
+    echo "logpath = /var/log/mail.log" >>/etc/fail2ban/jail.conf
+    echo "maxretry = 8" >>/etc/fail2ban/jail.conf
+    echo "findtime = 1200" >>/etc/fail2ban/jail.conf
+    echo "bantime = 1200" >>/etc/fail2ban/jail.conf
+  fi
+  systemctl restart fail2ban
+  sievec /var/mail/SpamToJunk.sieve
+  chown -R mail:mail /var/mail/*
+  systemctl restart postfix dovecot
+  clear
 }
