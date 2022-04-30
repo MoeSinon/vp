@@ -24,8 +24,8 @@ install_hexo() {
   npm install hexo-migrator-rss --save
   cat >'/usr/share/nginx/hexo/_config.yml' <<EOF
 title: MoSinon's Blog
-author: SinonLei
-description: Sinon的博客。
+author: MyOnly❤
+description: SinonLei的博客。
 language: zh-CN
 url: https://${domain}
 theme: next
