@@ -16,8 +16,8 @@ set +e
 ## aria2 passes 3 arguments to specified command when it is executed. These arguments are: GID, the number of files and file path. For HTTP, FTP, and SFTP downloads, usually the number of files is 1. BitTorrent download can contain multiple files. If number of files is more than one, file path is first one.
 ## 多文件(指新建了文件夹)的话默认路径是第一个文件的路径。
 
-rclone_name="onedrive" ## rclone config时设置的名称,```rclone listremotes --long```查看
-file_path=$3           ## 文件路径
+rclone_name="drive" ## rclone config时设置的名称,```rclone listremotes --long```查看
+file_path=$3        ## 文件路径
 #echo ${file_path}
 file_folder=${file_path%/*} ## 文件夹路径
 #echo ${file_folder}
