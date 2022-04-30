@@ -4,8 +4,8 @@
 
 set +e
 
-install_hexo(){
-TERM=ansi whiptail --title "安装中" --infobox "安装Hexo中..." 7 68
+install_hexo() {
+  TERM=ansi whiptail --title "安装中" --infobox "安装Hexo中..." 7 68
   colorEcho ${INFO} "Install Hexo ing..."
   cd /usr/share/nginx
   npm install -g npm
@@ -22,10 +22,10 @@ TERM=ansi whiptail --title "安装中" --infobox "安装Hexo中..." 7 68
   npm install hexo-generator-feed --save
   npm install hexo-filter-nofollow --save
   npm install hexo-migrator-rss --save
-    cat > '/usr/share/nginx/hexo/_config.yml' << EOF
-#title: xxx's Blog
-#author: xxx
-#description: xxx的博客。
+  cat >'/usr/share/nginx/hexo/_config.yml' <<EOF
+title: MoSinon's Blog
+author: SinonLei
+description: Sinon的博客。
 language: zh-CN
 url: https://${domain}
 theme: next
@@ -50,18 +50,18 @@ nofollow:
     - 'exclude2.com'
 EOF
 
-## Enable CC license (by-nc-sa)
+  ## Enable CC license (by-nc-sa)
 
-sed -i '0,/sidebar: false/s//sidebar: true/' /usr/share/nginx/hexo/themes/next/_config.yml
-sed -i '0,/post: false/s//post: true/' /usr/share/nginx/hexo/themes/next/_config.yml
-sed -i '0,/darkmode: false/s//darkmode: true/' /usr/share/nginx/hexo/themes/next/_config.yml
-sed -i '0,/lazyload: false/s//lazyload: true/' /usr/share/nginx/hexo/themes/next/_config.yml
-sed -i '0,/lazyload: false/s//lazyload: true/' /usr/share/nginx/hexo/themes/next/_config.yml
+  sed -i '0,/sidebar: false/s//sidebar: true/' /usr/share/nginx/hexo/themes/next/_config.yml
+  sed -i '0,/post: false/s//post: true/' /usr/share/nginx/hexo/themes/next/_config.yml
+  sed -i '0,/darkmode: false/s//darkmode: true/' /usr/share/nginx/hexo/themes/next/_config.yml
+  sed -i '0,/lazyload: false/s//lazyload: true/' /usr/share/nginx/hexo/themes/next/_config.yml
+  sed -i '0,/lazyload: false/s//lazyload: true/' /usr/share/nginx/hexo/themes/next/_config.yml
 
-hexo g
+  hexo g
 
-hexo_location=$(which hexo)
-    cat > '/etc/systemd/system/hexo.service' << EOF
+  hexo_location=$(which hexo)
+  cat >'/etc/systemd/system/hexo.service' <<EOF
 [Unit]
 Description=Hexo Server Service
 Documentation=https://hexo.io/zh-tw/docs/
@@ -77,7 +77,7 @@ RestartSec=3s
 [Install]
 WantedBy=multi-user.target
 EOF
-systemctl daemon-reload
-systemctl enable hexo --now
-cd
+  systemctl daemon-reload
+  systemctl enable hexo --now
+  cd
 }
