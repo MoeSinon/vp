@@ -4,7 +4,7 @@
 
 set +e
 
-install_nginx(){
+install_nginx() {
   clear
   TERM=ansi whiptail --title "安装中" --infobox "安装NGINX中..." 7 68
   colorEcho ${INFO} "Install Nginx ing"
@@ -13,22 +13,22 @@ install_nginx(){
   apt-get install gnupg gnupg2 -y
   touch /etc/apt/sources.list.d/nginx.list
   if [[ ${dist} == ubuntu ]]; then
-echo "deb [arch=amd64] http://nginx.org/packages/mainline/ubuntu `lsb_release -cs` nginx"  | sudo tee /etc/apt/sources.list.d/nginx.list
-else
-  cat > '/etc/apt/sources.list.d/nginx.list' << EOF
+    echo "deb [arch=amd64] http://nginx.org/packages/mainline/ubuntu $(lsb_release -cs) nginx" | sudo tee /etc/apt/sources.list.d/nginx.list
+  else
+    cat >'/etc/apt/sources.list.d/nginx.list' <<EOF
 deb https://nginx.org/packages/mainline/${dist}/ $(lsb_release -cs) nginx
 EOF
-fi
+  fi
   curl -fsSL https://nginx.org/keys/nginx_signing.key | apt-key add -
   #apt-key fingerprint ABF5BD827BD9BF62
   apt-get update
   sh -c 'echo "y\n\ny\ny\ny\n" | apt-get install nginx -y'
   id -u nginx
-if [[ $? != 0 ]]; then
-useradd -r nginx --shell=/usr/sbin/nologin
-apt-get install nginx -y
-fi
-  cat > '/lib/systemd/system/nginx.service' << EOF
+  if [[ $? != 0 ]]; then
+    useradd -r nginx --shell=/usr/sbin/nologin
+    apt-get install nginx -y
+  fi
+  cat >'/lib/systemd/system/nginx.service' <<EOF
 [Unit]
 Description=The NGINX HTTP and reverse proxy server
 Before=netdata.service trojan.service
@@ -49,11 +49,11 @@ RestartSec=3s
 [Install]
 WantedBy=multi-user.target
 EOF
-systemctl daemon-reload
-systemctl enable nginx
-mkdir /usr/share/nginx/cache
-#mkdir /usr/share/nginx/php_cache
-  cat > '/etc/nginx/nginx.conf' << EOF
+  systemctl daemon-reload
+  systemctl enable nginx
+  mkdir /usr/share/nginx/cache
+  #mkdir /usr/share/nginx/php_cache
+  cat >'/etc/nginx/nginx.conf' <<EOF
 user root;
 worker_processes auto;
 
@@ -170,7 +170,10 @@ http {
   gzip_disable "MSIE [1-6]\.";  
 
   include /etc/nginx/conf.d/default.conf;
+  include /etc/nginx/conf.d/verify.conf;
 }
 EOF
-clear
+  clear
+  touch /etc/nginx/conf.d/verify.conf
+  systemctl restart nginx
 }
