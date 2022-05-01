@@ -287,7 +287,6 @@ install_base() {
   colorEcho ${INFO} "Installing all necessary Software"
   apt-get install sudo nano git curl xz-utils wget apt-transport-https gnupg lsb-release unzip resolvconf ntpdate systemd dbus ca-certificates locales iptables software-properties-common cron e2fsprogs less neofetch npm libcap2-bin -y
   sudo apt-get update -y
-  apt-get install sudo nano git curl xz-utils wget apt-transport-https gnupg lsb-release unzip resolvconf ntpdate systemd dbus ca-certificates locales iptables software-properties-common cron e2fsprogs less neofetch npm libcap2-bin -y
   sh -c 'echo "y\n\ny\ny\n" | DEBIAN_FRONTEND=noninteractive apt-get install ntp -q -y'
   clear
 }
