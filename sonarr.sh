@@ -809,7 +809,7 @@ EOF
   sed -i '/^\[assrt\]$/,/^\[/ s/^token =/token = oHwtSNdY1aQe1qwRSZVo70SqNW0Pu1AM/' /usr/share/nginx/bazarr/config/config/config.ini ## 5次/分钟
   sed -i '/^\[betaseries\]$/,/^\[/ s/^token =/token = ecd1f45f3036/' /usr/share/nginx/bazarr/config/config/config.ini
   sed -i "s/enabled_providers = \[\]/enabled_providers = \['zimuku', 'assrt', 'yifysubtitles', 'betaseries', 'opensubtitlescom', 'supersubtitles', 'tvsubtitles', 'subscenter'\]/g" /usr/share/nginx/bazarr/config/config/config.ini
-  sqlite3 /usr/share/nginx/bazarr/config/db/bazarr.db "insert into table_languages_profiles values ('1','','[{\"id\": 1, \"language\": \"zh\", \"audio_exclude\": \"False\", \"hi\": \"False\", \"forced\": \"False\"}, {\"id\": 2, \"language\": \"zt\", \"audio_exclude\": \"False\", \"hi\": \"False\", \"forced\": \"False\"}, {\"id\": 3, \"language\": \"en\", \"audio_exclude\": \"False\", \"hi\": \"False\", \"forced\": \"False\"}]','Chinese','[]','[]');"
+  sqlite3 /usr/share/nginx/bazarr/config/db/bazarr.db "insert into table_languages_profiles values ('1','','[{\"id\": 1, \"language\": \"zh\", \"audio_exclude\": \"False\", \"hi\": \"False\", \"forced\": \"False\"}, {\"id\": 2, \"language\": \"zt\", \"audio_exclude\": \"False\", \"hi\": \"False\", \"forced\": \"False\"}, {\"id\": 3, \"language\": \"en\", \"audio_exclude\": \"False\", \"hi\": \"False\", \"forced\": \"False\"}]','Chinese','[]','[]','[]');"
 
   ## chinesesubfinder 19035
   #     cat > "/usr/share/nginx/chinesesubfinder/config/ChineseSubFinderSettings.json" << EOF

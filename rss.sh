@@ -4,15 +4,15 @@
 
 set +e
 
-install_rss(){
-cd /usr/share/nginx/
+install_rss() {
+  # cd /usr/share/nginx/
 
-## Install Miniflux
+  ## Install Miniflux
 
-cd /usr/share/nginx/
-mkdir miniflux
-cd /usr/share/nginx/miniflux
-cat > "/usr/share/nginx/miniflux/docker-compose.yml" << EOF
+  cd /usr/share/nginx/
+  mkdir miniflux
+  cd /usr/share/nginx/miniflux
+  cat >"/usr/share/nginx/miniflux/docker-compose.yml" <<EOF
 version: '3.8'
 services:
   rsshub: # 1200
@@ -64,7 +64,7 @@ services:
       - POSTGRES_USER=miniflux
       - POSTGRES_PASSWORD=adminadmin
     volumes:
-      - miniflux-db:var/lib/postgresql/data
+      - ./miniflux-db:var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "miniflux"]
       interval: 10s
@@ -72,8 +72,7 @@ services:
 volumes:
   miniflux-db:
 EOF
-sed -i "s/adminadmin/${password1}/g" docker-compose.yml
-docker-compose up -d
-cd
+  sed -i "s/adminadmin/${password1}/g" docker-compose.yml
+  docker-compose up -d
+  cd
 }
-
