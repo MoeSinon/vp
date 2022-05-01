@@ -105,6 +105,7 @@ EOF
   export LANGUAGE="zh_CN.UTF-8"
   export LANG="zh_CN.UTF-8"
   export LC_ALL=C
+  unset LANGUAGE
 }
 
 ## 写入配置文件
