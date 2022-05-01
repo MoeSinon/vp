@@ -15,8 +15,10 @@ install_rss() {
   cat >"/usr/share/nginx/miniflux/docker-compose.yml" <<EOF
 version: '3.8'
 services:
-  rsshub: # 1200
-    image: diygod/rsshub
+  rsshub:
+    # 1200
+    image: diygod/rsshub:latest
+    restart: unless-stopped
     container_name: rsshub
     ports:
       - '1200:1200'
@@ -29,48 +31,54 @@ services:
     depends_on:
       - browserless
       - redis
-    restart: unless-stopped
-  browserless: # 3000
-    image: browserless/chrome
+
+  browserless:
+    # 3000
+    image: browserless/chrome:latest
     container_name: browserless
     restart: unless-stopped
     ports:
       - 127.0.0.1:3000:3000
-  redis: # 6379
+  redis:
+    # 6379
     image: "redis:latest"
     container_name: redis
+    restart: unless-stopped
     ports:
       - "6379:6379"
     volumes:
       - "/data/redis:/data"
-  miniflux: # 8280
+  miniflux:
+    # 8280
     image: miniflux/miniflux:latest
     restart: unless-stopped
     ports:
       - "8280:8080"
     depends_on:
-      - postgresql
+      - postgresqldb
+      - rsshub
     environment:
-      - DATABASE_URL=postgres://miniflux:adminadmin@postgresql/miniflux?sslmode=disable
+      - DATABASE_URL=postgres://miniflux:adminadmin@postgresqldb/miniflux?sslmode=disable
       - BASE_URL=https://${domain}/miniflux/
       - RUN_MIGRATIONS=1
       - CREATE_ADMIN=1
       - ADMIN_USERNAME=admin
       - ADMIN_PASSWORD=adminadmin
-  postgresql:
+  postgresqldb:
     image: postgres:latest
     restart: unless-stopped
     environment:
       - POSTGRES_USER=miniflux
       - POSTGRES_PASSWORD=adminadmin
     volumes:
-      - ./miniflux-db:var/lib/postgresql/data
+      - miniflux-db:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "miniflux"]
+      test: [ "CMD", "pg_isready", "-U", "miniflux" ]
       interval: 10s
       start_period: 30s
 volumes:
   miniflux-db:
+
 EOF
   sed -i "s/adminadmin/${password1}/g" docker-compose.yml
   docker-compose up -d
