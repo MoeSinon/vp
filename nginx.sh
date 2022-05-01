@@ -174,6 +174,6 @@ http {
 }
 EOF
   clear
-  touch /etc/nginx/conf.d/verify.conf
+  # touch /etc/nginx/conf.d/verify.conf
   systemctl restart nginx
 }
