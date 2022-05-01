@@ -44,8 +44,6 @@ services:
     image: "redis:latest"
     container_name: redis
     restart: unless-stopped
-    ports:
-      - "6379:6379"
     volumes:
       - "/data/redis:/data"
   miniflux:
