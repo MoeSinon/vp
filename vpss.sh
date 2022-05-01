@@ -229,9 +229,8 @@ initialize() {
     apt-get update
     apt-get install sudo whiptail curl dnsutils locales lsb-release jq -y
   else
-    whiptail --title "操作系统不支援 OS incompatible" --msgbox "请使用Debian或者Ubuntu运行 Please use Debian or Ubuntu to run" 8 68
-    echo "操作系统不支援,请使用Debian或者Ubuntu运行 Please use Debian or Ubuntu."
-    exit 1
+    apt-get update
+    apt-get install sudo whiptail curl dnsutils locales lsb-release jq -y
   fi
 
   ## 卸载腾讯云云盾
