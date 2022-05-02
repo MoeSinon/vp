@@ -63,6 +63,7 @@ userinput_standard() {
     trojan)
       install_trojan=1
       install_bbr=1
+      install_freenom=1
       ;;
     alist)
       install_hexo=0
@@ -98,6 +99,7 @@ userinput_standard() {
       install_rss=1
       install_docker=1
       # install_redis=1
+      install_freenom=1
       ;;
     fail2ban)
       check_fail2ban="on"

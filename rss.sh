@@ -4,18 +4,18 @@
 
 set +e
 
-mkdir /etc/redis/
-wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /etc/redis/
-sed -i "s/appendonly no/appendonly yes/g" /etc/redis/redis.conf
-if grep -q "unixsocket /var/run/redis/redis.sock" /etc/redis/redis.conf; then
-  :
-else
-  echo "" >>/etc/redis/redis.conf
-  echo "unixsocket /var/run/redis/redis.sock" >>/etc/redis/redis.conf
-  echo "unixsocketperm 770" >>/etc/redis/redis.conf
-fi
-
 install_rss() {
+  cd
+  mkdir /etc/redis/
+  wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /etc/redis/
+  sed -i "s/appendonly no/appendonly yes/g" /etc/redis/redis.conf
+  if grep -q "unixsocket /var/run/redis/redis.sock" /etc/redis/redis.conf; then
+    :
+  else
+    echo "" >>/etc/redis/redis.conf
+    echo "unixsocket /var/run/redis/redis.sock" >>/etc/redis/redis.conf
+    echo "unixsocketperm 770" >>/etc/redis/redis.conf
+  fi
   # cd /usr/share/nginx/
 
   ## Install Miniflux
@@ -61,6 +61,7 @@ services:
     volumes:
       - "/etc/redis:/data"
       - "/etc/redis/redis.conf:/data/redis.conf"
+      - "/var/run/redis/redis.sock:/tmp/redis.sock"
     command:
       - redis-server /etc/redis/redis.conf
       
