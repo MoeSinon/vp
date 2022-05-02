@@ -315,6 +315,11 @@ install_moudles() {
   #   source redis.sh
   #   install_redis
   # fi
+  if [[ ${install_freenom} == 1 ]]; then
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/freenom.sh
+    source redis.sh
+    install_freenom
+  fi
   if [[ ${install_mongodb} == 1 ]]; then
     curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/mongodb.sh
     source mongodb.sh
