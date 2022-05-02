@@ -14,7 +14,7 @@ install_rss() {
   else
     echo "" >>/etc/redis/redis.conf
     echo "unixsocket /var/run/redis/redis.sock" >>/etc/redis/redis.conf
-    echo "unixsocketperm 770" >>/etc/redis/redis.conf
+    echo "unixsocketperm 777" >>/etc/redis/redis.conf
   fi
   # cd /usr/share/nginx/
 
@@ -99,5 +99,6 @@ volumes:
 EOF
   sed -i "s/adminadmin/${password1}/g" docker-compose.yml
   docker-compose up -d
+  usermod -a -G redis www-data
   cd
 }
