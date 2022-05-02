@@ -19,10 +19,10 @@ install_rss() {
   # cd /usr/share/nginx/
 
   ## Install Miniflux
-  cd usr
+  cd /etc
   mkdir miniflux
-  cd /usr/miniflux
-  cat >"/usr/miniflux/docker-compose.yml" <<EOF
+  cd /etc/miniflux
+  cat >"/etc/miniflux/docker-compose.yml" <<EOF
 version: '3.8'
 services:
   rsshub:
