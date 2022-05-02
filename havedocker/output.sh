@@ -76,7 +76,7 @@ echo -e "Netdata:\t\t 正常运行中"
   if [[ \$(systemctl is-active docker) == active ]]; then
 echo -e "Docker:\t\t\t 正常运行中"
   fi
-  if [[ \$(docker status mariadb) == active ]]; then
+  if [[ \$(systemctl is-active mariadb) == active ]]; then
 echo -e "MariaDB:\t\t 正常运行中"
   fi
   if [[ \$(systemctl is-active dovecot) == active ]]; then

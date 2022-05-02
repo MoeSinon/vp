@@ -128,7 +128,7 @@ services:
       # - "/usr/share/nginx/nextcloud/config:/var/www/html/config" 
       # - "/usr/share/nginx/nextcloud/apps:/var/www/html/custom_apps"
   db:
-    image: mariadb:10.5
+    image: mariadb:latest
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
     restart: always
     volumes:
