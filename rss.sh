@@ -94,7 +94,7 @@ volumes:
   miniflux-db:
 
 EOF
-  sed -i "s/adminadmin/${password1}/g" docker-compose.yml
-  docker-compose up -d
-  cd
+sed -i "s/adminadmin/${password1}/g" docker-compose.yml
+docker-compose up -d
+cd
 }
