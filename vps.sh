@@ -310,11 +310,11 @@ install_moudles() {
     source mariadb.sh
     install_mariadb
   fi
-  if [[ ${install_redis} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/redis.sh
-    source redis.sh
-    install_redis
-  fi
+  # if [[ ${install_redis} == 1 ]]; then
+  #   curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/redis.sh
+  #   source redis.sh
+  #   install_redis
+  # fi
   if [[ ${install_mongodb} == 1 ]]; then
     curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/mongodb.sh
     source mongodb.sh

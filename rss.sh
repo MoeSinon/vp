@@ -8,7 +8,15 @@ install_rss() {
   # cd /usr/share/nginx/
 
   ## Install Miniflux
-
+  wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /etc/redis/
+  sed -i "s/appendonly no/appendonly yes/g" /etc/redis/redis.conf
+  if grep -q "unixsocket /var/run/redis/redis.sock" /etc/redis/redis.conf
+  then
+    :
+  else
+  echo "" >> /etc/redis/redis.conf
+  echo "unixsocket /var/run/redis/redis.sock" >> /etc/redis/redis.conf
+  echo "unixsocketperm 770" >> /etc/redis/redis.conf
   cd /usr/share/nginx/
   mkdir miniflux
   cd /usr/share/nginx/miniflux
@@ -26,7 +34,7 @@ services:
       # PROXY_URI: 'http://127.0.0.1:8080'
       NODE_ENV: production
       CACHE_TYPE: redis
-      REDIS_URL: 'redis://redis:6379/'
+      REDIS_URL: 'redis://redis:6378/'
       PUPPETEER_WS_ENDPOINT: 'ws://browserless:3000'
     depends_on:
       - browserless
@@ -39,13 +47,21 @@ services:
     restart: unless-stopped
     ports:
       - 127.0.0.1:3000:3000
+
   redis:
     # 6379
     image: "redis:latest"
     container_name: redis
     restart: unless-stopped
+    ports:
+      - "6379:6379"
+      - "6378:6379"
     volumes:
-      - "/data/redis:/data"
+      - "/etc/redis:/data"
+      - "/etc/redis/redis.conf:/data/redis.conf"
+    command:
+      - redis-server /etc/redis/redis.conf
+      
   miniflux:
     # 8280
     image: miniflux/miniflux:latest

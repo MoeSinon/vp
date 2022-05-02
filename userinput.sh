@@ -91,13 +91,13 @@ userinput_standard() {
       install_nextcloud=1
       install_php=1
       install_mariadb=1
-      install_redis=1
+      # install_redis=1
       ;;
     rss)
       check_rss="on"
       install_rss=1
       install_docker=1
-      install_redis=1
+      # install_redis=1
       ;;
     fail2ban)
       check_fail2ban="on"
@@ -324,13 +324,13 @@ userinput_full() {
       install_nextcloud=1
       install_php=1
       install_mariadb=1
-      install_redis=1
+      # install_redis=1
       ;;
     rss)
       check_rss="on"
       install_rss=1
       install_docker=1
-      install_redis=1
+      # install_redis=1
       ;;
     qbt)
       check_tracker="on"
