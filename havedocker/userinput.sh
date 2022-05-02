@@ -49,10 +49,10 @@ userinput_standard() {
     "port" "自定义Trojan-GFW/Vless(grpc)端口" off \
     "hexo" "Hexo Blog" on \
     "ss" "shadowsocks-rust(不支持CDN)" ${check_ss} \
-    "nextcloud" "Nextcloud(私人网盘)" ${check_cloud} \
+    \
     "rss" "RSSHUB + Miniflux(RSS生成器+RSS阅读器)" ${check_rss} \
     "fail2ban" "Fail2ban(防SSH爆破用)" ${check_fail2ban} \
-    "net" "Netdata(监测伺服器运行状态)" off 2>results
+    "net" "Netdata(监测伺服器运行状态)" off 2>results # "nextcloud" "Nextcloud(私人网盘)" ${check_cloud} \
 
   while read choice; do
     case $choice in
@@ -87,9 +87,9 @@ userinput_standard() {
       check_speed="on"
       install_speedtest=1
       install_php=1
-      ;;
-    nextcloud)
-      install_nextcloud=1
+      # ;;
+      # nextcloud)
+      #   install_nextcloud=1
       # install_php=1
       # install_mariadb=1
       # install_redis=1
@@ -98,6 +98,7 @@ userinput_standard() {
       check_rss="on"
       install_rss=1
       install_docker=1
+      install_nextcloud=1
       # install_redis=1
       install_freenom=1
       ;;
@@ -254,7 +255,7 @@ userinput_full() {
     "影音" "影音" off \
     "media" "Emby Sonarr Radarr Lidarr Prowlarr Qbt" off \
     "网盘" "网盘" off \
-    "nextcloud" "Nextcloud(私人网盘)" ${check_cloud} \
+    \
     "rss" "RSSHUB + Miniflux(RSS生成器+RSS阅读器)" ${check_rss} \
     "rclone" "Rclone" ${check_rclone} \
     "aria" "Aria2+AriaNG+Filebrowser" ${check_aria} \
@@ -269,7 +270,7 @@ userinput_full() {
     "其他" "其他软件及选项" off \
     "net" "Netdata(监测伺服器运行状态)" off \
     "typecho" "Typecho" ${check_echo} \
-    "13" "Qbt原版+高性能Tracker+Filebrowser" off 2>results
+    "13" "Qbt原版+高性能Tracker+Filebrowser" off 2>results # "nextcloud" "Nextcloud(私人网盘)" ${check_cloud} \
 
   while read choice; do
     case $choice in
@@ -322,16 +323,18 @@ userinput_full() {
     net)
       install_netdata=1
       ;;
-    nextcloud)
-      install_nextcloud=1
-      install_php=1
+      # nextcloud)
+      #   install_nextcloud=1
+      # install_php=1
       # install_mariadb=1
       # install_redis=1
-      ;;
+      # ;;
     rss)
       check_rss="on"
       install_rss=1
       install_docker=1
+      install_nextcloud=1
+      install_freenom=1
       # install_redis=1
       ;;
     qbt)

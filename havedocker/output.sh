@@ -6,10 +6,10 @@ set +e
 
 apt-get install qrencode -y
 
-prase_output(){
-clear
-apt-get install neofetch -y
-	cat > '/etc/profile.d/mymotd.sh' << EOF
+prase_output() {
+  clear
+  apt-get install neofetch -y
+  cat >'/etc/profile.d/mymotd.sh' <<EOF
 #!/usr/bin/env bash
 bold=\$(tput bold)
 normal=\$(tput sgr0)
@@ -33,10 +33,10 @@ LIGHTPURPLE='\033[1;35m'
 LIGHTCYAN='\033[1;36m'
 WHITE='\033[1;37m'
 ###
-domain="$( jq -r '.domain' "/root/.trojan/config.json" )"
-trojanport="$( jq -r '.trojanport' "/root/.trojan/config.json" )"
-password1="$( jq -r '.password1' "/root/.trojan/config.json" )"
-password2="$( jq -r '.password2' "/root/.trojan/config.json" )"
+domain="$(jq -r '.domain' "/root/.trojan/config.json")"
+trojanport="$(jq -r '.trojanport' "/root/.trojan/config.json")"
+password1="$(jq -r '.password1' "/root/.trojan/config.json")"
+password2="$(jq -r '.password2' "/root/.trojan/config.json")"
 neofetch
 echo -e " --- 欢迎使用VPSToolBox --- "
 echo -e " --- \${BLUE}服務狀態(Service Status)\${NOCOLOR} ---"
@@ -76,7 +76,7 @@ echo -e "Netdata:\t\t 正常运行中"
   if [[ \$(systemctl is-active docker) == active ]]; then
 echo -e "Docker:\t\t\t 正常运行中"
   fi
-  if [[ \$(systemctl is-active mariadb) == active ]]; then
+  if [[ \$(docker status mariadb) == active ]]; then
 echo -e "MariaDB:\t\t 正常运行中"
   fi
   if [[ \$(systemctl is-active dovecot) == active ]]; then
@@ -190,9 +190,9 @@ echo -e " --- \${BLUE}Telegram群组链接\${NOCOLOR} ---"
 echo -e "    \${YELLOW}https://t.me/vpstoolbox_chat\${NOCOLOR}"
 echo -e "*********************"
 EOF
-chmod +x /etc/profile.d/mymotd.sh
-echo "" > /etc/motd
-echo "Install complete!"
-whiptail --title "Success" --msgbox "安装成功(Install Success),欢迎使用VPSTOOLBOX !" 8 68
-bash /etc/profile.d/mymotd.sh
+  chmod +x /etc/profile.d/mymotd.sh
+  echo "" >/etc/motd
+  echo "Install complete!"
+  whiptail --title "Success" --msgbox "安装成功(Install Success),欢迎使用VPSTOOLBOX !" 8 68
+  bash /etc/profile.d/mymotd.sh
 }

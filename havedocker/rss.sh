@@ -6,8 +6,8 @@ set +e
 
 install_rss() {
   cd
-  mkdir -p /usr/share/nginx/nextcloud_data
-  mkdir -p /usr/share/nginx/nextcloud/apps
+  # mkdir -p /usr/share/nginx/nextcloud_data
+  # mkdir -p /usr/share/nginx/nextcloud/apps
   mkdir /etc/redis/
   wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /etc/redis/
   sed -i "s/appendonly no/appendonly yes/g" /etc/redis/redis.conf

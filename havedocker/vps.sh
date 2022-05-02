@@ -376,11 +376,11 @@ install_moudles() {
     source mail.sh
     install_mail
   fi
-  if [[ ${install_nextcloud} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/nextcloud.sh
-    source nextcloud.sh
-    install_nextcloud
-  fi
+  # if [[ ${install_nextcloud} == 1 ]]; then
+  #   curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/nextcloud.sh
+  #   source nextcloud.sh
+  #   install_nextcloud
+  # fi
   if [[ ${install_rocketchat} == 1 ]]; then
     curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/rocketchat.sh
     source rocketchat.sh
