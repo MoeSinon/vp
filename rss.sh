@@ -8,19 +8,19 @@ install_rss() {
   # cd /usr/share/nginx/
 
   ## Install Miniflux
-  wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /etc/redis/
-  sed -i "s/appendonly no/appendonly yes/g" /etc/redis/redis.conf
-  if grep -q "unixsocket /var/run/redis/redis.sock" /etc/redis/redis.conf
-  then
-    :
-  else
-  echo "" >> /etc/redis/redis.conf
-  echo "unixsocket /var/run/redis/redis.sock" >> /etc/redis/redis.conf
-  echo "unixsocketperm 770" >> /etc/redis/redis.conf
-  cd /usr/share/nginx/
-  mkdir miniflux
-  cd /usr/share/nginx/miniflux
-  cat >"/usr/share/nginx/miniflux/docker-compose.yml" <<EOF
+wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /etc/redis/
+sed -i "s/appendonly no/appendonly yes/g" /etc/redis/redis.conf
+if grep -q "unixsocket /var/run/redis/redis.sock" /etc/redis/redis.conf
+then
+  :
+else
+echo "" >> /etc/redis/redis.conf
+echo "unixsocket /var/run/redis/redis.sock" >> /etc/redis/redis.conf
+echo "unixsocketperm 770" >> /etc/redis/redis.conf
+cd /usr/share/nginx/
+mkdir miniflux
+cd /usr/share/nginx/miniflux
+cat >"/usr/share/nginx/miniflux/docker-compose.yml" <<EOF
 version: '3.8'
 services:
   rsshub:
