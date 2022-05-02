@@ -6,6 +6,8 @@ set +e
 
 install_rss() {
   cd
+  mkdir -p /usr/share/nginx/nextcloud_data
+  mkdir -p /usr/share/nginx/nextcloud/apps
   mkdir /etc/redis/
   wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /etc/redis/
   sed -i "s/appendonly no/appendonly yes/g" /etc/redis/redis.conf
@@ -23,7 +25,7 @@ install_rss() {
   mkdir miniflux
   cd /usr/share/nginx/miniflux
   cat >"/usr/share/nginx/miniflux/docker-compose.yml" <<EOF
-version: '3.8'
+version: '1.0'
 services:
   rsshub:
     # 1200
@@ -36,7 +38,7 @@ services:
       # PROXY_URI: 'http://127.0.0.1:8080'
       NODE_ENV: production
       CACHE_TYPE: redis
-      REDIS_URL: 'redis://redis:6378/'
+      REDIS_URL: 'redis://redis:6379/'
       PUPPETEER_WS_ENDPOINT: 'ws://browserless:3000'
     depends_on:
       - browserless
@@ -57,11 +59,11 @@ services:
     restart: unless-stopped
     ports:
       - "6379:6379"
-      - "6378:6379"
+      # - "6378:6379"
     volumes:
       - "/etc/redis:/data"
       - "/etc/redis/redis.conf:/data/redis.conf"
-      - "/var/run/redis/redis.sock:/tmp/redis.sock"
+      # - "/var/run/redis/redis.sock:/tmp/redis.sock"
     command:
       - redis-server /etc/redis/redis.conf
       
@@ -94,14 +96,75 @@ services:
       interval: 10s
       start_period: 30s
 
-
-    
+  nextcloud:
+    image: nextcloud:apache
+    env_file:
+      - db.env
+    depends_on:
+      - db
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - UID=1000
+      - GID=1000
+      - UPLOAD_MAX_SIZE=10G
+      - APC_SHM_SIZE=128M
+      - OPCACHE_MEM_SIZE=128
+      - CRON_PERIOD=15m
+      - TZ=Aisa/Shanghai
+      - DOMAIN="${domain}"
+      - DB_TYPE=mysql
+      - DB_NAME=nextcloud
+      - DB_USER=nextcloud
+      - DB_PASSWORD="${password1}"
+      - NEXTCLOUD_ADMIN_USER="admin"
+      - NEXTCLOUD_ADMIN_PASSWORD="${password1}"
+      - DB_HOST=db
+    ports:
+      - 9000:80
+    volumes:
+      - nextcloud:/var/www/html
+      # - "/usr/share/nginx/nextcloud_data:/var/www/html/data"
+      # - "/usr/share/nginx/nextcloud/config:/var/www/html/config" 
+      # - "/usr/share/nginx/nextcloud/apps:/var/www/html/custom_apps"
+  db:
+    image: mariadb:10.5
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    restart: always
+    volumes:
+      - db:/var/lib/mysql
+      - /etc/localtime:/etc/localtime
+      - /etc/mysql/my.cnf:/etc/mysql/my.cnf
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD: "${password1}"
+      - MYSQL_DATABASE: nextcloud
+      - MYSQL_USER: nextcloud
+      - MYSQL_PASSWORD: "${password1}"
+    env_file:
+      - db.env
 volumes:
+  nextcloud:
   miniflux-db:
+  db:
 
 EOF
   sed -i "s/adminadmin/${password1}/g" docker-compose.yml
+  docker-compose build --pull
   docker-compose up -d
-  usermod -a -G redis www-data
+  # usermod -a -G redis www-data
+  docker exec -it mariadb /bin/bash
+  mysql -u root -p "${password1}"
+  mysql -u root -e "CREATE DATABASE trojan CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+  mysql -u root -e "create user 'trojan'@'localhost' IDENTIFIED BY '${password1}';"
+  mysql -u root -e "GRANT ALL PRIVILEGES ON trojan.* to trojan@'localhost';"
+  mysql -u root -e "flush privileges;"
+
+  docker restart mariadb
+  # mysql -u root -e "CREATE DATABASE nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+  # mysql -u root -e "create user 'nextcloud'@'localhost' IDENTIFIED BY '${password1}';"
+  # mysql -u root -e "GRANT ALL PRIVILEGES ON nextcloud.* to nextcloud@'localhost';"
+  # mysql -u root -e "flush privileges;"
   cd
 }

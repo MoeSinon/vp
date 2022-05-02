@@ -90,8 +90,8 @@ userinput_standard() {
       ;;
     nextcloud)
       install_nextcloud=1
-      install_php=1
-      install_mariadb=1
+      # install_php=1
+      # install_mariadb=1
       # install_redis=1
       ;;
     rss)
@@ -207,9 +207,9 @@ userinput_full() {
   if [[ -z ${check_speed} ]]; then
     check_speed="off"
   fi
-  if [[ -z ${check_mariadb} ]]; then
-    check_mariadb="off"
-  fi
+  # if [[ -z ${check_mariadb} ]]; then
+  #   check_mariadb="off"
+  # fi
   if [[ -z ${check_fail2ban} ]]; then
     check_fail2ban="on"
   fi
@@ -295,7 +295,7 @@ userinput_full() {
       ;;
     typecho)
       install_php=1
-      install_mariadb=1
+      # install_mariadb=1
       check_echo="on"
       install_typecho=1
       ;;
@@ -325,7 +325,7 @@ userinput_full() {
     nextcloud)
       install_nextcloud=1
       install_php=1
-      install_mariadb=1
+      # install_mariadb=1
       # install_redis=1
       ;;
     rss)
@@ -365,7 +365,7 @@ userinput_full() {
       check_mail="on"
       install_mail=1
       install_php=1
-      install_mariadb=1
+      # install_mariadb=1
       ;;
     tor)
       install_tor=1

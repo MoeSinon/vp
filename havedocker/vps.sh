@@ -130,7 +130,7 @@ prasejson() {
   "check_aria": "$check_aria",
   "check_file": "$check_file",
   "check_speed": "$check_speed",
-  "check_mariadb": "$check_mariadb",
+  # "check_mariadb": "$check_mariadb",
   "check_fail2ban": "$check_fail2ban",
   "check_mail": "$check_mail",
   "check_qbt_origin": "$check_qbt_origin",
@@ -164,7 +164,7 @@ readconfig() {
   check_aria="$(jq -r '.check_aria' "/root/.trojan/config.json")"
   check_file="$(jq -r '.check_file' "/root/.trojan/config.json")"
   check_speed="$(jq -r '.check_speed' "/root/.trojan/config.json")"
-  check_mariadb="$(jq -r '.check_mariadb' "/root/.trojan/config.json")"
+  # check_mariadb="$(jq -r '.check_mariadb' "/root/.trojan/config.json")"
   check_fail2ban="$(jq -r '.check_fail2ban' "/root/.trojan/config.json")"
   check_mail="$(jq -r '.check_mail' "/root/.trojan/config.json")"
   check_qbt_origin="$(jq -r '.check_qbt_origin' "/root/.trojan/config.json")"
@@ -305,11 +305,11 @@ install_moudles() {
     source php.sh
     install_php
   fi
-  if [[ ${install_mariadb} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/mariadb.sh
-    source mariadb.sh
-    install_mariadb
-  fi
+  # if [[ ${install_mariadb} == 1 ]]; then
+  #   curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/mariadb.sh
+  #   source mariadb.sh
+  #   install_mariadb
+  # fi
   # if [[ ${install_redis} == 1 ]]; then
   #   curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/redis.sh
   #   source redis.sh
@@ -580,17 +580,17 @@ MasterMenu() {
       curl https://${domain}:${trojanport}/nextcloud/
       sleep 10s
       ## Delete last line
-      sed -i '$d' /usr/share/nginx/nextcloud/config/config.php
-      echo "  'default_phone_region' => 'CN'," >>/usr/share/nginx/nextcloud/config/config.php
-      echo "  'memcache.local' => '\\OC\\Memcache\\APCu'," >>/usr/share/nginx/nextcloud/config/config.php
-      echo "  'memcache.distributed' => '\\OC\\Memcache\\Redis'," >>/usr/share/nginx/nextcloud/config/config.php
-      echo "  'memcache.locking' => '\\OC\\Memcache\\Redis'," >>/usr/share/nginx/nextcloud/config/config.php
-      echo "  'redis' => [" >>/usr/share/nginx/nextcloud/config/config.php
-      echo "     'host'     => '/var/run/redis/redis.sock'," >>/usr/share/nginx/nextcloud/config/config.php
-      echo "     'port'     => 0," >>/usr/share/nginx/nextcloud/config/config.php
-      echo "     'timeout'  => 1.0," >>/usr/share/nginx/nextcloud/config/config.php
-      echo "  ]," >>/usr/share/nginx/nextcloud/config/config.php
-      echo ");" >>/usr/share/nginx/nextcloud/config/config.php
+      sed -i '$d' /nextcloud/config/config.php #/usr/share/nginx
+      echo "  'default_phone_region' => 'CN'," >>/nextcloud/config/config.php
+      echo "  'memcache.local' => '\\OC\\Memcache\\APCu'," >>/nextcloud/config/config.php
+      echo "  'memcache.distributed' => '\\OC\\Memcache\\Redis'," >>/nextcloud/config/config.php
+      echo "  'memcache.locking' => '\\OC\\Memcache\\Redis'," >>/nextcloud/config/config.php
+      echo "  'redis' => [" >>/nextcloud/config/config.php
+      echo "     'host'     => '/var/run/redis/redis.sock'," >>/nextcloud/config/config.php
+      echo "     'port'     => 0," >>/nextcloud/config/config.php
+      echo "     'timeout'  => 1.0," >>/nextcloud/config/config.php
+      echo "  ]," >>/nginx/nextcloud/config/config.php
+      echo ");" >>/nginx/nextcloud/config/config.php
     fi
     ## 输出结果
     echo "nameserver 1.1.1.1" >/etc/resolv.conf

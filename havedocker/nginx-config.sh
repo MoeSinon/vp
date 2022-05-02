@@ -12,19 +12,19 @@ set +e
 
 cipher_server="ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384"
 
-nginx_config(){
-  clear
-TERM=ansi whiptail --title "安装中" --infobox "配置NGINX中..." 7 68
-  colorEcho ${INFO} "配置(configing) nginx"
-rm -rf /etc/nginx/sites-available/*
-rm -rf /etc/nginx/sites-enabled/*
-rm -rf /etc/nginx/conf.d/*
-touch /etc/nginx/conf.d/default.conf
-  cat > '/etc/nginx/conf.d/default.conf' << EOF
+nginx_config() {
+    clear
+    TERM=ansi whiptail --title "安装中" --infobox "配置NGINX中..." 7 68
+    colorEcho ${INFO} "配置(configing) nginx"
+    rm -rf /etc/nginx/sites-available/*
+    rm -rf /etc/nginx/sites-enabled/*
+    rm -rf /etc/nginx/conf.d/*
+    touch /etc/nginx/conf.d/default.conf
+    cat >'/etc/nginx/conf.d/default.conf' <<EOF
 server {
   listen 127.0.0.1:81 fastopen=20 reuseport default_server so_keepalive=on;
   listen 127.0.0.1:82 http2 fastopen=20 reuseport default_server so_keepalive=on;
-  server_name $domain _;
+  server_name ${domain};
   # listen 443 ssl http2 fastopen=20 reuseport default_server so_keepalive=on;
   # listen [::]:443 ssl http2 fastopen=20 reuseport default_server so_keepalive=on;
   # ssl_certificate     /etc/certs/${domain}_ecc/fullchain.cer;
@@ -54,26 +54,26 @@ server {
   #add_header X-Cache-Status \$upstream_cache_status;
 EOF
 
-if [[ $install_hexo == 1 ]]; then
-echo "  location / {" >> /etc/nginx/conf.d/default.conf
-echo "    #proxy_pass http://127.0.0.1:4000/; # Hexo server" >> /etc/nginx/conf.d/default.conf
-echo "    root /usr/share/nginx/hexo/public/; # Hexo public content" >> /etc/nginx/conf.d/default.conf
-echo "    #error_page 404  /404.html;" >> /etc/nginx/conf.d/default.conf
-echo "  }" >> /etc/nginx/conf.d/default.conf
-fi
-if [[ $install_alist == 1 ]]; then
-echo "  location / {" >> /etc/nginx/conf.d/default.conf
-echo "    #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "    client_max_body_size 0;" >> /etc/nginx/conf.d/default.conf
-echo "    proxy_set_header X-Forwarded-Proto https;" >> /etc/nginx/conf.d/default.conf
-echo "    proxy_pass http://127.0.0.1:5244/;" >> /etc/nginx/conf.d/default.conf
-echo "  }" >> /etc/nginx/conf.d/default.conf
-fi
+    if [[ $install_hexo == 1 ]]; then
+        echo "  location / {" >>/etc/nginx/conf.d/default.conf
+        echo "    #proxy_pass http://127.0.0.1:4000/; # Hexo server" >>/etc/nginx/conf.d/default.conf
+        echo "    root /usr/share/nginx/hexo/public/; # Hexo public content" >>/etc/nginx/conf.d/default.conf
+        echo "    #error_page 404  /404.html;" >>/etc/nginx/conf.d/default.conf
+        echo "  }" >>/etc/nginx/conf.d/default.conf
+    fi
+    if [[ $install_alist == 1 ]]; then
+        echo "  location / {" >>/etc/nginx/conf.d/default.conf
+        echo "    #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "    client_max_body_size 0;" >>/etc/nginx/conf.d/default.conf
+        echo "    proxy_set_header X-Forwarded-Proto https;" >>/etc/nginx/conf.d/default.conf
+        echo "    proxy_pass http://127.0.0.1:5244/;" >>/etc/nginx/conf.d/default.conf
+        echo "  }" >>/etc/nginx/conf.d/default.conf
+    fi
 
-if [[ $install_nextcloud == 1 ]]; then
-echo "    include /etc/nginx/conf.d/nextcloud.conf;" >> /etc/nginx/conf.d/default.conf
-touch /etc/nginx/conf.d/nextcloud.conf
-cat << EOF > /etc/nginx/conf.d/nextcloud.conf
+    if [[ $install_nextcloud == 1 ]]; then
+        echo "    include /etc/nginx/conf.d/nextcloud.conf;" >>/etc/nginx/conf.d/default.conf
+        touch /etc/nginx/conf.d/nextcloud.conf
+        cat <<EOF >/etc/nginx/conf.d/nextcloud.conf
 
 # https://docs.nextcloud.com/server/23/admin_manual/installation/nginx.html
 
@@ -83,7 +83,8 @@ cat << EOF > /etc/nginx/conf.d/nextcloud.conf
     location = /.well-known/nodeinfo { return 301 https://${domain}:443/nextcloud/index.php/.well-known/nodeinfo; }
 
     location ^~ /nextcloud/ {
-        root /usr/share/nginx/;
+        # root /usr/share/nginx/;
+        root /nextcloud/;
         client_body_temp_path /usr/share/nginx/tmp/ 1 2;
         client_max_body_size 0;
         fastcgi_buffers 64 4K;
@@ -96,13 +97,17 @@ cat << EOF > /etc/nginx/conf.d/nextcloud.conf
         add_header X-Robots-Tag                         "none"          always;
         add_header X-XSS-Protection                     "1; mode=block" always;
         #fastcgi_hide_header X-Powered-By;
-        index index.php index.html /nextcloud/index.php\$request_uri;
+        index index.php index.html /index.php\$request_uri; #/nextcloud
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_pass http://127.0.0.1:9000; 
 
         expires 1m;
 
         location = /nextcloud/ {
             if ( \$http_user_agent ~ ^DavClnt ) {
-                return 302 /nextcloud/remote.php/webdav/\$is_args\$args;
+                return 302 /remote.php/webdav/\$is_args\$args; #/nextcloud
             }
         }
 
@@ -130,27 +135,27 @@ cat << EOF > /etc/nginx/conf.d/nextcloud.conf
         }
 
         location ~ \.(?:css|js|svg|gif)\$ {
-            try_files \$uri /nextcloud/index.php\$request_uri;
+            try_files \$uri /index.php\$request_uri;#/nextcloud
             expires 6M;
             access_log off;
         }
 
         location ~ \.woff2?\$ {
-            try_files \$uri /nextcloud/index.php\$request_uri;
+            try_files \$uri /index.php\$request_uri;#/nextcloud
             expires 7d;
             access_log off;
         }
 
         location /nextcloud/ {
-            try_files \$uri \$uri/ /nextcloud/index.php\$request_uri;
+            try_files \$uri \$uri/ /index.php\$request_uri;#/nextcloud
         }
     }
 EOF
-fi
-if [[ $install_grpc == 1 ]]; then
-echo "    include /etc/nginx/conf.d/grpc.conf;" >> /etc/nginx/conf.d/default.conf
-touch /etc/nginx/conf.d/grpc.conf
-cat << EOF > /etc/nginx/conf.d/grpc.conf
+    fi
+    if [[ $install_grpc == 1 ]]; then
+        echo "    include /etc/nginx/conf.d/grpc.conf;" >>/etc/nginx/conf.d/default.conf
+        touch /etc/nginx/conf.d/grpc.conf
+        cat <<EOF >/etc/nginx/conf.d/grpc.conf
 	location /${path_new} {
     client_max_body_size 0;
     client_body_buffer_size 1m;
@@ -171,353 +176,353 @@ cat << EOF > /etc/nginx/conf.d/grpc.conf
     proxy_buffering off;
 	}
 EOF
-fi
-if [[ $install_typecho == 1 ]]; then
-echo "    #location / {" >> /etc/nginx/conf.d/default.conf
-echo "    #    client_max_body_size 0;" >> /etc/nginx/conf.d/default.conf
-echo "    #    index index.php index.html;" >> /etc/nginx/conf.d/default.conf
-echo "    #    root /usr/share/nginx/typecho/;" >> /etc/nginx/conf.d/default.conf
-echo "    #    location ~ \.php\$ {" >> /etc/nginx/conf.d/default.conf
-echo "    #    fastcgi_split_path_info ^(.+\.php)(/.+)\$;" >> /etc/nginx/conf.d/default.conf
-echo "    #    include fastcgi_params;" >> /etc/nginx/conf.d/default.conf
-echo "    #    fastcgi_pass unix:/run/php/php8.0-fpm.sock;" >> /etc/nginx/conf.d/default.conf
-echo "    #    fastcgi_param HTTPS on;" >> /etc/nginx/conf.d/default.conf
-echo "    #    fastcgi_index index.php;" >> /etc/nginx/conf.d/default.conf
-echo "    #    fastcgi_param SCRIPT_FILENAME \$request_filename;" >> /etc/nginx/conf.d/default.conf
-echo "    #    }" >> /etc/nginx/conf.d/default.conf
-echo "    #    }" >> /etc/nginx/conf.d/default.conf
-fi
-if [[ $install_jellyfin == 1 ]]; then
-echo "    location /emby {" >> /etc/nginx/conf.d/default.conf
-echo "        return 302 https://${domain}:443/emby/;" >> /etc/nginx/conf.d/default.conf
-echo "    }" >> /etc/nginx/conf.d/default.conf
-echo "    location /emby/ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:8096/;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass_request_headers on;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forward-Proto https;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forwarded-Host \$http_host;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Upgrade \$http_upgrade;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Connection \$http_connection;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_buffering off;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-## sonarr 8989
-echo "    location /sonarr {" >> /etc/nginx/conf.d/default.conf
-echo "        return 302 https://${domain}:443/sonarr/;" >> /etc/nginx/conf.d/default.conf
-echo "    }" >> /etc/nginx/conf.d/default.conf
-echo "    location /sonarr/ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:8989/sonarr/;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass_request_headers on;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Host \$host;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forward-Proto https;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forwarded-Host \$http_host;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Upgrade \$http_upgrade;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Connection \$http_connection;" >> /etc/nginx/conf.d/default.conf
-echo "        #proxy_buffering off;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-## radarr 7878
-echo "    location /radarr {" >> /etc/nginx/conf.d/default.conf
-echo "        return 302 https://${domain}:443/radarr/;" >> /etc/nginx/conf.d/default.conf
-echo "    }" >> /etc/nginx/conf.d/default.conf
-echo "    location /radarr/ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:7878/radarr/;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass_request_headers on;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forward-Proto https;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forwarded-Host \$http_host;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Upgrade \$http_upgrade;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Connection \$http_connection;" >> /etc/nginx/conf.d/default.conf
-echo "        #proxy_buffering off;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-## lidarr 8686
-echo "    location /lidarr {" >> /etc/nginx/conf.d/default.conf
-echo "        return 302 https://${domain}:443/lidarr/;" >> /etc/nginx/conf.d/default.conf
-echo "    }" >> /etc/nginx/conf.d/default.conf
-echo "    location /lidarr/ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:8686/lidarr/;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass_request_headers on;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forward-Proto https;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forwarded-Host \$http_host;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Upgrade \$http_upgrade;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Connection \$http_connection;" >> /etc/nginx/conf.d/default.conf
-echo "        #proxy_buffering off;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-## readarr 8787
-echo "    location /readarr {" >> /etc/nginx/conf.d/default.conf
-echo "        return 302 https://${domain}:443/readarr/;" >> /etc/nginx/conf.d/default.conf
-echo "    }" >> /etc/nginx/conf.d/default.conf
-echo "    location /readarr/ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:8787/readarr/;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass_request_headers on;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forward-Proto https;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forwarded-Host \$http_host;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Upgrade \$http_upgrade;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Connection \$http_connection;" >> /etc/nginx/conf.d/default.conf
-echo "        #proxy_buffering off;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-## bazarr 6767
-echo "    location /bazarr {" >> /etc/nginx/conf.d/default.conf
-echo "        return 302 https://${domain}:443/bazarr/;" >> /etc/nginx/conf.d/default.conf
-echo "    }" >> /etc/nginx/conf.d/default.conf
-echo "    location /bazarr/ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:6767/bazarr/;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass_request_headers on;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Host \$host;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forward-Proto https;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forwarded-Host \$http_host;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Upgrade \$http_upgrade;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Connection \$http_connection;" >> /etc/nginx/conf.d/default.conf
-echo "        #proxy_buffering off;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-## chinesesubfinder 19035
-echo "    location /chinesesubfinder {" >> /etc/nginx/conf.d/default.conf
-echo "        return 302 https://${domain}:443/chinesesubfinder/;" >> /etc/nginx/conf.d/default.conf
-echo "    }" >> /etc/nginx/conf.d/default.conf
-echo "    location /chinesesubfinder/ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:19035/;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass_request_headers on;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forward-Proto https;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forwarded-Host \$http_host;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Upgrade \$http_upgrade;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Connection \$http_connection;" >> /etc/nginx/conf.d/default.conf
-echo "        #proxy_buffering off;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-## prowlarr 9696
-echo "    location /prowlarr{" >> /etc/nginx/conf.d/default.conf
-echo "        return 302 https://${domain}:443/prowlarr/;" >> /etc/nginx/conf.d/default.conf
-echo "    }" >> /etc/nginx/conf.d/default.conf
-echo "    location /prowlarr/ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:9696/prowlarr/;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass_request_headers on;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forward-Proto https;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forwarded-Host \$http_host;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Upgrade \$http_upgrade;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Connection \$http_connection;" >> /etc/nginx/conf.d/default.conf
-echo "        #proxy_buffering off;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-## jackett 9117
-echo "    location /jackett {" >> /etc/nginx/conf.d/default.conf
-echo "        return 302 https://${domain}:443/jackett/;" >> /etc/nginx/conf.d/default.conf
-echo "    }" >> /etc/nginx/conf.d/default.conf
-echo "    location /jackett/ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:9117/jackett/;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass_request_headers on;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forward-Proto https;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forwarded-Host \$http_host;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Upgrade \$http_upgrade;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Connection \$http_connection;" >> /etc/nginx/conf.d/default.conf
-echo "        #proxy_buffering off;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-## ombi 3579
-echo "    location /ombi {" >> /etc/nginx/conf.d/default.conf
-echo "        return 302 https://${domain}:443/ombi/;" >> /etc/nginx/conf.d/default.conf
-echo "    }" >> /etc/nginx/conf.d/default.conf
-echo "    location /ombi/ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:3579/ombi/;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass_request_headers on;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Host \$host;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forward-Proto https;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forwarded-Host \$http_host;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Upgrade \$http_upgrade;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Connection \$http_connection;" >> /etc/nginx/conf.d/default.conf
-echo "        #proxy_buffering off;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-## nzbget 6789
-echo "    location /nzbget {" >> /etc/nginx/conf.d/default.conf
-echo "        return 302 https://${domain}:443/nzbget/;" >> /etc/nginx/conf.d/default.conf
-echo "    }" >> /etc/nginx/conf.d/default.conf
-echo "    location /nzbget/ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:6789/;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass_request_headers on;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forward-Proto https;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forwarded-Host \$http_host;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Upgrade \$http_upgrade;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Connection \$http_connection;" >> /etc/nginx/conf.d/default.conf
-echo "        #proxy_buffering off;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-fi
-if [[ $install_rocketchat == 1 ]]; then
-echo "    location /chat/ {" >> /etc/nginx/conf.d/default.conf
-echo "        expires -1;" >> /etc/nginx/conf.d/default.conf
-echo "        client_max_body_size 0;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_no_cache 1;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_cache_bypass 1;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Upgrade \$http_upgrade;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Connection "upgrade";" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forward-Proto https;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Nginx-Proxy true;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:3000/chat/;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_redirect off;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-echo "        location /file-upload/ {" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:3000/chat/file-upload/;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-echo "        location /avatar/ {" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:3000/chat/avatar/;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-echo "        location /assets/ {" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:3000/chat/assets/;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-echo "        location /home {" >> /etc/nginx/conf.d/default.conf
-echo "        return 301 https://${domain}/chat/home/;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-fi
-if [[ $install_mail == 1 ]]; then
-echo "    location /mail/ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        client_max_body_size 0;" >> /etc/nginx/conf.d/default.conf
-echo "        index index.php;" >> /etc/nginx/conf.d/default.conf
-echo "        alias /usr/share/nginx/roundcubemail/;" >> /etc/nginx/conf.d/default.conf
-echo "        location ~ \.php\$ {" >> /etc/nginx/conf.d/default.conf
-echo "        include fastcgi_params;" >> /etc/nginx/conf.d/default.conf
-echo "        fastcgi_pass unix:/run/php/php8.0-fpm.sock;" >> /etc/nginx/conf.d/default.conf
-echo "        fastcgi_index index.php;" >> /etc/nginx/conf.d/default.conf
-echo "        fastcgi_param HTTPS on;" >> /etc/nginx/conf.d/default.conf
-echo "        fastcgi_param SCRIPT_FILENAME \$request_filename;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-fi
-if [[ $install_speedtest == 1 ]]; then
-echo "    location /${password1}_speedtest/ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        client_max_body_size 0;" >> /etc/nginx/conf.d/default.conf
-echo "        alias /usr/share/nginx/speedtest/;" >> /etc/nginx/conf.d/default.conf
-echo "        http2_push /${password1}_speedtest/speedtest.js;" >> /etc/nginx/conf.d/default.conf
-echo "        http2_push /${password1}_speedtest/favicon.ico;" >> /etc/nginx/conf.d/default.conf
-echo "        location ~ \.php\$ {" >> /etc/nginx/conf.d/default.conf
-echo "        fastcgi_split_path_info ^(.+\.php)(/.+)\$;" >> /etc/nginx/conf.d/default.conf
-echo "        fastcgi_param HTTPS on;" >> /etc/nginx/conf.d/default.conf
-echo "        fastcgi_param SCRIPT_FILENAME \$request_filename;" >> /etc/nginx/conf.d/default.conf
-echo "        include fastcgi_params;" >> /etc/nginx/conf.d/default.conf
-echo "        fastcgi_pass   unix:/run/php/php8.0-fpm.sock;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-fi
-if [[ $install_rss == 1 ]] || [[ $install_jellyfin == 1 ]]; then
-echo "    location /rsshub/ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_redirect off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:1200/;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-fi
-if [[ $install_rss == 1 ]]; then
-echo "    location /miniflux/ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        client_max_body_size 0;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Host ${domain};" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forwarded-Proto https;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:8280/miniflux/;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-fi
-if [[ $install_aria == 1 ]]; then
-echo "    location $ariapath {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_redirect off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:6800/jsonrpc;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-echo "    location /ariang/ {" >> /etc/nginx/conf.d/default.conf
-echo "        expires -1;" >> /etc/nginx/conf.d/default.conf
-echo "        client_max_body_size 0;" >> /etc/nginx/conf.d/default.conf
-echo "        index index.html;" >> /etc/nginx/conf.d/default.conf
-echo "        alias /usr/share/nginx/ariang/;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-fi
-if [[ $install_qbt_e == 1 ]] || [[ $install_qbt_o == 1 ]]; then
-echo "    location /qbt/ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        client_max_body_size 0;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass              http://127.0.0.1:8080/;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header        X-Forwarded-Host        \$http_host;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-fi
-if [[ $install_filebrowser == 1 ]]; then
-echo "    location /file/ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:8081/;" >> /etc/nginx/conf.d/default.conf
-echo "        client_max_body_size 0;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-fi
-if [[ $install_i2pd == 1 ]]; then
-echo "    location /i2p/ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:7070/;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-fi
-if [[ $install_tracker == 1 ]]; then
-echo "    location /tracker/ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        index index.html;" >> /etc/nginx/conf.d/default.conf
-echo "        alias /usr/share/nginx/tracker/;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-echo "    location /tracker_stats/ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:6969/;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-echo "    location ~ ^/announce$ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:6969;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-echo "    location ~ ^/scrape$ {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://127.0.0.1:6969;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-fi
-if [[ $install_netdata == 1 ]]; then
-echo "    location ~ /${password1}_netdata/(?<ndpath>.*) {" >> /etc/nginx/conf.d/default.conf
-echo "        #access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_cache off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_redirect off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header Host \$host;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forwarded-Host \$host;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forwarded-Server \$host;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass_request_headers on;" >> /etc/nginx/conf.d/default.conf
-echo '        proxy_set_header Connection "keep-alive";' >> /etc/nginx/conf.d/default.conf
-echo "        proxy_store off;" >> /etc/nginx/conf.d/default.conf
-echo "        proxy_pass http://netdata/\$ndpath\$is_args\$args;" >> /etc/nginx/conf.d/default.conf
-echo "        gzip on;" >> /etc/nginx/conf.d/default.conf
-echo "        gzip_proxied any;" >> /etc/nginx/conf.d/default.conf
-echo "        gzip_types *;" >> /etc/nginx/conf.d/default.conf
-echo "        }" >> /etc/nginx/conf.d/default.conf
-fi
-echo "}" >> /etc/nginx/conf.d/default.conf
-echo "" >> /etc/nginx/conf.d/default.conf
-echo "server {" >> /etc/nginx/conf.d/default.conf
-echo "    listen 80 fastopen=20 reuseport;" >> /etc/nginx/conf.d/default.conf
-echo "    listen [::]:80 fastopen=20 reuseport;" >> /etc/nginx/conf.d/default.conf
-echo "    return 301 https://\$host\$request_uri;" >> /etc/nginx/conf.d/default.conf
-echo "}" >> /etc/nginx/conf.d/default.conf
-echo "" >> /etc/nginx/conf.d/default.conf
-if [[ $install_netdata == 1 ]]; then
-echo "server { #For Netdata only !" >> /etc/nginx/conf.d/default.conf
-echo "    listen 127.0.0.1:83 fastopen=20 reuseport;" >> /etc/nginx/conf.d/default.conf
-echo "    location /stub_status {" >> /etc/nginx/conf.d/default.conf
-echo "    access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "    stub_status;" >> /etc/nginx/conf.d/default.conf
-echo "    }" >> /etc/nginx/conf.d/default.conf
-echo "    location ~ ^/(status|ping)\$ {" >> /etc/nginx/conf.d/default.conf
-echo "    access_log off;" >> /etc/nginx/conf.d/default.conf
-echo "    allow 127.0.0.1;" >> /etc/nginx/conf.d/default.conf
-echo "    fastcgi_param SCRIPT_FILENAME \$request_filename;" >> /etc/nginx/conf.d/default.conf
-echo "    fastcgi_index index.php;" >> /etc/nginx/conf.d/default.conf
-echo "    include fastcgi_params;" >> /etc/nginx/conf.d/default.conf
-echo "    fastcgi_pass   unix:/run/php/php8.0-fpm.sock;" >> /etc/nginx/conf.d/default.conf
-echo "    }" >> /etc/nginx/conf.d/default.conf
-echo "}" >> /etc/nginx/conf.d/default.conf
-echo "upstream netdata {" >> /etc/nginx/conf.d/default.conf
-echo "    server 127.0.0.1:19999;" >> /etc/nginx/conf.d/default.conf
-echo "    keepalive 64;" >> /etc/nginx/conf.d/default.conf
-echo "}" >> /etc/nginx/conf.d/default.conf
-fi
-chown -R nginx:nginx /usr/share/nginx/
-systemctl restart nginx
+    fi
+    if [[ $install_typecho == 1 ]]; then
+        echo "    #location / {" >>/etc/nginx/conf.d/default.conf
+        echo "    #    client_max_body_size 0;" >>/etc/nginx/conf.d/default.conf
+        echo "    #    index index.php index.html;" >>/etc/nginx/conf.d/default.conf
+        echo "    #    root /usr/share/nginx/typecho/;" >>/etc/nginx/conf.d/default.conf
+        echo "    #    location ~ \.php\$ {" >>/etc/nginx/conf.d/default.conf
+        echo "    #    fastcgi_split_path_info ^(.+\.php)(/.+)\$;" >>/etc/nginx/conf.d/default.conf
+        echo "    #    include fastcgi_params;" >>/etc/nginx/conf.d/default.conf
+        echo "    #    fastcgi_pass unix:/run/php/php8.0-fpm.sock;" >>/etc/nginx/conf.d/default.conf
+        echo "    #    fastcgi_param HTTPS on;" >>/etc/nginx/conf.d/default.conf
+        echo "    #    fastcgi_index index.php;" >>/etc/nginx/conf.d/default.conf
+        echo "    #    fastcgi_param SCRIPT_FILENAME \$request_filename;" >>/etc/nginx/conf.d/default.conf
+        echo "    #    }" >>/etc/nginx/conf.d/default.conf
+        echo "    #    }" >>/etc/nginx/conf.d/default.conf
+    fi
+    if [[ $install_jellyfin == 1 ]]; then
+        echo "    location /emby {" >>/etc/nginx/conf.d/default.conf
+        echo "        return 302 https://${domain}:443/emby/;" >>/etc/nginx/conf.d/default.conf
+        echo "    }" >>/etc/nginx/conf.d/default.conf
+        echo "    location /emby/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:8096/;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass_request_headers on;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forward-Proto https;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forwarded-Host \$http_host;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Upgrade \$http_upgrade;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Connection \$http_connection;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_buffering off;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+        ## sonarr 8989
+        echo "    location /sonarr {" >>/etc/nginx/conf.d/default.conf
+        echo "        return 302 https://${domain}:443/sonarr/;" >>/etc/nginx/conf.d/default.conf
+        echo "    }" >>/etc/nginx/conf.d/default.conf
+        echo "    location /sonarr/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:8989/sonarr/;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass_request_headers on;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Host \$host;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forward-Proto https;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forwarded-Host \$http_host;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Upgrade \$http_upgrade;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Connection \$http_connection;" >>/etc/nginx/conf.d/default.conf
+        echo "        #proxy_buffering off;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+        ## radarr 7878
+        echo "    location /radarr {" >>/etc/nginx/conf.d/default.conf
+        echo "        return 302 https://${domain}:443/radarr/;" >>/etc/nginx/conf.d/default.conf
+        echo "    }" >>/etc/nginx/conf.d/default.conf
+        echo "    location /radarr/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:7878/radarr/;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass_request_headers on;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forward-Proto https;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forwarded-Host \$http_host;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Upgrade \$http_upgrade;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Connection \$http_connection;" >>/etc/nginx/conf.d/default.conf
+        echo "        #proxy_buffering off;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+        ## lidarr 8686
+        echo "    location /lidarr {" >>/etc/nginx/conf.d/default.conf
+        echo "        return 302 https://${domain}:443/lidarr/;" >>/etc/nginx/conf.d/default.conf
+        echo "    }" >>/etc/nginx/conf.d/default.conf
+        echo "    location /lidarr/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:8686/lidarr/;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass_request_headers on;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forward-Proto https;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forwarded-Host \$http_host;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Upgrade \$http_upgrade;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Connection \$http_connection;" >>/etc/nginx/conf.d/default.conf
+        echo "        #proxy_buffering off;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+        ## readarr 8787
+        echo "    location /readarr {" >>/etc/nginx/conf.d/default.conf
+        echo "        return 302 https://${domain}:443/readarr/;" >>/etc/nginx/conf.d/default.conf
+        echo "    }" >>/etc/nginx/conf.d/default.conf
+        echo "    location /readarr/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:8787/readarr/;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass_request_headers on;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forward-Proto https;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forwarded-Host \$http_host;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Upgrade \$http_upgrade;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Connection \$http_connection;" >>/etc/nginx/conf.d/default.conf
+        echo "        #proxy_buffering off;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+        ## bazarr 6767
+        echo "    location /bazarr {" >>/etc/nginx/conf.d/default.conf
+        echo "        return 302 https://${domain}:443/bazarr/;" >>/etc/nginx/conf.d/default.conf
+        echo "    }" >>/etc/nginx/conf.d/default.conf
+        echo "    location /bazarr/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:6767/bazarr/;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass_request_headers on;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Host \$host;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forward-Proto https;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forwarded-Host \$http_host;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Upgrade \$http_upgrade;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Connection \$http_connection;" >>/etc/nginx/conf.d/default.conf
+        echo "        #proxy_buffering off;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+        ## chinesesubfinder 19035
+        echo "    location /chinesesubfinder {" >>/etc/nginx/conf.d/default.conf
+        echo "        return 302 https://${domain}:443/chinesesubfinder/;" >>/etc/nginx/conf.d/default.conf
+        echo "    }" >>/etc/nginx/conf.d/default.conf
+        echo "    location /chinesesubfinder/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:19035/;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass_request_headers on;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forward-Proto https;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forwarded-Host \$http_host;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Upgrade \$http_upgrade;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Connection \$http_connection;" >>/etc/nginx/conf.d/default.conf
+        echo "        #proxy_buffering off;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+        ## prowlarr 9696
+        echo "    location /prowlarr{" >>/etc/nginx/conf.d/default.conf
+        echo "        return 302 https://${domain}:443/prowlarr/;" >>/etc/nginx/conf.d/default.conf
+        echo "    }" >>/etc/nginx/conf.d/default.conf
+        echo "    location /prowlarr/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:9696/prowlarr/;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass_request_headers on;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forward-Proto https;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forwarded-Host \$http_host;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Upgrade \$http_upgrade;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Connection \$http_connection;" >>/etc/nginx/conf.d/default.conf
+        echo "        #proxy_buffering off;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+        ## jackett 9117
+        echo "    location /jackett {" >>/etc/nginx/conf.d/default.conf
+        echo "        return 302 https://${domain}:443/jackett/;" >>/etc/nginx/conf.d/default.conf
+        echo "    }" >>/etc/nginx/conf.d/default.conf
+        echo "    location /jackett/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:9117/jackett/;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass_request_headers on;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forward-Proto https;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forwarded-Host \$http_host;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Upgrade \$http_upgrade;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Connection \$http_connection;" >>/etc/nginx/conf.d/default.conf
+        echo "        #proxy_buffering off;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+        ## ombi 3579
+        echo "    location /ombi {" >>/etc/nginx/conf.d/default.conf
+        echo "        return 302 https://${domain}:443/ombi/;" >>/etc/nginx/conf.d/default.conf
+        echo "    }" >>/etc/nginx/conf.d/default.conf
+        echo "    location /ombi/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:3579/ombi/;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass_request_headers on;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Host \$host;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forward-Proto https;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forwarded-Host \$http_host;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Upgrade \$http_upgrade;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Connection \$http_connection;" >>/etc/nginx/conf.d/default.conf
+        echo "        #proxy_buffering off;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+        ## nzbget 6789
+        echo "    location /nzbget {" >>/etc/nginx/conf.d/default.conf
+        echo "        return 302 https://${domain}:443/nzbget/;" >>/etc/nginx/conf.d/default.conf
+        echo "    }" >>/etc/nginx/conf.d/default.conf
+        echo "    location /nzbget/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:6789/;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass_request_headers on;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forward-Proto https;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forwarded-Host \$http_host;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Upgrade \$http_upgrade;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Connection \$http_connection;" >>/etc/nginx/conf.d/default.conf
+        echo "        #proxy_buffering off;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+    fi
+    if [[ $install_rocketchat == 1 ]]; then
+        echo "    location /chat/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        expires -1;" >>/etc/nginx/conf.d/default.conf
+        echo "        client_max_body_size 0;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_no_cache 1;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_cache_bypass 1;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Upgrade \$http_upgrade;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Connection "upgrade";" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forward-Proto https;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Nginx-Proxy true;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:3000/chat/;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_redirect off;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+        echo "        location /file-upload/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:3000/chat/file-upload/;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+        echo "        location /avatar/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:3000/chat/avatar/;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+        echo "        location /assets/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:3000/chat/assets/;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+        echo "        location /home {" >>/etc/nginx/conf.d/default.conf
+        echo "        return 301 https://${domain}/chat/home/;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+    fi
+    if [[ $install_mail == 1 ]]; then
+        echo "    location /mail/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        client_max_body_size 0;" >>/etc/nginx/conf.d/default.conf
+        echo "        index index.php;" >>/etc/nginx/conf.d/default.conf
+        echo "        alias /usr/share/nginx/roundcubemail/;" >>/etc/nginx/conf.d/default.conf
+        echo "        location ~ \.php\$ {" >>/etc/nginx/conf.d/default.conf
+        echo "        include fastcgi_params;" >>/etc/nginx/conf.d/default.conf
+        echo "        fastcgi_pass unix:/run/php/php8.0-fpm.sock;" >>/etc/nginx/conf.d/default.conf
+        echo "        fastcgi_index index.php;" >>/etc/nginx/conf.d/default.conf
+        echo "        fastcgi_param HTTPS on;" >>/etc/nginx/conf.d/default.conf
+        echo "        fastcgi_param SCRIPT_FILENAME \$request_filename;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+    fi
+    if [[ $install_speedtest == 1 ]]; then
+        echo "    location /${password1}_speedtest/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        client_max_body_size 0;" >>/etc/nginx/conf.d/default.conf
+        echo "        alias /usr/share/nginx/speedtest/;" >>/etc/nginx/conf.d/default.conf
+        echo "        http2_push /${password1}_speedtest/speedtest.js;" >>/etc/nginx/conf.d/default.conf
+        echo "        http2_push /${password1}_speedtest/favicon.ico;" >>/etc/nginx/conf.d/default.conf
+        echo "        location ~ \.php\$ {" >>/etc/nginx/conf.d/default.conf
+        echo "        fastcgi_split_path_info ^(.+\.php)(/.+)\$;" >>/etc/nginx/conf.d/default.conf
+        echo "        fastcgi_param HTTPS on;" >>/etc/nginx/conf.d/default.conf
+        echo "        fastcgi_param SCRIPT_FILENAME \$request_filename;" >>/etc/nginx/conf.d/default.conf
+        echo "        include fastcgi_params;" >>/etc/nginx/conf.d/default.conf
+        echo "        fastcgi_pass   unix:/run/php/php8.0-fpm.sock;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+    fi
+    if [[ $install_rss == 1 ]] || [[ $install_jellyfin == 1 ]]; then
+        echo "    location /rsshub/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_redirect off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:1200/;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+    fi
+    if [[ $install_rss == 1 ]]; then
+        echo "    location /miniflux/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        client_max_body_size 0;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Host ${domain};" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forwarded-Proto https;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:8280/miniflux/;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+    fi
+    if [[ $install_aria == 1 ]]; then
+        echo "    location $ariapath {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_redirect off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:6800/jsonrpc;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+        echo "    location /ariang/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        expires -1;" >>/etc/nginx/conf.d/default.conf
+        echo "        client_max_body_size 0;" >>/etc/nginx/conf.d/default.conf
+        echo "        index index.html;" >>/etc/nginx/conf.d/default.conf
+        echo "        alias /usr/share/nginx/ariang/;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+    fi
+    if [[ $install_qbt_e == 1 ]] || [[ $install_qbt_o == 1 ]]; then
+        echo "    location /qbt/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        client_max_body_size 0;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass              http://127.0.0.1:8080/;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header        X-Forwarded-Host        \$http_host;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+    fi
+    if [[ $install_filebrowser == 1 ]]; then
+        echo "    location /file/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:8081/;" >>/etc/nginx/conf.d/default.conf
+        echo "        client_max_body_size 0;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+    fi
+    if [[ $install_i2pd == 1 ]]; then
+        echo "    location /i2p/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:7070/;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+    fi
+    if [[ $install_tracker == 1 ]]; then
+        echo "    location /tracker/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        index index.html;" >>/etc/nginx/conf.d/default.conf
+        echo "        alias /usr/share/nginx/tracker/;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+        echo "    location /tracker_stats/ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:6969/;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+        echo "    location ~ ^/announce$ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:6969;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+        echo "    location ~ ^/scrape$ {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://127.0.0.1:6969;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+    fi
+    if [[ $install_netdata == 1 ]]; then
+        echo "    location ~ /${password1}_netdata/(?<ndpath>.*) {" >>/etc/nginx/conf.d/default.conf
+        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_cache off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_redirect off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header Host \$host;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forwarded-Host \$host;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forwarded-Server \$host;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass_request_headers on;" >>/etc/nginx/conf.d/default.conf
+        echo '        proxy_set_header Connection "keep-alive";' >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_store off;" >>/etc/nginx/conf.d/default.conf
+        echo "        proxy_pass http://netdata/\$ndpath\$is_args\$args;" >>/etc/nginx/conf.d/default.conf
+        echo "        gzip on;" >>/etc/nginx/conf.d/default.conf
+        echo "        gzip_proxied any;" >>/etc/nginx/conf.d/default.conf
+        echo "        gzip_types *;" >>/etc/nginx/conf.d/default.conf
+        echo "        }" >>/etc/nginx/conf.d/default.conf
+    fi
+    echo "}" >>/etc/nginx/conf.d/default.conf
+    echo "" >>/etc/nginx/conf.d/default.conf
+    echo "server {" >>/etc/nginx/conf.d/default.conf
+    echo "    listen 80 fastopen=20 reuseport;" >>/etc/nginx/conf.d/default.conf
+    echo "    listen [::]:80 fastopen=20 reuseport;" >>/etc/nginx/conf.d/default.conf
+    echo "    return 301 https://\$host\$request_uri;" >>/etc/nginx/conf.d/default.conf
+    echo "}" >>/etc/nginx/conf.d/default.conf
+    echo "" >>/etc/nginx/conf.d/default.conf
+    if [[ $install_netdata == 1 ]]; then
+        echo "server { #For Netdata only !" >>/etc/nginx/conf.d/default.conf
+        echo "    listen 127.0.0.1:83 fastopen=20 reuseport;" >>/etc/nginx/conf.d/default.conf
+        echo "    location /stub_status {" >>/etc/nginx/conf.d/default.conf
+        echo "    access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "    stub_status;" >>/etc/nginx/conf.d/default.conf
+        echo "    }" >>/etc/nginx/conf.d/default.conf
+        echo "    location ~ ^/(status|ping)\$ {" >>/etc/nginx/conf.d/default.conf
+        echo "    access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "    allow 127.0.0.1;" >>/etc/nginx/conf.d/default.conf
+        echo "    fastcgi_param SCRIPT_FILENAME \$request_filename;" >>/etc/nginx/conf.d/default.conf
+        echo "    fastcgi_index index.php;" >>/etc/nginx/conf.d/default.conf
+        echo "    include fastcgi_params;" >>/etc/nginx/conf.d/default.conf
+        echo "    fastcgi_pass   unix:/run/php/php8.0-fpm.sock;" >>/etc/nginx/conf.d/default.conf
+        echo "    }" >>/etc/nginx/conf.d/default.conf
+        echo "}" >>/etc/nginx/conf.d/default.conf
+        echo "upstream netdata {" >>/etc/nginx/conf.d/default.conf
+        echo "    server 127.0.0.1:19999;" >>/etc/nginx/conf.d/default.conf
+        echo "    keepalive 64;" >>/etc/nginx/conf.d/default.conf
+        echo "}" >>/etc/nginx/conf.d/default.conf
+    fi
+    chown -R nginx:nginx /usr/share/nginx/
+    systemctl restart nginx
 }

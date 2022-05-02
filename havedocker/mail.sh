@@ -295,6 +295,8 @@ EOF
     php /usr/local/bin/composer update --no-dev
     rm -rf /usr/share/nginx/roundcubemail/installer/
     cd
+    docker exec -it mariadb /bin/bash
+    mysql -u root -p "${password1}"
     mysql -u root -e "CREATE DATABASE roundcubemail DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
     mysql -u root -e "CREATE USER roundcube@localhost IDENTIFIED BY '${password1}';"
     mysql -u root -e "GRANT ALL PRIVILEGES ON roundcubemail.* TO roundcube@localhost;"
