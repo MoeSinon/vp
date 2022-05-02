@@ -5,9 +5,9 @@
 set +e
 
 install_rss() {
-  # cd /usr/share/nginx/
+# cd /usr/share/nginx/
 
-  ## Install Miniflux
+## Install Miniflux
 wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /etc/redis/
 sed -i "s/appendonly no/appendonly yes/g" /etc/redis/redis.conf
 if grep -q "unixsocket /var/run/redis/redis.sock" /etc/redis/redis.conf
