@@ -93,6 +93,9 @@ services:
       test: [ "CMD", "pg_isready", "-U", "miniflux" ]
       interval: 10s
       start_period: 30s
+
+
+    
 volumes:
   miniflux-db:
 
