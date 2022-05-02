@@ -45,7 +45,7 @@ EOF
   mkdir /usr/share/nginx/qBittorrent/data/
   mkdir /usr/share/nginx/qBittorrent/data/GeoIP/
   cd /usr/share/nginx/qBittorrent/data/GeoIP/
-  curl --retry 5 -LO --progress-bar https://raw.githubusercontent.com/MoeSinon/vp/master/binary/GeoLite2-Country.mmdb
+  curl --retry 5 -LO --progress-bar https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/binary/GeoLite2-Country.mmdb
   cd
   chmod 755 /usr/share/nginx/
   chown -R nginx:nginx /usr/share/nginx/

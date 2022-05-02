@@ -314,7 +314,7 @@ EOF
 \$config['default_port'] = 143;
 \$config['smtp_server'] = '127.0.0.1';
 \$config['smtp_port'] = 25;
-\$config['support_url'] = 'https://github.com/MoeSinon/vp/master';
+\$config['support_url'] = 'https://github.com/MoeSinon/vp/master/havedocker';
 \$config['product_name'] = 'Roundcube Webmail For VPSTOOLBOX';
 \$config['des_key'] = '${deskey}';
 \$config['ip_check'] = true;

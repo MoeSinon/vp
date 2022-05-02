@@ -138,6 +138,6 @@ EOF
   cd
   TERM=ansi whiptail --title "安装中" --infobox "拉取全自动Aria2上传脚本中..." 7 68
   cd /etc/aria2/
-  curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/autoupload.sh
+  curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/autoupload.sh
   chmod +x /etc/aria2/autoupload.sh
 }

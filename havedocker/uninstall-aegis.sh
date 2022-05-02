@@ -54,7 +54,7 @@ uninstall_aegis() {
   apt-get purge sysstat exim4 chrony aliyun-assist -y
   systemctl daemon-reload
   # 更换apt源以防出bug
-  curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/system-upgrade.sh
+  curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/system-upgrade.sh
   source system-upgrade.sh
   upgrade_system
   #echo "nameserver 1.1.1.1" > '/etc/resolv.conf'
