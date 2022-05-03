@@ -35,21 +35,22 @@ services:
     container_name: freenom
     restart: always
     volumes:
-      - "/freenom/conf:/conf"
-      - "/freenom/logs:/app/logs"
+      - "/usr/freenom/conf:/conf"
+      - "/usr/freenom/logs:/app/logs"
 
 EOF
     docker-compose up -d
     # mkdir -p /dockercontainer/nextcloud
     # docker cp freenom:/config/config.php ./dockercontainer/nextcloud
     # systemctl stop docker.service
+    sleep 10s
     cd
     docker stop freenom
-    sed -i "s/FREENOM_USERNAME=''/FREENOM_USERNAME=${idcard}/g" /freenom/conf/.env
-    sed -i "s/FREENOM_PASSWORD=''/FREENOM_PASSWORD=${passw}/g" /freenom/conf/.env
-    sed -i "s/TELEGRAM_CHAT_ID=''/TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}/g" /freenom/conf/.env
-    sed -i "s/TELEGRAM_BOT_TOKEN=''/TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}/g" /freenom/conf/.env
-    sed -i "s/TELEGRAM_BOT_ENABLE=0/TELEGRAM_BOT_ENABLE=1/g" /freenom/conf/.env
+    sed -i "s/FREENOM_USERNAME=''/FREENOM_USERNAME=${idcard}/g" /usr/freenom/conf/.env
+    sed -i "s/FREENOM_PASSWORD=''/FREENOM_PASSWORD=${passw}/g" /usr/freenom/conf/.env
+    sed -i "s/TELEGRAM_CHAT_ID=''/TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}/g" /usr/freenom/conf/.env
+    sed -i "s/TELEGRAM_BOT_TOKEN=''/TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}/g" /usr/freenom/conf/.env
+    sed -i "s/TELEGRAM_BOT_ENABLE=0/TELEGRAM_BOT_ENABLE=1/g" /usr/freenom/conf/.env
     docker restart freenom
     # if grep -q "unixsocket /var/run/redis/redis.sock" /etc/redis/redis.conf; then
     #     :
