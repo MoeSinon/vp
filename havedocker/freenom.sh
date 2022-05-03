@@ -44,11 +44,11 @@ volumes:
 EOF
     docker-compose up -d
     cd
-    sed -i "s/FREENOM_USERNAME=''/FREENOM_USERNAME=${idcard}/g" /freenomconf/conf.env
-    sed -i "s/FREENOM_PASSWORD=''/FREENOM_PASSWORD=${passw}/g" /freenomconf/conf.env
-    sed -i "s/TELEGRAM_CHAT_ID=''/TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}/g" /freenomconf/conf.env
-    sed -i "s/TELEGRAM_BOT_TOKEN=''/TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}/g" /freenomconf/conf.env
-    sed -i "s/TELEGRAM_BOT_ENABLE=0/TELEGRAM_BOT_ENABLE=1/g" /freenomconf/conf.env
+    sed -i "s/FREENOM_USERNAME=''/FREENOM_USERNAME=${idcard}/g" /freenomconf/.env
+    sed -i "s/FREENOM_PASSWORD=''/FREENOM_PASSWORD=${passw}/g" /freenomconf/.env
+    sed -i "s/TELEGRAM_CHAT_ID=''/TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}/g" /freenomconf/.env
+    sed -i "s/TELEGRAM_BOT_TOKEN=''/TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}/g" /freenomconf/.env
+    sed -i "s/TELEGRAM_BOT_ENABLE=0/TELEGRAM_BOT_ENABLE=1/g" /freenomconf/.env
     docker restart freenom
     # if grep -q "unixsocket /var/run/redis/redis.sock" /etc/redis/redis.conf; then
     #     :
