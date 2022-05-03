@@ -36,10 +36,10 @@ services:
       - '1200:1200'
     environment:
       # PROXY_URI: 'http://127.0.0.1:8080'
-      NODE_ENV:production
-      CACHE_TYPE:redis
-      REDIS_URL:'redis://redis:6379/'
-      PUPPETEER_WS_ENDPOINT:'ws://browserless:3000'
+      NODE_ENV: production
+      CACHE_TYPE: redis
+      REDIS_URL: 'redis://redis:6379/'
+      PUPPETEER_WS_ENDPOINT: 'ws://browserless:3000'
     depends_on:
       - browserless
       - redis
