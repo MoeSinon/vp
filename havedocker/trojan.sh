@@ -14,6 +14,7 @@ install_trojan() {
     mysql -u root -e "create user 'trojan'@'localhost' IDENTIFIED BY '${password1}';"
     mysql -u root -e "GRANT ALL PRIVILEGES ON trojan.* to trojan@'localhost';"
     mysql -u root -e "flush privileges;"
+    exit
     docker restart mariadb
     if [[ ! -f /usr/local/bin/trojan ]]; then
         clear

@@ -302,6 +302,7 @@ EOF
     mysql -u root -e "GRANT ALL PRIVILEGES ON roundcubemail.* TO roundcube@localhost;"
     mysql -u root -e "flush privileges;"
     mysql -u roundcube -p"${password1}" -D roundcubemail </usr/share/nginx/roundcubemail/SQL/mysql.initial.sql
+    exit
   fi
   mkdir /usr/share/nginx/pgp/
   deskey=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9-_#&!*%?' | fold -w 24 | head -n 1)

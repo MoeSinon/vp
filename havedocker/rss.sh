@@ -134,7 +134,6 @@ services:
     volumes:
       - db:/var/lib/mysql
       - /etc/localtime:/etc/localtime
-      - /etc/mysql/my.cnf:/etc/mysql/my.cnf
     ports:
       - 3306:3306
     environment:
@@ -142,6 +141,7 @@ services:
       - MYSQL_DATABASE:nextcloud
       - MYSQL_USER:nextcloud
       - MYSQL_PASSWORD:"${password1}"
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--innodb_read_only_compressed=OFF']
     # env_file:
     #   - db.env
 volumes:
