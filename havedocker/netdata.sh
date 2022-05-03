@@ -6,7 +6,8 @@ set +e
 
 cd
 docker exec -it mariadb /bin/bash
-mysql -u root -e "create user 'netdata'@'localhost';"
+mysql -u root -p "${password1}"
+mysql -u root -e "create user 'netdata'@'localhost' IDENTIFIED BY '${password1};"
 mysql -u root -e "grant usage on *.* to 'netdata'@'localhost';"
 mysql -u root -e "flush privileges;"
 exit

@@ -127,9 +127,10 @@ services:
       # - "/nextcloud/config/config.php:/var/www/html/data"
       # - "/usr/share/nginx/nextcloud/config:/var/www/html/config" 
       # - "/usr/share/nginx/nextcloud/apps:/var/www/html/custom_apps"
+
   db:
     image: mariadb:latest
-    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    container_name: mariadb
     restart: always
     volumes:
       - db:/var/lib/mysql
@@ -137,13 +138,18 @@ services:
     ports:
       - 3306:3306
     environment:
-      - MYSQL_ROOT_PASSWORD:"${password1}"
-      - MYSQL_DATABASE:nextcloud
-      - MYSQL_USER:nextcloud
-      - MYSQL_PASSWORD:"${password1}"
-    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--innodb_read_only_compressed=OFF']
-    # env_file:
-    #   - db.env
+      - MYSQL_ROOT_PASSWORD="${password1}"
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD="${password1}"
+      - TZ="Asia/Shanghai"
+    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--transaction-isolation=READ-COMMITTED', '--binlog-format=ROW', --default-storage-engine=innodb]
+    healthcheck:
+      test: mysqladmin -p${password1} ping -h localhost
+      interval: 20s
+      start_period: 10s
+      timeout: 10s
+      retries: 3
 volumes:
   nextcloud:
   miniflux-db:
