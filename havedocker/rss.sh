@@ -6,6 +6,7 @@ set +e
 
 install_rss() {
   cd
+  mkdir -p /jk
   touch /jk/kk.sql
   echo "CREATE DATABASE trojan CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/jk/kk.sql
   echo "CREATE DATABASE netdata CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/jk/kk.sql
