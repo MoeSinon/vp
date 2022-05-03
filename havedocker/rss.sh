@@ -36,10 +36,10 @@ services:
       - '1200:1200'
     environment:
       # PROXY_URI: 'http://127.0.0.1:8080'
-      NODE_ENV: production
-      CACHE_TYPE: redis
-      REDIS_URL: 'redis://redis:6379/'
-      PUPPETEER_WS_ENDPOINT: 'ws://browserless:3000'
+      NODE_ENV:production
+      CACHE_TYPE:redis
+      REDIS_URL:'redis://redis:6379/'
+      PUPPETEER_WS_ENDPOINT:'ws://browserless:3000'
     depends_on:
       - browserless
       - redis
@@ -138,10 +138,10 @@ services:
     ports:
       - 3306:3306
     environment:
-      - MYSQL_ROOT_PASSWORD: "${password1}"
-      - MYSQL_DATABASE: nextcloud
-      - MYSQL_USER: nextcloud
-      - MYSQL_PASSWORD: "${password1}"
+      - MYSQL_ROOT_PASSWORD:"${password1}"
+      - MYSQL_DATABASE:nextcloud
+      - MYSQL_USER:nextcloud
+      - MYSQL_PASSWORD:"${password1}"
     env_file:
       - db.env
 volumes:
@@ -154,14 +154,6 @@ EOF
   docker-compose build --pull
   docker-compose up -d
   # usermod -a -G redis www-data
-  docker exec -it mariadb /bin/bash
-  mysql -u root -p "${password1}"
-  mysql -u root -e "CREATE DATABASE trojan CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-  mysql -u root -e "create user 'trojan'@'localhost' IDENTIFIED BY '${password1}';"
-  mysql -u root -e "GRANT ALL PRIVILEGES ON trojan.* to trojan@'localhost';"
-  mysql -u root -e "flush privileges;"
-
-  docker restart mariadb
   # mysql -u root -e "CREATE DATABASE nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
   # mysql -u root -e "create user 'nextcloud'@'localhost' IDENTIFIED BY '${password1}';"
   # mysql -u root -e "GRANT ALL PRIVILEGES ON nextcloud.* to nextcloud@'localhost';"

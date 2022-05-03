@@ -8,6 +8,13 @@ cipher_server="ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE
 cipher_client="ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES128-SHA:ECDHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA:AES256-SHA:DES-CBC3-SHA"
 
 install_trojan() {
+    docker exec -it mariadb /bin/bash
+    mysql -u root -p "${password1}"
+    mysql -u root -e "CREATE DATABASE trojan CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+    mysql -u root -e "create user 'trojan'@'localhost' IDENTIFIED BY '${password1}';"
+    mysql -u root -e "GRANT ALL PRIVILEGES ON trojan.* to trojan@'localhost';"
+    mysql -u root -e "flush privileges;"
+    docker restart mariadb
     if [[ ! -f /usr/local/bin/trojan ]]; then
         clear
         TERM=ansi whiptail --title "安装中" --infobox "安装Trojan中..." 7 68
