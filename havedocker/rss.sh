@@ -98,8 +98,8 @@ services:
 
   nextcloud:
     image: nextcloud:apache
-    env_file:
-      - db.env
+    # env_file:
+    #   - db.env
     depends_on:
       - db
       - redis
@@ -142,8 +142,8 @@ services:
       - MYSQL_DATABASE:nextcloud
       - MYSQL_USER:nextcloud
       - MYSQL_PASSWORD:"${password1}"
-    env_file:
-      - db.env
+    # env_file:
+    #   - db.env
 volumes:
   nextcloud:
   miniflux-db:

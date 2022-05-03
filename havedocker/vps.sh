@@ -317,7 +317,7 @@ install_moudles() {
   # fi
   if [[ ${install_freenom} == 1 ]]; then
     curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/freenom.sh
-    source redis.sh
+    source freenom.sh
     install_freenom
   fi
   if [[ ${install_mongodb} == 1 ]]; then
