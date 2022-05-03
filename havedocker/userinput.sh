@@ -66,12 +66,12 @@ userinput_standard() {
       install_freenom=1
       ;;
     alist)
-      install_hexo=0
+      # install_hexo=0
       install_alist=1
       ;;
     hexo)
       install_hexo=1
-      install_alist=0
+      # install_alist=0
       ;;
     ss)
       check_ss="on"
@@ -116,10 +116,10 @@ userinput_standard() {
 
   rm results
 
-  if [[ ${install_hexo} == 1 ]] && [[ ${install_alist} == 1 ]]; then
-    install_hexo=0
-    install_alist=1
-  fi
+  # if [[ ${install_hexo} == 1 ]] && [[ ${install_alist} == 1 ]]; then
+  #   install_hexo=0
+  #   install_alist=1
+  # fi
 
   if [[ ${trojan_other_port} == 1 ]]; then
     trojanport=$(whiptail --inputbox --nocancel "Trojan-GFW 端口(若不確定，請直接回車)" 8 68 443 --title "port input" 3>&1 1>&2 2>&3)
@@ -247,7 +247,7 @@ userinput_full() {
     "基础" "基础" on \
     "trojan" "Trojan-GFW+TCP-BBR" on \
     "grpc" "Vless+gRPC+TLS(支持CDN)" off \
-    "alist" "alist网盘管理器" off \
+    "alist" "alist网盘管理器" on \
     "speed" "Speedtest(测试本地网络到VPS的延迟及带宽)" ${check_speed} \
     "port" "自定义Trojan-GFW/Vless(grpc)端口" off \
     "hexo" "Hexo Blog" on \
@@ -268,7 +268,7 @@ userinput_full() {
     "安全" "安全" off \
     "fail2ban" "Fail2ban(防SSH爆破用)" ${check_fail2ban} \
     "其他" "其他软件及选项" off \
-    "net" "Netdata(监测伺服器运行状态)" off \
+    "net" "Netdata(监测伺服器运行状态)" on \
     "typecho" "Typecho" ${check_echo} \
     "13" "Qbt原版+高性能Tracker+Filebrowser" off 2>results # "nextcloud" "Nextcloud(私人网盘)" ${check_cloud} \
 
@@ -283,12 +283,12 @@ userinput_full() {
       install_bbr=1
       ;;
     alist)
-      install_hexo=0
+      # install_hexo=0
       install_alist=1
       ;;
     hexo)
       install_hexo=1
-      install_alist=0
+      # install_alist=0
       ;;
     ss)
       check_ss="on"
@@ -392,10 +392,10 @@ userinput_full() {
 
   rm results
 
-  if [[ ${install_hexo} == 1 ]] && [[ ${install_alist} == 1 ]]; then
-    install_hexo=0
-    install_alist=1
-  fi
+  # if [[ ${install_hexo} == 1 ]] && [[ ${install_alist} == 1 ]]; then
+  #   install_hexo=0
+  #   install_alist=1
+  # fi
 
   if [[ ${trojan_other_port} == 1 ]]; then
     trojanport=$(whiptail --inputbox --nocancel "Trojan-GFW 端口(若不確定，請直接回車)" 8 68 443 --title "port input" 3>&1 1>&2 2>&3)

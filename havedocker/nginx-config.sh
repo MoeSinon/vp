@@ -65,9 +65,14 @@ EOF
         echo "  }" >>/etc/nginx/conf.d/default.conf
     fi
     if [[ $install_alist == 1 ]]; then
-        echo "  location / {" >>/etc/nginx/conf.d/default.conf
+        echo "  location /alist/ {" >>/etc/nginx/conf.d/default.conf
         echo "    #access_log off;" >>/etc/nginx/conf.d/default.conf
         echo "    client_max_body_size 0;" >>/etc/nginx/conf.d/default.conf
+        echo "    proxy_pass_request_headers on;" >>/etc/nginx/conf.d/default.conf
+        echo "    proxy_set_header X-Forward-Proto https;" >>/etc/nginx/conf.d/default.conf
+        echo "    proxy_set_header X-Forwarded-Host \$http_host;" >>/etc/nginx/conf.d/default.conf
+        echo "    proxy_set_header Upgrade \$http_upgrade;" >>/etc/nginx/conf.d/default.conf
+        echo "    proxy_set_header Connection \$http_connection;" >>/etc/nginx/conf.d/default.conf
         echo "    proxy_set_header X-Forwarded-Proto https;" >>/etc/nginx/conf.d/default.conf
         echo "    proxy_pass http://127.0.0.1:5244/;" >>/etc/nginx/conf.d/default.conf
         echo "  }" >>/etc/nginx/conf.d/default.conf
