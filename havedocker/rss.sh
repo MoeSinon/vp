@@ -64,8 +64,8 @@ services:
       - "/etc/redis:/data"
       - "/etc/redis/redis.conf:/data/redis.conf"
       # - "/var/run/redis/redis.sock:/tmp/redis.sock"
-    command:
-      - redis-server /etc/redis/redis.conf
+    # command:
+    #   - redis-server /etc/redis/redis.conf
       
   miniflux:
     # 8280
