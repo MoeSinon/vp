@@ -200,7 +200,7 @@ userinput_full() {
     check_qbt="off"
   fi
   if [[ -z ${check_aria} ]]; then
-    check_aria="on"
+    check_aria="off"
   fi
   if [[ -z ${check_file} ]]; then
     check_file="off"
@@ -346,7 +346,7 @@ userinput_full() {
       install_filebrowser=1
       ;;
     aria)
-      check_aria="on"
+      check_aria="off"
       install_aria=1
       check_file="on"
       install_filebrowser=1
