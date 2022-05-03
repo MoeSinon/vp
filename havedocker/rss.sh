@@ -133,7 +133,7 @@ services:
     restart: always
     volumes:
       - db:/var/lib/mysql
-      - /etc/localtime:/etc/localtime
+      # - /etc/localtime:/etc/localtime
     ports:
       - 3306:3306
     environment:
