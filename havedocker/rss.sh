@@ -70,6 +70,7 @@ services:
   miniflux:
     # 8280
     image: miniflux/miniflux:latest
+    container_name: miniflux
     restart: unless-stopped
     ports:
       - "8280:8080"
@@ -98,6 +99,7 @@ services:
 
   nextcloud:
     image: nextcloud:apache
+    container_name: nextcloud
     # env_file:
     #   - db.env
     depends_on:
