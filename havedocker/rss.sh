@@ -138,7 +138,7 @@ services:
     ports:
       - 3306:3306
     environment:
-      - MYSQL_ROOT_PASSWORD="${password1}"
+      #- MYSQL_ROOT_PASSWORD="${password1}"
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
       - MYSQL_PASSWORD="${password1}"
