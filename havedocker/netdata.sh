@@ -4,6 +4,14 @@
 
 set +e
 
+cd
+docker exec -it mariadb /bin/bash
+mysql -u root -e "create user 'netdata'@'localhost';"
+mysql -u root -e "grant usage on *.* to 'netdata'@'localhost';"
+mysql -u root -e "flush privileges;"
+exit
+docker restart mariadb
+
 install_netdata() {
   clear
   TERM=ansi whiptail --title "安装中" --infobox "安装Netdata中..." 7 68
@@ -13,7 +21,7 @@ install_netdata() {
   sed -i "s/Restart=on-failure/Restart=always/" /lib/systemd/system/netdata.service
   systemctl daemon-reload
   systemctl stop netdata
-  killall netdata
+  kill all netdata
   cat >'/opt/netdata/etc/netdata/python.d/nginx.conf' <<EOF
 localhost:
 

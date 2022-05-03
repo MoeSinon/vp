@@ -124,7 +124,7 @@ services:
       - 9000:80
     volumes:
       - nextcloud:/var/www/html
-      # - "/usr/share/nginx/nextcloud_data:/var/www/html/data"
+      # - "/nextcloud/config/config.php:/var/www/html/data"
       # - "/usr/share/nginx/nextcloud/config:/var/www/html/config" 
       # - "/usr/share/nginx/nextcloud/apps:/var/www/html/custom_apps"
   db:
@@ -153,6 +153,7 @@ EOF
   sed -i "s/adminadmin/${password1}/g" docker-compose.yml
   docker-compose build --pull
   docker-compose up -d
+
   # usermod -a -G redis www-data
   # mysql -u root -e "CREATE DATABASE nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
   # mysql -u root -e "create user 'nextcloud'@'localhost' IDENTIFIED BY '${password1}';"

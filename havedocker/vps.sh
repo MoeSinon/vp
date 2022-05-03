@@ -240,9 +240,11 @@ initialize() {
   rm -rf /usr/local/agenttools
   rm -rf /usr/local/qcloud
   rm -rf /usr/local/telescope
+  #挂载目录
+
+  # mkdir -p /dockercontainer/nextcloud
 
   ## 卸载阿里云云盾
-
   cat /etc/apt/sources.list | grep aliyun &>/dev/null
 
   if [[ $? == 0 ]] || [[ -d /usr/local/aegis ]]; then
@@ -285,7 +287,7 @@ install_base() {
   TERM=ansi whiptail --title "安装中" --infobox "安装基础软件中..." 7 68
   apt upgrade -y
   colorEcho ${INFO} "Installing all necessary Software"
-  apt-get install sudo socat git curl xz-utils wget apt-transport-https gnupg lsb-release unzip resolvconf ntpdate systemd dbus ca-certificates locales iptables software-properties-common cron e2fsprogs less neofetch npm libcap2-bin -y
+  apt-get install sudo socat git curl xz-utils wget apt-transport-https gnupg lsb-release unzip resolvconf ntpdate systemd dbus ca-certificates locales iptables software-properties-common cron e2fsprogs less neofetch npm -y #libcap2-bin
   sh -c 'echo "y\n\ny\ny\n" | DEBIAN_FRONTEND=noninteractive apt-get install ntp -q -y'
   clear
 }
@@ -580,18 +582,23 @@ MasterMenu() {
       curl https://${domain}:${trojanport}/nextcloud/
       sleep 10s
       ## Delete last line
-      sed -i '$d' /nextcloud/config/config.php #/usr/share/nginx
-      echo "  'default_phone_region' => 'CN'," >>/nextcloud/config/config.php
-      echo "  'memcache.local' => '\\OC\\Memcache\\APCu'," >>/nextcloud/config/config.php
-      echo "  'memcache.distributed' => '\\OC\\Memcache\\Redis'," >>/nextcloud/config/config.php
-      echo "  'memcache.locking' => '\\OC\\Memcache\\Redis'," >>/nextcloud/config/config.php
-      echo "  'redis' => [" >>/nextcloud/config/config.php
-      echo "     'host'     => '/var/run/redis/redis.sock'," >>/nextcloud/config/config.php
-      echo "     'port'     => 0," >>/nextcloud/config/config.php
-      echo "     'timeout'  => 1.0," >>/nextcloud/config/config.php
-      echo "  ]," >>/nginx/nextcloud/config/config.php
-      echo ");" >>/nginx/nextcloud/config/config.php
+      mkdir -p /dockercontainer/nextcloud
+      docker cp nextcloud:/config/config.php ./dockercontainer/nextcloud
+      systemctl stop docker.service
+      sed -i '$d' /dockercontainer/nextcloud/config.php
+      echo "  'default_phone_region' => 'CN'," >>/dockercontainer/nextcloud/config.php
+      echo "  'memcache.local' => '\\OC\\Memcache\\APCu'," >>/dockercontainer/nextcloud/config.php
+      echo "  'memcache.distributed' => '\\OC\\Memcache\\Redis'," >>/dockercontainer/nextcloud/config.php
+      echo "  'memcache.locking' => '\\OC\\Memcache\\Redis'," >>/dockercontainer/nextcloud/config.php
+      echo "  'redis' => [" >>/dockercontainer/nextcloud/config.php
+      echo "     'host'     => '/var/run/redis/redis.sock'," >>/dockercontainer/nextcloud/config.php
+      echo "     'port'     => 0," >>/dockercontainer/nextcloud/config.php
+      echo "     'timeout'  => 1.0," >>/dockercontainer/nextcloud/config.php
+      echo "  ]," >>/dockercontainer/nextcloud/config.php
+      echo ");" >>/dockercontainer/nextcloud/config.php
     fi
+    docker cp ./dockercontainer/nextcloud/config.php nextcloud:/config/config.php
+    systemctl start docker.service
     ## 输出结果
     echo "nameserver 1.1.1.1" >/etc/resolv.conf
     echo "nameserver 1.0.0.1" >>/etc/resolv.conf

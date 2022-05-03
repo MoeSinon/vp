@@ -18,12 +18,12 @@ nginx_config() {
     colorEcho ${INFO} "配置(configing) nginx"
     rm -rf /etc/nginx/sites-available/*
     rm -rf /etc/nginx/sites-enabled/*
-    rm -rf /etc/nginx/conf.d/*
+    # touch /etc/nginx/conf.d/verify.conf
     touch /etc/nginx/conf.d/default.conf
     cat >'/etc/nginx/conf.d/default.conf' <<EOF
 server {
-  listen 127.0.0.1:81 fastopen=20 reuseport default_server so_keepalive=on;
-  listen 127.0.0.1:82 http2 fastopen=20 reuseport default_server so_keepalive=on;
+  listen 127.0.0.1:81 fastopen=512 reuseport default_server so_keepalive=on;
+  listen 127.0.0.1:82 http2 fastopen=512 reuseport default_server so_keepalive=on;
   server_name ${domain};
   # listen 443 ssl http2 fastopen=20 reuseport default_server so_keepalive=on;
   # listen [::]:443 ssl http2 fastopen=20 reuseport default_server so_keepalive=on;
@@ -52,6 +52,9 @@ server {
   #if (\$host != "$domain") { return 404; }
   add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" always;
   #add_header X-Cache-Status \$upstream_cache_status;
+    location /.well-known/acme-challenge/ { ## Acme.sh 证书签发及续签专用
+      root /usr/share/nginx/;
+    }
 EOF
 
     if [[ $install_hexo == 1 ]]; then
@@ -84,7 +87,6 @@ EOF
 
     location ^~ /nextcloud/ {
         # root /usr/share/nginx/;
-        root /nextcloud/;
         client_body_temp_path /usr/share/nginx/tmp/ 1 2;
         client_max_body_size 0;
         fastcgi_buffers 64 4K;
@@ -97,17 +99,16 @@ EOF
         add_header X-Robots-Tag                         "none"          always;
         add_header X-XSS-Protection                     "1; mode=block" always;
         #fastcgi_hide_header X-Powered-By;
-        index index.php index.html /index.php\$request_uri; #/nextcloud
+        index index.php index.html /nextcloud/index.php\$request_uri;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header Host $http_host;
         proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_pass http://127.0.0.1:9000; 
-
+        proxy_pass http://127.0.0.1:12222; 
         expires 1m;
 
         location = /nextcloud/ {
             if ( \$http_user_agent ~ ^DavClnt ) {
-                return 302 /remote.php/webdav/\$is_args\$args; #/nextcloud
+                return 302 /nextcloud/remote.php/webdav/\$is_args\$args;
             }
         }
 
@@ -135,19 +136,19 @@ EOF
         }
 
         location ~ \.(?:css|js|svg|gif)\$ {
-            try_files \$uri /index.php\$request_uri;#/nextcloud
+            try_files \$uri /nextcloud/index.php\$request_uri;
             expires 6M;
             access_log off;
         }
 
         location ~ \.woff2?\$ {
-            try_files \$uri /index.php\$request_uri;#/nextcloud
+            try_files \$uri /nextcloud/index.php\$request_uri;
             expires 7d;
             access_log off;
         }
 
         location /nextcloud/ {
-            try_files \$uri \$uri/ /index.php\$request_uri;#/nextcloud
+            try_files \$uri \$uri/ /nextcloud/index.php\$request_uri;
         }
     }
 EOF
@@ -496,11 +497,21 @@ EOF
     fi
     echo "}" >>/etc/nginx/conf.d/default.conf
     echo "" >>/etc/nginx/conf.d/default.conf
-    echo "server {" >>/etc/nginx/conf.d/default.conf
-    echo "    listen 80 fastopen=20 reuseport;" >>/etc/nginx/conf.d/default.conf
-    echo "    listen [::]:80 fastopen=20 reuseport;" >>/etc/nginx/conf.d/default.conf
-    echo "    return 301 https://\$host\$request_uri;" >>/etc/nginx/conf.d/default.conf
-    echo "}" >>/etc/nginx/conf.d/default.conf
+
+    if [[ ${ipissue} == 1 ]]; then
+        echo good
+    else
+        echo "server {" >>/etc/nginx/conf.d/default.conf
+        echo "    listen 80 fastopen=20 reuseport default_server;" >>/etc/nginx/conf.d/default.conf
+        echo "    listen [::]:80 fastopen=20 reuseport default_server;" >>/etc/nginx/conf.d/default.conf
+        echo "    location /.well-known/acme-challenge/ {" >>/etc/nginx/conf.d/default.conf
+        echo "      root /usr/share/nginx/;" >>/etc/nginx/conf.d/default.conf
+        echo "    }" >>/etc/nginx/conf.d/default.conf
+        echo "    location / {" >>/etc/nginx/conf.d/default.conf
+        echo "    return 301 https://\$host\$request_uri;" >>/etc/nginx/conf.d/default.conf
+        echo "    }" >>/etc/nginx/conf.d/default.conf
+        echo "}" >>/etc/nginx/conf.d/default.conf
+    fi
     echo "" >>/etc/nginx/conf.d/default.conf
     if [[ $install_netdata == 1 ]]; then
         echo "server { #For Netdata only !" >>/etc/nginx/conf.d/default.conf
