@@ -6,6 +6,17 @@ set +e
 
 install_rss() {
   cd
+  echo "CREATE DATABASE trojan CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/jk/kk.sql
+  echo "CREATE DATABASE netdata CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/jk/kk.sql
+  echo "CREATE DATABASE roundcubemail CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/jk/kk.sql
+  echo "CREATE USER 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
+  echo "CREATE USER 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
+  echo "CREATE USER 'roundcube@localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
+  echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'netdata'@'localhost';" >>/jk/kk.sql
+  echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'trojan'@'localhost';" >>/jk/kk.sql
+  echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'roundcube@localhost';" >>/jk/kk.sql
+  echo "FLUSH PRIVILEGES;" >>/jk/kk.sql
+  cd
   # mkdir -p /usr/share/nginx/nextcloud_data
   # mkdir -p /usr/share/nginx/nextcloud/apps
   mkdir /etc/redis/
@@ -136,11 +147,12 @@ services:
     restart: always
     volumes:
       - db:/var/lib/mysql
+      - /jk/kk.sql:/docker-entrypoint-initdb.d/kk.sql
       # - /etc/localtime:/etc/localtime
     ports:
       - 3306:3306
     environment:
-      #- MYSQL_ROOT_PASSWORD="${password1}"
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
       - MYSQL_PASSWORD="${password1}"

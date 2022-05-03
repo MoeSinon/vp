@@ -4,15 +4,6 @@
 
 set +e
 
-cd
-docker exec -it mariadb /bin/bash
-mysql -u root
-mysql -u root -e "create user 'netdata'@'localhost' IDENTIFIED BY '${password1};"
-mysql -u root -e "grant usage on *.* to 'netdata'@'localhost';"
-mysql -u root -e "flush privileges;"
-exit
-docker restart mariadb
-
 install_netdata() {
   clear
   TERM=ansi whiptail --title "安装中" --infobox "安装Netdata中..." 7 68

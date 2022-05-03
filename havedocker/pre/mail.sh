@@ -294,15 +294,7 @@ EOF
     cp -f composer.json-dist composer.json
     php /usr/local/bin/composer update --no-dev
     rm -rf /usr/share/nginx/roundcubemail/installer/
-    cd
-    docker exec -it mariadb /bin/bash
-    mysql -u root
-    mysql -u root -e "CREATE DATABASE roundcubemail DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-    mysql -u root -e "CREATE USER roundcube@localhost IDENTIFIED BY '${password1}';"
-    mysql -u root -e "GRANT ALL PRIVILEGES ON roundcubemail.* TO roundcube@localhost;"
-    mysql -u root -e "flush privileges;"
-    mysql -u roundcube -p"${password1}" -D roundcubemail </usr/share/nginx/roundcubemail/SQL/mysql.initial.sql
-    exit
+    # mysql -u roundcube -p"${password1}" -D roundcubemail </usr/share/nginx/roundcubemail/SQL/mysql.initial.sql
   fi
   mkdir /usr/share/nginx/pgp/
   deskey=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9-_#&!*%?' | fold -w 24 | head -n 1)
