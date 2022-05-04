@@ -78,7 +78,7 @@ EOF
         echo "  }" >>/etc/nginx/conf.d/default.conf
     fi
 
-    if [[ $install_nextcloud == 1 ]]; then
+    if [[ $install_rss == 1 ]]; then
         echo "    include /etc/nginx/conf.d/nextcloud.conf;" >>/etc/nginx/conf.d/default.conf
         touch /etc/nginx/conf.d/nextcloud.conf
         cat <<EOF >/etc/nginx/conf.d/nextcloud.conf

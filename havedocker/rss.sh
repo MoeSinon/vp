@@ -4,52 +4,20 @@
 
 set +e
 
-if [[ -f ../jk/kk.sql ]]; then
-  echo "mariadb服务器配置文件已经存在，正在跳过，执行安装"
-else
-  mkdir -p /jk
-  touch ../jk/kk.sql
-  # echo "mysql -u root" >/jk/kk.sql
-  # # echo "CREATE DATABASE trojan CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >/jk/kk.sql
-  # echo "CREATE DATABASE netdata CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/jk/kk.sql
-  # # echo "CREATE DATABASE roundcubemail CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/jk/kk.sql
-  # echo "CREATE USER 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
-  # # echo "CREATE USER 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
-  # # echo "CREATE USER 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
-  # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'netdata'@'localhost';" >>/jk/kk.sql
-  # # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'trojan'@'localhost';" >>/jk/kk.sql
-  # # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'roundcube'@'localhost';" >>/jk/kk.sql
-  # echo "FLUSH PRIVILEGES;" >>/jk/kk.sql
-
-  echo "CREATE DATABASE IF NOT EXISTS trojan;" >/jk/kk.sql
-  echo "CREATE DATABASE IF NOT EXISTS nextcloud;" >/jk/kk.sql
-  echo "CREATE DATABASE IF NOT EXISTS netdata;" >>/jk/kk.sql
-  echo "CREATE DATABASE IF NOT EXISTS roundcubemail;" >>/jk/kk.sql
-  echo "CREATE USER IF NOT EXISTS 'nextcloud'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
-  echo "CREATE USER IF NOT EXISTS 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
-  echo "CREATE USER IF NOT EXISTS 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
-  echo "CREATE USER IF NOT EXISTS 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
-  echo "GRANT ALL PRIVILEGES ON *.* TO 'nextcloud'@'localhost';" >>/jk/kk.sql
-  echo "GRANT ALL PRIVILEGES ON *.* TO 'netdata'@'localhost';" >>/jk/kk.sql
-  echo "GRANT ALL PRIVILEGES ON *.* TO 'trojan'@'localhost';" >>/jk/kk.sql
-  echo "GRANT ALL PRIVILEGES ON *.* TO 'roundcube'@'localhost';" >>/jk/kk.sql
-  echo "FLUSH PRIVILEGES;" >>/jk/kk.sql
-fi
-
 install_rss() {
 
   cd
   # mkdir -p /usr/share/nginx/nextcloud_data
   # mkdir -p /usr/share/nginx/nextcloud/apps
-  mkdir /etc/redis/
-  wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /etc/redis/
-  sed -i "s/appendonly no/appendonly yes/g" /etc/redis/redis.conf
-  if grep -q "unixsocket /var/run/redis/redis.sock" /etc/redis/redis.conf; then
+  mkdir /usr/share/nginx/miniflux/redis/
+  wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /usr/share/nginx/miniflux/redis/
+  sed -i "s/appendonly no/appendonly yes/g" /usr/share/nginx/miniflux/redis/redis.conf
+  if grep -q "unixsocket /var/run/redis/redis.sock" /usr/share/nginx/miniflux/redis/redis.conf; then
     :
   else
-    echo "" >>/etc/redis/redis.conf
-    echo "unixsocket /var/run/redis/redis.sock" >>/etc/redis/redis.conf
-    echo "unixsocketperm 777" >>/etc/redis/redis.conf
+    echo "" >>/usr/share/nginx/miniflux/redis/redis.conf
+    echo "unixsocket /var/run/redis/redis.sock" >>/usr/share/nginx/miniflux/redis/redis.conf
+    echo "unixsocketperm 777" >>/usr/share/nginx/miniflux/redis/redis.conf
     echo "redis写入执行完毕"
   fi
   # cd /usr/share/nginx/
@@ -58,6 +26,38 @@ install_rss() {
   cd /usr/share/nginx/
   mkdir miniflux
   cd /usr/share/nginx/miniflux
+
+  if [[ -f /usr/share/nginx/miniflux/kk.sql ]]; then
+    echo "mariadb服务器配置文件已经存在，正在跳过，执行安装"
+  else
+    touch /usr/share/nginx/miniflux/kk.sql
+    # echo "mysql -u root" >/usr/share/nginx/miniflux/kk.sql
+    # # echo "CREATE DATABASE trojan CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >/usr/share/nginx/miniflux/kk.sql
+    # echo "CREATE DATABASE netdata CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/usr/share/nginx/miniflux/kk.sql
+    # # echo "CREATE DATABASE roundcubemail CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/usr/share/nginx/miniflux/kk.sql
+    # echo "CREATE USER 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
+    # # echo "CREATE USER 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
+    # # echo "CREATE USER 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
+    # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'netdata'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
+    # # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'trojan'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
+    # # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'roundcube'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
+    # echo "FLUSH PRIVILEGES;" >>/usr/share/nginx/miniflux/kk.sql
+
+    echo "CREATE DATABASE IF NOT EXISTS trojan;" >/usr/share/nginx/miniflux/kk.sql
+    echo "CREATE DATABASE IF NOT EXISTS nextcloud;" >>/usr/share/nginx/miniflux/kk.sql
+    echo "CREATE DATABASE IF NOT EXISTS netdata;" >>/usr/share/nginx/miniflux/kk.sql
+    echo "CREATE DATABASE IF NOT EXISTS roundcubemail;" >>/usr/share/nginx/miniflux/kk.sql
+    echo "CREATE USER IF NOT EXISTS 'nextcloud'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
+    echo "CREATE USER IF NOT EXISTS 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
+    echo "CREATE USER IF NOT EXISTS 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
+    echo "CREATE USER IF NOT EXISTS 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
+    echo "GRANT ALL PRIVILEGES ON *.* TO 'nextcloud'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
+    echo "GRANT ALL PRIVILEGES ON *.* TO 'netdata'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
+    echo "GRANT ALL PRIVILEGES ON *.* TO 'trojan'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
+    echo "GRANT ALL PRIVILEGES ON *.* TO 'roundcube'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
+    echo "FLUSH PRIVILEGES;" >>/usr/share/nginx/miniflux/kk.sql
+  fi
+
   cat >"/usr/share/nginx/miniflux/docker-compose.yml" <<EOF
 version: '3.8'
 services:
@@ -95,8 +95,8 @@ services:
       - "6379:6379"
       # - "6378:6379"
     volumes:
-      - "/etc/redis/data:/data"
-      - "../etc/redis/redis.conf:/data/redis.conf"
+      - "/redis/data:/data"
+      - "/redis/redis.conf:/data/redis.conf"
       # - "/var/run/redis/redis.sock:/tmp/redis.sock"
     command: redis-server /data/redis.conf
       
@@ -134,8 +134,8 @@ services:
       - POSTGRES_PASSWORD=adminadmin
       - POSTGRES_DB=miniflux
     volumes:
-      - ./miniflux-data/db:/var/lib/postgresql/data
-      - ./miniflux-data/db_socket:/var/run/postgresql
+      - /miniflux-data/db:/var/lib/postgresql/data
+      - /miniflux-data/db_socket:/var/run/postgresql
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "miniflux" ]
       interval: 10s
@@ -171,15 +171,15 @@ services:
       - nextcloud:/var/www/html
       # - "/nextcloud/config/config.php:/var/www/html/data"
       # - "/usr/share/nginx/nextcloud/config:/var/www/html/config" 
-      # - "/usr/share/nginx/nextcloud/apps:/var/www/html/custom_apps"
+      - "/usr/share/miniflux/nginx/nextcloud/apps:/var/www/html/custom_apps"
 
   db:
     image: mariadb:10.5
     container_name: mariadb
     restart: unless-stopped
     volumes:
-      # - ./mariadb-db:/var/lib/mysql
-      - ./jk:/docker-entrypoint-initdb.d
+      - /mariadb-db:/var/lib/mysql
+      - /kk.sql:/docker-entrypoint-initdb.d/kk.sql
       # - /etc/localtime:/etc/localtime
     ports:
       - 3306:3306
