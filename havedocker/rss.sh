@@ -62,7 +62,7 @@ services:
       - "6379:6379"
       # - "6378:6379"
     volumes:
-      - "/etc/redis:/data"
+      - "$(pwd)/etc/redis:/data"
       - "$(pwd)/etc/redis/redis.conf:/data/redis.conf"
       # - "/var/run/redis/redis.sock:/tmp/redis.sock"
     command: redis-server /data/redis.conf
