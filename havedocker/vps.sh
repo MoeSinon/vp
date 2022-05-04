@@ -584,7 +584,7 @@ MasterMenu() {
       sleep 10s
       ## Delete last line
       mkdir -p ./dockercontainer/nextcloud
-      docker cp nextcloud:/config/config.php /dockercontainer/nextcloud
+      docker cp nextcloud:/config/config.php ./dockercontainer/nextcloud
       systemctl stop docker.service
       sed -i '$d' /dockercontainer/nextcloud/config.php
       echo "  'default_phone_region' => 'CN'," >>/dockercontainer/nextcloud/config.php
