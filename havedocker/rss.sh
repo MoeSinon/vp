@@ -22,11 +22,14 @@ else
   # echo "FLUSH PRIVILEGES;" >>/jk/kk.sql
 
   echo "CREATE DATABASE IF NOT EXISTS trojan;" >/jk/kk.sql
+  # echo "CREATE DATABASE IF NOT EXISTS nextcloud;" >/jk/kk.sql
   echo "CREATE DATABASE IF NOT EXISTS netdata;" >>/jk/kk.sql
   echo "CREATE DATABASE IF NOT EXISTS roundcubemail;" >>/jk/kk.sql
+  # echo "CREATE USER IF NOT EXISTS 'nextcloud'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
   echo "CREATE USER IF NOT EXISTS 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
   echo "CREATE USER IF NOT EXISTS 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
   echo "CREATE USER IF NOT EXISTS 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
+  # echo "GRANT ALL PRIVILEGES ON *.* TO 'nextcloud'@'localhost';" >>/jk/kk.sql
   echo "GRANT ALL PRIVILEGES ON *.* TO 'netdata'@'localhost';" >>/jk/kk.sql
   echo "GRANT ALL PRIVILEGES ON *.* TO 'trojan'@'localhost';" >>/jk/kk.sql
   echo "GRANT ALL PRIVILEGES ON *.* TO 'roundcube'@'localhost';" >>/jk/kk.sql
@@ -107,7 +110,8 @@ services:
     depends_on:
       - postgresqldb
     environment:
-      - DATABASE_URL=postgresql://miniflux:adminadmin@localhost/miniflux?sslmode=disable
+    #新版不建议在套接字中指定主机
+      - DATABASE_URL=postgresql://miniflux:adminadmin@:5432/miniflux?sslmode=disable
       - BASE_URL=https://${domain}/miniflux/
       - RUN_MIGRATIONS=1
       - CREATE_ADMIN=1
@@ -165,7 +169,7 @@ services:
     container_name: mariadb
     restart: always
     volumes:
-      - db:/var/lib/mysql
+      - ./mariadb-db:/var/lib/mysql
       - "../jk/kk.sql:/docker-entrypoint-initdb.d/kk.sql"
       # - /etc/localtime:/etc/localtime
     ports:
@@ -186,8 +190,6 @@ services:
 volumes:
   nextcloud:
   miniflux-db:
-  db:
-
 EOF
   sed -i "s/adminadmin/${password1}/g" docker-compose.yml
   docker-compose build --pull
