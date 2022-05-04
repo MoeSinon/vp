@@ -104,7 +104,7 @@ services:
     depends_on:
       - postgresqldb
     volumes:
-      - ./miniflux-data/db_socket:/socket/postgresql
+      - /miniflux-data/db_socket:/socket/postgresql
     environment:
     #新版不建议在套接字中指定主机
       - TZ=Aisa/Shanghai
