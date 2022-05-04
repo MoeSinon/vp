@@ -192,14 +192,13 @@ services:
       - TZ="Asia/Shanghai"
     command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--transaction-isolation=READ-COMMITTED', '--binlog-format=ROW', '--default-storage-engine=innodb','--max-connections=1000','--max-connections=1000']
     healthcheck:
-      test: mysqladmin -p${password1} ping -h localhost
+      test: ["CMD-SHELL", 'mysqladmin ping']
       interval: 20s
       start_period: 10s
       timeout: 10s
       retries: 3
 volumes:
   nextcloud:
-  miniflux-db:
 EOF
   sed -i "s/adminadmin/${password1}/g" docker-compose.yml
   docker-compose build --pull
