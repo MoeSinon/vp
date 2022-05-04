@@ -137,7 +137,7 @@ services:
     restart: always
     volumes:
       - db:/var/lib/mysql
-      - "/jk/kk.sql:/docker-entrypoint-initdb.d/kk.sql"
+      - "/jk:/docker-entrypoint-initdb.d"
       # - /etc/localtime:/etc/localtime
     ports:
       - 3306:3306
