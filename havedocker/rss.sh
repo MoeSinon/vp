@@ -187,5 +187,5 @@ EOF
   # mysql -u root -e "GRANT ALL PRIVILEGES ON nextcloud.* to nextcloud@'localhost';"
   # mysql -u root -e "flush privileges;"
   cd
-  rm -rf /jk
+  # rm -rf /jk
 }
