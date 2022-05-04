@@ -61,7 +61,7 @@ services:
   rsshub:
     # 1200
     image: diygod/rsshub:latest
-    restart: unless-stopped
+    restart: always
     container_name: rsshub
     ports:
       - '1200:1200'
@@ -79,7 +79,7 @@ services:
     # 3000
     image: browserless/chrome:latest
     container_name: browserless
-    restart: unless-stopped
+    restart: always
     ports:
       - 127.0.0.1:3000:3000
 
@@ -87,7 +87,7 @@ services:
     # 6379
     image: "redis:latest"
     container_name: redis
-    restart: unless-stopped
+    restart: always
     ports:
       - "6379:6379"
       # - "6378:6379"
@@ -101,7 +101,7 @@ services:
     # 8280
     image: miniflux/miniflux:latest
     container_name: miniflux
-    restart: unless-stopped
+    restart: always
     ports:
       - "8280:8080"
     depends_on:
@@ -117,7 +117,7 @@ services:
   postgresqldb:
     container_name: postgresqldb
     image: postgres:latest
-    restart: unless-stopped
+    restart: always
     environment:
       - POSTGRES_USER=miniflux
       - POSTGRES_PASSWORD=adminadmin
@@ -131,8 +131,7 @@ services:
   nextcloud:
     image: nextcloud:apache
     container_name: nextcloud
-    # env_file:
-    #   - db.env
+    restart: always
     depends_on:
       - db
       - redis
