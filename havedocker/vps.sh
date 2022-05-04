@@ -583,7 +583,7 @@ MasterMenu() {
       curl --retry 5 -LO https://${domain}:${trojanport}/nextcloud/
       sleep 10s
       ## Delete last line
-      mkdir -p /dockercontainer/nextcloud
+      mkdir -p ./dockercontainer/nextcloud
       docker cp nextcloud:/config/config.php /dockercontainer/nextcloud
       systemctl stop docker.service
       sed -i '$d' /dockercontainer/nextcloud/config.php
