@@ -185,9 +185,9 @@ services:
       - 3306:3306
     environment:
       - MYSQL_ROOT_PASSWORD="${password1}"
-      # - MYSQL_DATABASE=nextcloud
-      # - MYSQL_USER=nextcloud
-      # - MYSQL_PASSWORD="${password1}"
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD="${password1}"
       - TZ="Asia/Shanghai"
     command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--default-storage-engine=innodb','--max-connections=1000','--max-connections=1000']
     healthcheck:
