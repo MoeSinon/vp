@@ -9,15 +9,16 @@ if [[ -f ../jk/kk.sql ]]; then
 else
   mkdir -p /jk
   touch ../jk/kk.sql
-  echo "CREATE DATABASE trojan CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >/jk/kk.sql
+  echo "mysql -u root" >/jk/kk.sql
+  # echo "CREATE DATABASE trojan CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >/jk/kk.sql
   echo "CREATE DATABASE netdata CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/jk/kk.sql
-  echo "CREATE DATABASE roundcubemail CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/jk/kk.sql
+  # echo "CREATE DATABASE roundcubemail CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/jk/kk.sql
   echo "CREATE USER 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
-  echo "CREATE USER 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
-  echo "CREATE USER 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
+  # echo "CREATE USER 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
+  # echo "CREATE USER 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
   echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'netdata'@'localhost';" >>/jk/kk.sql
-  echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'trojan'@'localhost';" >>/jk/kk.sql
-  echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'roundcube'@'localhost';" >>/jk/kk.sql
+  # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'trojan'@'localhost';" >>/jk/kk.sql
+  # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'roundcube'@'localhost';" >>/jk/kk.sql
   echo "FLUSH PRIVILEGES;" >>/jk/kk.sql
 fi
 
@@ -93,9 +94,8 @@ services:
       - "8280:8080"
     depends_on:
       - postgresqldb
-      - rsshub
     environment:
-      - DATABASE_URL=postgres://miniflux:adminadmin@postgresqldb/miniflux?sslmode=disable
+      - DATABASE_URL=postgresql://miniflux:adminadmin@postgresqldb/miniflux?sslmode=disable
       - BASE_URL=https://${domain}/miniflux/
       - RUN_MIGRATIONS=1
       - CREATE_ADMIN=1
@@ -103,7 +103,7 @@ services:
       - ADMIN_PASSWORD=adminadmin
 
   postgresqldb:
-    container_name: postgresql
+    container_name: postgresqldb
     image: postgres:latest
     restart: unless-stopped
     environment:
@@ -133,7 +133,7 @@ services:
       - OPCACHE_MEM_SIZE=128
       - CRON_PERIOD=15m
       - TZ=Aisa/Shanghai
-      # - DOMAIN="${domain}"
+      - DOMAIN=https://${domain}/nextcloud/
       - DB_TYPE=mysql
       - DB_NAME=nextcloud
       - DB_USER=nextcloud

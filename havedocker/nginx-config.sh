@@ -74,7 +74,7 @@ EOF
         echo "    proxy_set_header Upgrade \$http_upgrade;" >>/etc/nginx/conf.d/default.conf
         echo "    proxy_set_header Connection \$http_connection;" >>/etc/nginx/conf.d/default.conf
         echo "    proxy_set_header X-Forwarded-Proto https;" >>/etc/nginx/conf.d/default.conf
-        echo "    proxy_pass http://127.0.0.1:5244/alist/;" >>/etc/nginx/conf.d/default.conf
+        echo "    proxy_pass http://127.0.0.1:5244;" >>/etc/nginx/conf.d/default.conf
         echo "  }" >>/etc/nginx/conf.d/default.conf
     fi
 
