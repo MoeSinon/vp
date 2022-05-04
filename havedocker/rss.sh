@@ -4,53 +4,53 @@
 
 set +e
 
+cd /usr/share/nginx/
+mkdir miniflux
+cd /usr/share/nginx/miniflux
+mkdir redis
+wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /usr/share/nginx/miniflux/redis/
+sed -i "s/appendonly no/appendonly yes/g" /usr/share/nginx/miniflux/redis/redis.conf
+if grep -q "unixsocket /var/run/redis/redis.sock" /usr/share/nginx/miniflux/redis/redis.conf; then
+  :
+else
+  echo "" >>/usr/share/nginx/miniflux/redis/redis.conf
+  echo "unixsocket /var/run/redis/redis.sock" >>/usr/share/nginx/miniflux/redis/redis.conf
+  echo "unixsocketperm 777" >>/usr/share/nginx/miniflux/redis/redis.conf
+  echo "redis写入执行完毕"
+fi
+if [[ -f /usr/share/nginx/miniflux/kk.sql ]]; then
+  echo "mariadb服务器配置文件已经存在，正在跳过，执行安装"
+else
+  touch /usr/share/nginx/miniflux/kk.sql
+  # echo "mysql -u root" >/usr/share/nginx/miniflux/kk.sql
+  # # echo "CREATE DATABASE trojan CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >/usr/share/nginx/miniflux/kk.sql
+  # echo "CREATE DATABASE netdata CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/usr/share/nginx/miniflux/kk.sql
+  # # echo "CREATE DATABASE roundcubemail CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/usr/share/nginx/miniflux/kk.sql
+  # echo "CREATE USER 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
+  # # echo "CREATE USER 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
+  # # echo "CREATE USER 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
+  # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'netdata'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
+  # # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'trojan'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
+  # # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'roundcube'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
+  # echo "FLUSH PRIVILEGES;" >>/usr/share/nginx/miniflux/kk.sql
+
+  echo "CREATE DATABASE IF NOT EXISTS trojan;" >/usr/share/nginx/miniflux/kk.sql
+  echo "CREATE DATABASE IF NOT EXISTS nextcloud;" >>/usr/share/nginx/miniflux/kk.sql
+  echo "CREATE DATABASE IF NOT EXISTS netdata;" >>/usr/share/nginx/miniflux/kk.sql
+  echo "CREATE DATABASE IF NOT EXISTS roundcubemail;" >>/usr/share/nginx/miniflux/kk.sql
+  echo "CREATE USER IF NOT EXISTS 'nextcloud'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
+  echo "CREATE USER IF NOT EXISTS 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
+  echo "CREATE USER IF NOT EXISTS 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
+  echo "CREATE USER IF NOT EXISTS 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'nextcloud'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'netdata'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'trojan'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'roundcube'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
+  echo "FLUSH PRIVILEGES;" >>/usr/share/nginx/miniflux/kk.sql
+fi
+
 install_rss() {
-
   ## Install Miniflux
-  cd /usr/share/nginx/
-  mkdir miniflux
-  cd /usr/share/nginx/miniflux
-  mkdir redis
-  wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /usr/share/nginx/miniflux/redis/
-  sed -i "s/appendonly no/appendonly yes/g" /usr/share/nginx/miniflux/redis/redis.conf
-  if grep -q "unixsocket /var/run/redis/redis.sock" /usr/share/nginx/miniflux/redis/redis.conf; then
-    :
-  else
-    echo "" >>/usr/share/nginx/miniflux/redis/redis.conf
-    echo "unixsocket /var/run/redis/redis.sock" >>/usr/share/nginx/miniflux/redis/redis.conf
-    echo "unixsocketperm 777" >>/usr/share/nginx/miniflux/redis/redis.conf
-    echo "redis写入执行完毕"
-  fi
-  if [[ -f /usr/share/nginx/miniflux/kk.sql ]]; then
-    echo "mariadb服务器配置文件已经存在，正在跳过，执行安装"
-  else
-    touch /usr/share/nginx/miniflux/kk.sql
-    # echo "mysql -u root" >/usr/share/nginx/miniflux/kk.sql
-    # # echo "CREATE DATABASE trojan CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >/usr/share/nginx/miniflux/kk.sql
-    # echo "CREATE DATABASE netdata CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/usr/share/nginx/miniflux/kk.sql
-    # # echo "CREATE DATABASE roundcubemail CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/usr/share/nginx/miniflux/kk.sql
-    # echo "CREATE USER 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
-    # # echo "CREATE USER 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
-    # # echo "CREATE USER 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
-    # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'netdata'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
-    # # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'trojan'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
-    # # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'roundcube'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
-    # echo "FLUSH PRIVILEGES;" >>/usr/share/nginx/miniflux/kk.sql
-
-    echo "CREATE DATABASE IF NOT EXISTS trojan;" >/usr/share/nginx/miniflux/kk.sql
-    echo "CREATE DATABASE IF NOT EXISTS nextcloud;" >>/usr/share/nginx/miniflux/kk.sql
-    echo "CREATE DATABASE IF NOT EXISTS netdata;" >>/usr/share/nginx/miniflux/kk.sql
-    echo "CREATE DATABASE IF NOT EXISTS roundcubemail;" >>/usr/share/nginx/miniflux/kk.sql
-    echo "CREATE USER IF NOT EXISTS 'nextcloud'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
-    echo "CREATE USER IF NOT EXISTS 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
-    echo "CREATE USER IF NOT EXISTS 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
-    echo "CREATE USER IF NOT EXISTS 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
-    echo "GRANT ALL PRIVILEGES ON *.* TO 'nextcloud'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
-    echo "GRANT ALL PRIVILEGES ON *.* TO 'netdata'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
-    echo "GRANT ALL PRIVILEGES ON *.* TO 'trojan'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
-    echo "GRANT ALL PRIVILEGES ON *.* TO 'roundcube'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
-    echo "FLUSH PRIVILEGES;" >>/usr/share/nginx/miniflux/kk.sql
-  fi
   cd /usr/share/nginx/miniflux
   cat >"/usr/share/nginx/miniflux/docker-compose.yml" <<EOF
 version: '3.8'
