@@ -79,8 +79,8 @@ services:
       - "6379:6379"
       # - "6378:6379"
     volumes:
-      - "$(pwd)/etc/redis:/data"
-      - "$(pwd)/etc/redis/redis.conf:/data/redis.conf"
+      - "/etc/redis:/data"
+      - "../etc/redis/redis.conf:/data/redis.conf"
       # - "/var/run/redis/redis.sock:/tmp/redis.sock"
     command: redis-server /data/redis.conf
       
@@ -155,7 +155,7 @@ services:
     restart: always
     volumes:
       - db:/var/lib/mysql
-      - "$(pwd)/jk/kk.sql:/docker-entrypoint-initdb.d/kk.sql"
+      - "../jk/kk.sql:/docker-entrypoint-initdb.d/kk.sql"
       # - /etc/localtime:/etc/localtime
     ports:
       - 3306:3306

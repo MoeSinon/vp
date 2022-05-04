@@ -35,8 +35,8 @@ services:
     container_name: freenom
     restart: always
     volumes:
-      - "$(pwd)/usr/freenom/conf:/conf"
-      - "$(pwd)/usr/freenom/logs:/app/logs"
+      - "/usr/freenom/conf:/conf"
+      - "/usr/freenom/logs:/app/logs"
 
 EOF
     docker-compose up -d
