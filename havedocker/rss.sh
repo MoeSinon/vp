@@ -109,8 +109,8 @@ services:
       - "8280:8080"
     depends_on:
       - postgresqldb
-    # volumes:
-    #   - ./data/db_socket:/socket/postgresql
+    volumes:
+      - ./miniflux-data/db_socket:/socket/postgresql
     environment:
     #新版不建议在套接字中指定主机
       - TZ=Aisa/Shanghai
@@ -135,7 +135,8 @@ services:
       - POSTGRES_PASSWORD=adminadmin
       - POSTGRES_DB=miniflux
     volumes:
-      - miniflux-db:/var/lib/postgresql/data
+      - ./miniflux-data/db:/var/lib/postgresql/data
+      - ./miniflux-data/db_socket:/var/run/postgresql
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "miniflux" ]
       interval: 10s
