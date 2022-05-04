@@ -61,7 +61,7 @@ services:
   rsshub:
     # 1200
     image: diygod/rsshub:latest
-    restart: always
+    restart: unless-stopped
     container_name: rsshub
     ports:
       - '1200:1200'
@@ -79,7 +79,7 @@ services:
     # 3000
     image: browserless/chrome:latest
     container_name: browserless
-    restart: always
+    restart: unless-stopped
     ports:
       - 127.0.0.1:3000:3000
 
