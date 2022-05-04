@@ -579,7 +579,8 @@ MasterMenu() {
     clean_env
     ## 初始化Nextcloud
     if [[ ${install_nextcloud} == 1 ]] && [[ ${nextcloud_installed} != 1 ]]; then
-      curl https://${domain}:${trojanport}/nextcloud/
+      docker restart nextcloud
+      curl --retry 5 -LO https://${domain}:${trojanport}/nextcloud/
       sleep 10s
       ## Delete last line
       mkdir -p /dockercontainer/nextcloud
