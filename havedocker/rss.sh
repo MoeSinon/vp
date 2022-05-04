@@ -165,7 +165,7 @@ services:
       - MYSQL_USER=nextcloud
       - MYSQL_PASSWORD="${password1}"
       - TZ="Asia/Shanghai"
-    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--transaction-isolation=READ-COMMITTED', '--binlog-format=ROW', --default-storage-engine=innodb]
+    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--transaction-isolation=READ-COMMITTED', '--binlog-format=ROW', '--default-storage-engine=innodb','--max-connections=1000','--max-connections=1000']
     healthcheck:
       test: mysqladmin -p${password1} ping -h localhost
       interval: 20s
