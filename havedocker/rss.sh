@@ -174,11 +174,11 @@ services:
       # - "/usr/share/nginx/nextcloud/apps:/var/www/html/custom_apps"
 
   db:
-    image: mariadb:latest
+    image: mariadb:10.5
     container_name: mariadb
     restart: unless-stopped
     volumes:
-      - ./mariadb-db:/var/lib/mysql
+      # - ./mariadb-db:/var/lib/mysql
       - ./jk:/docker-entrypoint-initdb.d
       # - /etc/localtime:/etc/localtime
     ports:
@@ -189,7 +189,7 @@ services:
       # - MYSQL_USER=nextcloud
       # - MYSQL_PASSWORD="${password1}"
       - TZ="Asia/Shanghai"
-    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--transaction-isolation=READ-COMMITTED', '--binlog-format=ROW', '--default-storage-engine=innodb','--max-connections=1000','--max-connections=1000']
+    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--default-storage-engine=innodb','--max-connections=1000','--max-connections=1000']
     healthcheck:
       test: ["CMD-SHELL", 'mysqladmin ping']
       interval: 20s
