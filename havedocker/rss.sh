@@ -4,6 +4,20 @@
 
 set +e
 
+cd
+mkdir -p /jk
+touch ../jk/kk.sql
+echo "CREATE DATABASE trojan CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/jk/kk.sql
+echo "CREATE DATABASE netdata CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/jk/kk.sql
+echo "CREATE DATABASE roundcubemail CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/jk/kk.sql
+echo "CREATE USER 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
+echo "CREATE USER 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
+echo "CREATE USER 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
+echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'netdata'@'localhost';" >>/jk/kk.sql
+echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'trojan'@'localhost';" >>/jk/kk.sql
+echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'roundcube'@'localhost';" >>/jk/kk.sql
+echo "FLUSH PRIVILEGES;" >>/jk/kk.sql
+
 install_rss() {
 
   cd
