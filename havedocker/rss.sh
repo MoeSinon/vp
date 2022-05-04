@@ -104,27 +104,36 @@ services:
     # 8280
     image: miniflux/miniflux:latest
     container_name: miniflux
-    restart: always
+    restart: unless-stopped
     ports:
       - "8280:8080"
     depends_on:
       - postgresqldb
+    # volumes:
+    #   - ./data/db_socket:/socket/postgresql
     environment:
     #新版不建议在套接字中指定主机
-      - DATABASE_URL=postgresql://miniflux:adminadmin@/miniflux
+      - TZ=Aisa/Shanghai
+      - DATABASE_URL=user=miniflux password=adminadmin dbname=miniflux sslmode=disable host=/socket/postgresql
       - BASE_URL=https://${domain}/miniflux/
       - RUN_MIGRATIONS=1
       - CREATE_ADMIN=1
       - ADMIN_USERNAME=admin
       - ADMIN_PASSWORD=adminadmin
+    healthcheck:
+      test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
+      interval: 10s
+      start_period: 30s
 
   postgresqldb:
     container_name: postgresqldb
     image: postgres:latest
-    restart: always
+    restart: unless-stopped
     environment:
+      - TZ=Aisa/Shanghai
       - POSTGRES_USER=miniflux
       - POSTGRES_PASSWORD=adminadmin
+      - POSTGRES_DB=miniflux
     volumes:
       - miniflux-db:/var/lib/postgresql/data
     healthcheck:
