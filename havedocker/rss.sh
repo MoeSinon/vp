@@ -142,7 +142,7 @@ services:
       - NEXTCLOUD_ADMIN_PASSWORD="${password1}"
       - DB_HOST=db
     ports:
-      - 9000:80
+      - 12222:80
     volumes:
       - nextcloud:/var/www/html
       # - "/nextcloud/config/config.php:/var/www/html/data"
