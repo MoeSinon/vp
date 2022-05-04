@@ -65,8 +65,7 @@ services:
       - "/etc/redis:/data"
       - "/etc/redis/redis.conf:/data/redis.conf"
       # - "/var/run/redis/redis.sock:/tmp/redis.sock"
-    # command:
-    #   - redis-server /etc/redis/redis.conf
+    command: redis-server /etc/redis/redis.conf
       
   miniflux:
     # 8280
@@ -139,7 +138,7 @@ services:
     restart: always
     volumes:
       - db:/var/lib/mysql
-      - "/jk:/docker-entrypoint-initdb.d"
+      - "/jk/kk.sql:/docker-entrypoint-initdb.d/kk.sql"
       # - /etc/localtime:/etc/localtime
     ports:
       - 3306:3306
