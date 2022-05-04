@@ -26,8 +26,8 @@ install_rss() {
   cd
   # mkdir -p /usr/share/nginx/nextcloud_data
   # mkdir -p /usr/share/nginx/nextcloud/apps
-  mkdir /etc/redis/
-  wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /etc/redis/
+  mkdir /etc/redis/data/
+  wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /etc/redis/data/
   sed -i "s/appendonly no/appendonly yes/g" /etc/redis/redis.conf
   if grep -q "unixsocket /var/run/redis/redis.sock" /etc/redis/redis.conf; then
     :
