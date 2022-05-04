@@ -6,10 +6,11 @@ set +e
 
 install_rss() {
 
-  cd
-  # mkdir -p /usr/share/nginx/nextcloud_data
-  # mkdir -p /usr/share/nginx/nextcloud/apps
-  mkdir /usr/share/nginx/miniflux/redis/
+  ## Install Miniflux
+  cd /usr/share/nginx/
+  mkdir miniflux
+  cd /usr/share/nginx/miniflux
+  mkdir redis
   wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /usr/share/nginx/miniflux/redis/
   sed -i "s/appendonly no/appendonly yes/g" /usr/share/nginx/miniflux/redis/redis.conf
   if grep -q "unixsocket /var/run/redis/redis.sock" /usr/share/nginx/miniflux/redis/redis.conf; then
@@ -20,13 +21,6 @@ install_rss() {
     echo "unixsocketperm 777" >>/usr/share/nginx/miniflux/redis/redis.conf
     echo "redis写入执行完毕"
   fi
-  # cd /usr/share/nginx/
-
-  ## Install Miniflux
-  cd /usr/share/nginx/
-  mkdir miniflux
-  cd /usr/share/nginx/miniflux
-
   if [[ -f /usr/share/nginx/miniflux/kk.sql ]]; then
     echo "mariadb服务器配置文件已经存在，正在跳过，执行安装"
   else
@@ -57,7 +51,7 @@ install_rss() {
     echo "GRANT ALL PRIVILEGES ON *.* TO 'roundcube'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
     echo "FLUSH PRIVILEGES;" >>/usr/share/nginx/miniflux/kk.sql
   fi
-
+  cd /usr/share/nginx/miniflux
   cat >"/usr/share/nginx/miniflux/docker-compose.yml" <<EOF
 version: '3.8'
 services:
@@ -168,10 +162,10 @@ services:
     ports:
       - 12222:80
     volumes:
-      - nextcloud:/var/www/html
+      - /nextcloud:/var/www/html
       # - "/nextcloud/config/config.php:/var/www/html/data"
       # - "/usr/share/nginx/nextcloud/config:/var/www/html/config" 
-      - "/usr/share/miniflux/nginx/nextcloud/apps:/var/www/html/custom_apps"
+      #- "/usr/share/miniflux/nginx/nextcloud/apps:/var/www/html/custom_apps"
 
   db:
     image: mariadb:10.5
@@ -196,8 +190,6 @@ services:
       start_period: 10s
       timeout: 10s
       retries: 3
-volumes:
-  nextcloud:
 EOF
   sed -i "s/adminadmin/${password1}/g" docker-compose.yml
   docker-compose build --pull
