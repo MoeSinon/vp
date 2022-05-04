@@ -22,14 +22,14 @@ else
   # echo "FLUSH PRIVILEGES;" >>/jk/kk.sql
 
   echo "CREATE DATABASE IF NOT EXISTS trojan;" >/jk/kk.sql
-  # echo "CREATE DATABASE IF NOT EXISTS nextcloud;" >/jk/kk.sql
+  echo "CREATE DATABASE IF NOT EXISTS nextcloud;" >/jk/kk.sql
   echo "CREATE DATABASE IF NOT EXISTS netdata;" >>/jk/kk.sql
   echo "CREATE DATABASE IF NOT EXISTS roundcubemail;" >>/jk/kk.sql
-  # echo "CREATE USER IF NOT EXISTS 'nextcloud'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
+  echo "CREATE USER IF NOT EXISTS 'nextcloud'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
   echo "CREATE USER IF NOT EXISTS 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
   echo "CREATE USER IF NOT EXISTS 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
   echo "CREATE USER IF NOT EXISTS 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
-  # echo "GRANT ALL PRIVILEGES ON *.* TO 'nextcloud'@'localhost';" >>/jk/kk.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'nextcloud'@'localhost';" >>/jk/kk.sql
   echo "GRANT ALL PRIVILEGES ON *.* TO 'netdata'@'localhost';" >>/jk/kk.sql
   echo "GRANT ALL PRIVILEGES ON *.* TO 'trojan'@'localhost';" >>/jk/kk.sql
   echo "GRANT ALL PRIVILEGES ON *.* TO 'roundcube'@'localhost';" >>/jk/kk.sql
@@ -111,7 +111,7 @@ services:
       - postgresqldb
     environment:
     #新版不建议在套接字中指定主机
-      - DATABASE_URL=postgresql://miniflux:adminadmin@:5432/miniflux?sslmode=disable
+      - DATABASE_URL=postgresql://miniflux:adminadmin@/miniflux
       - BASE_URL=https://${domain}/miniflux/
       - RUN_MIGRATIONS=1
       - CREATE_ADMIN=1
@@ -176,9 +176,9 @@ services:
       - 3306:3306
     environment:
       - MYSQL_ROOT_PASSWORD="${password1}"
-      - MYSQL_DATABASE=nextcloud
-      - MYSQL_USER=nextcloud
-      - MYSQL_PASSWORD="${password1}"
+      # - MYSQL_DATABASE=nextcloud
+      # - MYSQL_USER=nextcloud
+      # - MYSQL_PASSWORD="${password1}"
       - TZ="Asia/Shanghai"
     command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--transaction-isolation=READ-COMMITTED', '--binlog-format=ROW', '--default-storage-engine=innodb','--max-connections=1000','--max-connections=1000']
     healthcheck:

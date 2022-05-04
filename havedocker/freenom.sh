@@ -51,6 +51,7 @@ EOF
     sed -i "s/TELEGRAM_CHAT_ID=''/TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}/g" /usr/freenom/conf/.env
     sed -i "s/TELEGRAM_BOT_TOKEN=''/TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}/g" /usr/freenom/conf/.env
     sed -i "s/TELEGRAM_BOT_ENABLE=0/TELEGRAM_BOT_ENABLE=1/g" /usr/freenom/conf/.env
+    sed -i "s/NOTICE_FREQ=1/NOTICE_FREQ=0/g" /usr/freenom/conf/.env
     docker restart freenom
     # if grep -q "unixsocket /var/run/redis/redis.sock" /etc/redis/redis.conf; then
     #     :
