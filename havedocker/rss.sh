@@ -103,12 +103,12 @@ services:
       - "8280:8080"
     depends_on:
       - postgresqldb
-    volumes:
-      - /miniflux-data/db_socket:/socket/postgresql
+    # volumes:
+    #   - /miniflux-data/db_socket:/socket/postgresql
     environment:
     #新版不建议在套接字中指定主机
       - TZ=Aisa/Shanghai
-      - DATABASE_URL=user=miniflux password=adminadmin dbname=miniflux sslmode=disable host=/socket/postgresql
+      - DATABASE_URL=user=miniflux password=adminadmin dbname=miniflux sslmode=disable host=miniflux_socket
       - BASE_URL=https://${domain}/miniflux/
       - RUN_MIGRATIONS=1
       - CREATE_ADMIN=1
@@ -129,7 +129,7 @@ services:
       - POSTGRES_DB=miniflux
     volumes:
       - /miniflux-data/db:/var/lib/postgresql/data
-      - /miniflux-data/db_socket:/var/run/postgresql
+      - miniflux_socket:/var/run/postgresql
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "miniflux" ]
       interval: 10s
@@ -190,6 +190,8 @@ services:
       start_period: 10s
       timeout: 10s
       retries: 3
+volumes:      
+  miniflux_socket:
 EOF
   sed -i "s/adminadmin/${password1}/g" docker-compose.yml
   docker-compose build --pull
