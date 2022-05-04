@@ -13,7 +13,7 @@ install_netdata() {
   sed -i "s/Restart=on-failure/Restart=always/" /lib/systemd/system/netdata.service
   systemctl daemon-reload
   systemctl stop netdata
-  kill all netdata
+  killall netdata
   cat >'/opt/netdata/etc/netdata/python.d/nginx.conf' <<EOF
 localhost:
 
