@@ -24,7 +24,7 @@ nginx_config() {
 server {
   listen 127.0.0.1:81 fastopen=512 reuseport default_server so_keepalive=on;
   listen 127.0.0.1:82 http2 fastopen=512 reuseport default_server so_keepalive=on;
-  server_name $domain _;
+  server_name ${domain};
   # listen 443 ssl http2 fastopen=20 reuseport default_server so_keepalive=on;
   # listen [::]:443 ssl http2 fastopen=20 reuseport default_server so_keepalive=on;
   # ssl_certificate     /etc/certs/${domain}_ecc/fullchain.cer;

@@ -578,28 +578,28 @@ MasterMenu() {
     nginx_config
     clean_env
     ## 初始化Nextcloud
-    if [[ ${install_nextcloud} == 1 ]] && [[ ${nextcloud_installed} != 1 ]]; then
-      docker restart nextcloud
-      curl --retry 5 -LO https://${domain}:${trojanport}/nextcloud/
-      sleep 10s
-      ## Delete last line
-      mkdir -p ./dockercontainer/nextcloud
-      docker cp nextcloud:/config/config.php ./dockercontainer/nextcloud
-      systemctl stop docker.service
-      sed -i '$d' ./dockercontainer/nextcloud/config.php
-      echo "  'default_phone_region' => 'CN'," >>./dockercontainer/nextcloud/config.php
-      echo "  'memcache.local' => '\\OC\\Memcache\\APCu'," >>./dockercontainer/nextcloud/config.php
-      echo "  'memcache.distributed' => '\\OC\\Memcache\\Redis'," >>./dockercontainer/nextcloud/config.php
-      echo "  'memcache.locking' => '\\OC\\Memcache\\Redis'," >>./dockercontainer/nextcloud/config.php
-      echo "  'redis' => [" >>./dockercontainer/nextcloud/config.php
-      echo "     'host'     => '/var/run/redis/redis.sock'," >>./dockercontainer/nextcloud/config.php
-      echo "     'port'     => 0," >>./dockercontainer/nextcloud/config.php
-      echo "     'timeout'  => 1.0," >>./dockercontainer/nextcloud/config.php
-      echo "  ]," >>./dockercontainer/nextcloud/config.php
-      echo ");" >>./dockercontainer/nextcloud/config.php
-    fi
-    docker cp ./dockercontainer/nextcloud/config.php nextcloud:/config/config.php
-    systemctl start docker.service
+    # if [[ ${install_nextcloud} == 1 ]] && [[ ${nextcloud_installed} != 1 ]]; then
+    #   docker restart nextcloud
+    curl 127.0.0.1:12222
+    #   sleep 10s
+    #   ## Delete last line
+    #   mkdir -p ./dockercontainer/nextcloud
+    #   docker cp nextcloud:/var/www/html/config/config.php ./dockercontainer/nextcloud
+    #   systemctl stop docker.service
+    #   sed -i '$d' ./dockercontainer/nextcloud/config.php
+    #   echo "  'default_phone_region' => 'CN'," >>./dockercontainer/nextcloud/config.php
+    #   echo "  'memcache.local' => '\\OC\\Memcache\\APCu'," >>./dockercontainer/nextcloud/config.php
+    #   echo "  'memcache.distributed' => '\\OC\\Memcache\\Redis'," >>./dockercontainer/nextcloud/config.php
+    #   echo "  'memcache.locking' => '\\OC\\Memcache\\Redis'," >>./dockercontainer/nextcloud/config.php
+    #   echo "  'redis' => [" >>./dockercontainer/nextcloud/config.php
+    #   echo "     'host'     => '/var/run/redis/redis.sock'," >>./dockercontainer/nextcloud/config.php
+    #   echo "     'port'     => 0," >>./dockercontainer/nextcloud/config.php
+    #   echo "     'timeout'  => 1.0," >>./dockercontainer/nextcloud/config.php
+    #   echo "  ]," >>./dockercontainer/nextcloud/config.php
+    #   echo ");" >>./dockercontainer/nextcloud/config.php
+    # fi
+    # docker cp ./dockercontainer/nextcloud/config.php nextcloud:/config/config.php
+    # systemctl start docker.service
     ## 输出结果
     echo "nameserver 1.1.1.1" >/etc/resolv.conf
     echo "nameserver 1.0.0.1" >>/etc/resolv.conf

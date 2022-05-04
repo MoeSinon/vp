@@ -64,7 +64,7 @@ services:
   rsshub:
     # 1200
     image: diygod/rsshub:latest
-    restart: unless-stopped
+    restart: always
     container_name: rsshub
     ports:
       - '1200:1200'
@@ -104,7 +104,7 @@ services:
     # 8280
     image: miniflux/miniflux:latest
     container_name: miniflux
-    restart: unless-stopped
+    restart: always
     ports:
       - "8280:8080"
     depends_on:
@@ -130,7 +130,6 @@ services:
     image: postgres:latest
     restart: unless-stopped
     environment:
-      - TZ=Aisa/Shanghai
       - POSTGRES_USER=miniflux
       - POSTGRES_PASSWORD=adminadmin
       - POSTGRES_DB=miniflux
@@ -177,7 +176,7 @@ services:
   db:
     image: mariadb:latest
     container_name: mariadb
-    restart: always
+    restart: unless-stopped
     volumes:
       - ./mariadb-db:/var/lib/mysql
       - ./jk:/docker-entrypoint-initdb.d
