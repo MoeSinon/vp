@@ -107,7 +107,7 @@ services:
     depends_on:
       - postgresqldb
     environment:
-      - DATABASE_URL=postgresql://miniflux:adminadmin@postgresqldb/miniflux?sslmode=disable
+      - DATABASE_URL=postgresql://miniflux:adminadmin@localhost/miniflux?sslmode=disable
       - BASE_URL=https://${domain}/miniflux/
       - RUN_MIGRATIONS=1
       - CREATE_ADMIN=1
