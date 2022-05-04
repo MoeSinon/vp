@@ -9,16 +9,27 @@ if [[ -f ../jk/kk.sql ]]; then
 else
   mkdir -p /jk
   touch ../jk/kk.sql
-  echo "mysql -u root" >/jk/kk.sql
-  # echo "CREATE DATABASE trojan CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >/jk/kk.sql
-  echo "CREATE DATABASE netdata CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/jk/kk.sql
-  # echo "CREATE DATABASE roundcubemail CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/jk/kk.sql
-  echo "CREATE USER 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
-  # echo "CREATE USER 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
-  # echo "CREATE USER 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
-  echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'netdata'@'localhost';" >>/jk/kk.sql
-  # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'trojan'@'localhost';" >>/jk/kk.sql
-  # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'roundcube'@'localhost';" >>/jk/kk.sql
+  # echo "mysql -u root" >/jk/kk.sql
+  # # echo "CREATE DATABASE trojan CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >/jk/kk.sql
+  # echo "CREATE DATABASE netdata CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/jk/kk.sql
+  # # echo "CREATE DATABASE roundcubemail CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/jk/kk.sql
+  # echo "CREATE USER 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
+  # # echo "CREATE USER 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
+  # # echo "CREATE USER 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
+  # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'netdata'@'localhost';" >>/jk/kk.sql
+  # # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'trojan'@'localhost';" >>/jk/kk.sql
+  # # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'roundcube'@'localhost';" >>/jk/kk.sql
+  # echo "FLUSH PRIVILEGES;" >>/jk/kk.sql
+
+  echo "CREATE DATABASE IF NOT EXISTS trojan;" >/jk/kk.sql
+  echo "CREATE DATABASE IF NOT EXISTS netdata;" >>/jk/kk.sql
+  echo "CREATE DATABASE IF NOT EXISTS roundcubemail;" >>/jk/kk.sql
+  echo "CREATE USER IF NOT EXISTS 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
+  echo "CREATE USER IF NOT EXISTS 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
+  echo "CREATE USER IF NOT EXISTS 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/jk/kk.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'netdata'@'localhost';" >>/jk/kk.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'trojan'@'localhost';" >>/jk/kk.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'roundcube'@'localhost';" >>/jk/kk.sql
   echo "FLUSH PRIVILEGES;" >>/jk/kk.sql
 fi
 
@@ -36,6 +47,7 @@ install_rss() {
     echo "" >>/etc/redis/redis.conf
     echo "unixsocket /var/run/redis/redis.sock" >>/etc/redis/redis.conf
     echo "unixsocketperm 777" >>/etc/redis/redis.conf
+    echo "redis写入执行完毕"
   fi
   # cd /usr/share/nginx/
 
@@ -160,7 +172,7 @@ services:
     ports:
       - 3306:3306
     environment:
-      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_ROOT_PASSWORD:"${password1}"
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
       - MYSQL_PASSWORD="${password1}"
