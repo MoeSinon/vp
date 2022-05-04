@@ -586,17 +586,17 @@ MasterMenu() {
       mkdir -p ./dockercontainer/nextcloud
       docker cp nextcloud:/config/config.php ./dockercontainer/nextcloud
       systemctl stop docker.service
-      sed -i '$d' /dockercontainer/nextcloud/config.php
-      echo "  'default_phone_region' => 'CN'," >>/dockercontainer/nextcloud/config.php
-      echo "  'memcache.local' => '\\OC\\Memcache\\APCu'," >>/dockercontainer/nextcloud/config.php
-      echo "  'memcache.distributed' => '\\OC\\Memcache\\Redis'," >>/dockercontainer/nextcloud/config.php
-      echo "  'memcache.locking' => '\\OC\\Memcache\\Redis'," >>/dockercontainer/nextcloud/config.php
-      echo "  'redis' => [" >>/dockercontainer/nextcloud/config.php
-      echo "     'host'     => '/var/run/redis/redis.sock'," >>/dockercontainer/nextcloud/config.php
-      echo "     'port'     => 0," >>/dockercontainer/nextcloud/config.php
-      echo "     'timeout'  => 1.0," >>/dockercontainer/nextcloud/config.php
-      echo "  ]," >>/dockercontainer/nextcloud/config.php
-      echo ");" >>/dockercontainer/nextcloud/config.php
+      sed -i '$d' ./dockercontainer/nextcloud/config.php
+      echo "  'default_phone_region' => 'CN'," >>./dockercontainer/nextcloud/config.php
+      echo "  'memcache.local' => '\\OC\\Memcache\\APCu'," >>./dockercontainer/nextcloud/config.php
+      echo "  'memcache.distributed' => '\\OC\\Memcache\\Redis'," >>./dockercontainer/nextcloud/config.php
+      echo "  'memcache.locking' => '\\OC\\Memcache\\Redis'," >>./dockercontainer/nextcloud/config.php
+      echo "  'redis' => [" >>./dockercontainer/nextcloud/config.php
+      echo "     'host'     => '/var/run/redis/redis.sock'," >>./dockercontainer/nextcloud/config.php
+      echo "     'port'     => 0," >>./dockercontainer/nextcloud/config.php
+      echo "     'timeout'  => 1.0," >>./dockercontainer/nextcloud/config.php
+      echo "  ]," >>./dockercontainer/nextcloud/config.php
+      echo ");" >>./dockercontainer/nextcloud/config.php
     fi
     docker cp ./dockercontainer/nextcloud/config.php nextcloud:/config/config.php
     systemctl start docker.service

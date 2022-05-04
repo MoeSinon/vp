@@ -4,7 +4,7 @@
 
 set +e
 
-apt-get install qrencode -y
+# apt-get install qrencode -y
 
 prase_output() {
   clear
