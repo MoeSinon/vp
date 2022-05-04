@@ -170,7 +170,7 @@ services:
     restart: always
     volumes:
       - ./mariadb-db:/var/lib/mysql
-      - "../jk/kk.sql:/docker-entrypoint-initdb.d/kk.sql"
+      - ./jk/kk.sql:/docker-entrypoint-initdb.d/kk.sql
       # - /etc/localtime:/etc/localtime
     ports:
       - 3306:3306
