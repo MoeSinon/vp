@@ -85,7 +85,9 @@ services:
       - CREATE_ADMIN=1
       - ADMIN_USERNAME=admin
       - ADMIN_PASSWORD=adminadmin
+
   postgresqldb:
+    container_name: postgresql
     image: postgres:latest
     restart: unless-stopped
     environment:
