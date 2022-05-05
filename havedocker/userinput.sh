@@ -44,15 +44,17 @@ userinput_standard() {
     "Back" "返回上级菜单(Back to main menu)" off \
     "trojan" "Trojan-GFW+TCP-BBR" on \
     "grpc" "Vless+gRPC(支持CDN)" off \
-    "alist" "alist网盘管理器" on \
-    "speed" "Speedtest(测试本地网络到VPS的延迟及带宽)" ${check_speed} \
+    \
+    \
     "port" "自定义Trojan-GFW/Vless(grpc)端口" off \
     "hexo" "Hexo Blog" on \
     "ss" "shadowsocks-rust(不支持CDN)" ${check_ss} \
     \
     "rss" "RSSHUB + Miniflux(RSS生成器+RSS阅读器)" ${check_rss} \
     "fail2ban" "Fail2ban(防SSH爆破用)" ${check_fail2ban} \
-    "net" "Netdata(监测伺服器运行状态)" off 2>results # "nextcloud" "Nextcloud(私人网盘)" ${check_cloud} \
+    "net" "Netdata(监测伺服器运行状态)" off 2>results # "alist" "alist网盘管理器" on \
+  # "speed" "Speedtest(测试本地网络到VPS的延迟及带宽)" ${check_speed} \
+  # "nextcloud" "Nextcloud(私人网盘)" ${check_cloud} \
 
   while read choice; do
     case $choice in
@@ -247,8 +249,8 @@ userinput_full() {
     "基础" "基础" on \
     "trojan" "Trojan-GFW+TCP-BBR" on \
     "grpc" "Vless+gRPC+TLS(支持CDN)" off \
-    "alist" "alist网盘管理器" on \
-    "speed" "Speedtest(测试本地网络到VPS的延迟及带宽)" ${check_speed} \
+    \
+    \
     "port" "自定义Trojan-GFW/Vless(grpc)端口" off \
     "hexo" "Hexo Blog" on \
     "ss" "shadowsocks-rust(不支持CDN)" ${check_ss} \
@@ -270,7 +272,9 @@ userinput_full() {
     "其他" "其他软件及选项" off \
     "net" "Netdata(监测伺服器运行状态)" on \
     "typecho" "Typecho" ${check_echo} \
-    "13" "Qbt原版+高性能Tracker+Filebrowser" off 2>results # "nextcloud" "Nextcloud(私人网盘)" ${check_cloud} \
+    "13" "Qbt原版+高性能Tracker+Filebrowser" off 2>results # "alist" "alist网盘管理器" on \
+  # "speed" "Speedtest(测试本地网络到VPS的延迟及带宽)" ${check_speed} \
+  # "nextcloud" "Nextcloud(私人网盘)" ${check_cloud} \
 
   while read choice; do
     case $choice in
