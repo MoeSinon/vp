@@ -100,7 +100,7 @@ userinput_standard() {
       install_docker=1
       install_nextcloud=1
       install_alist=1
-      install_freenom=0
+      install_freenom=1
       ;;
     fail2ban)
       check_fail2ban="on"
