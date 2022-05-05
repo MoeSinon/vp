@@ -19,11 +19,10 @@ else
   echo "unixsocketperm 777" >>/usr/share/nginx/miniflux/redis/redis.conf
   echo "redis写入执行完毕"
 fi
-if [[ -f /mariadbinit/init.sql ]]; then
+if [[ -f /usr/share/nginx/miniflux/mariadbinit/init.sql ]]; then
   echo "mariadb服务器配置文件已经存在，正在跳过，执行安装"
 else
-  touch /mariadbinit/init.sql
-  chmod 777 /mariadbinit/init.sql
+  touch /usr/share/nginx/miniflux/mariadbinit/init.sql
   # echo "mysql -u root" >/mariadbinit/init.sql
   # # echo "CREATE DATABASE trojan CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >/mariadbinit/init.sql
   # echo "CREATE DATABASE netdata CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/mariadbinit/init.sql
@@ -36,20 +35,20 @@ else
   # # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'roundcube'@'localhost';" >>/mariadbinit/init.sql
   # echo "FLUSH PRIVILEGES;" >>/mariadbinit/init.sql
 
-  echo "CREATE DATABASE IF NOT EXISTS trojan;" >/mariadbinit/init.sql
-  echo "CREATE DATABASE IF NOT EXISTS nextcloud;" >>/mariadbinit/init.sql
-  echo "CREATE DATABASE IF NOT EXISTS netdata;" >>/mariadbinit/init.sql
-  echo "CREATE DATABASE IF NOT EXISTS roundcubemail;" >>/mariadbinit/init.sql
-  echo "CREATE USER IF NOT EXISTS 'nextcloud'@'localhost' IDENTIFIED BY '${password1}';" >>/mariadbinit/init.sql
-  echo "CREATE USER IF NOT EXISTS 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/mariadbinit/init.sql
-  echo "CREATE USER IF NOT EXISTS 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/mariadbinit/init.sql
-  echo "CREATE USER IF NOT EXISTS 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/mariadbinit/init.sql
-  echo "GRANT ALL PRIVILEGES ON *.* TO 'nextcloud'@'localhost';" >>/mariadbinit/init.sql
-  echo "GRANT ALL PRIVILEGES ON *.* TO 'netdata'@'localhost';" >>/mariadbinit/init.sql
-  echo "GRANT ALL PRIVILEGES ON *.* TO 'trojan'@'localhost';" >>/mariadbinit/init.sql
-  echo "GRANT ALL PRIVILEGES ON *.* TO 'roundcube'@'localhost';" >>/mariadbinit/init.sql
-  echo "FLUSH PRIVILEGES;" >>/mariadbinit/init.sql
-  chmod 777 /mariadbinit/init.sql
+  echo "CREATE DATABASE IF NOT EXISTS trojan;" >/usr/share/nginx/miniflux/mariadbinit/init.sql
+  echo "CREATE DATABASE IF NOT EXISTS nextcloud;" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
+  echo "CREATE DATABASE IF NOT EXISTS netdata;" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
+  echo "CREATE DATABASE IF NOT EXISTS roundcubemail;" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
+  echo "CREATE USER IF NOT EXISTS 'nextcloud'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
+  echo "CREATE USER IF NOT EXISTS 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
+  echo "CREATE USER IF NOT EXISTS 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
+  echo "CREATE USER IF NOT EXISTS 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'nextcloud'@'localhost';" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'netdata'@'localhost';" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'trojan'@'localhost';" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'roundcube'@'localhost';" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
+  echo "FLUSH PRIVILEGES;" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
+  chmod 777 /usr/share/nginx/miniflux/mariadbinit/init.sql
 fi
 
 install_rss() {
@@ -176,7 +175,7 @@ services:
     restart: unless-stopped
     volumes:
       - /mariadb:/var/lib/mysql
-      - ./mariadbinit:/docker-entrypoint-initdb.d
+      - /usr/share/nginx/miniflux/mariadbinit:/docker-entrypoint-initdb.d
       # - /etc/localtime:/etc/localtime
     ports:
       - 3306:3306
