@@ -70,6 +70,7 @@ LINK="92m"    # Share Link Message
 
 #Predefined install,do not change!!!
 install_bbr=1
+install_socat=1
 install_nodejs=1
 install_trojan=1
 trojanport="443"
@@ -129,7 +130,7 @@ prasejson() {
   "check_qbt": "$check_qbt",
   "check_aria": "$check_aria",
   "check_file": "$check_file",
-  "check_speed": "$check_speed",
+  # "check_speed": "$check_speed",
   # "check_mariadb": "$check_mariadb",
   "check_fail2ban": "$check_fail2ban",
   "check_mail": "$check_mail",
@@ -163,7 +164,7 @@ readconfig() {
   check_qbt="$(jq -r '.check_qbt' "/root/.trojan/config.json")"
   check_aria="$(jq -r '.check_aria' "/root/.trojan/config.json")"
   check_file="$(jq -r '.check_file' "/root/.trojan/config.json")"
-  check_speed="$(jq -r '.check_speed' "/root/.trojan/config.json")"
+  # check_speed="$(jq -r '.check_speed' "/root/.trojan/config.json")"
   # check_mariadb="$(jq -r '.check_mariadb' "/root/.trojan/config.json")"
   check_fail2ban="$(jq -r '.check_fail2ban' "/root/.trojan/config.json")"
   check_mail="$(jq -r '.check_mail' "/root/.trojan/config.json")"
@@ -285,11 +286,11 @@ install_initial() {
 install_base() {
   set +e
   TERM=ansi whiptail --title "安装中" --infobox "安装基础软件中..." 7 68
-  if [[ ${install_alist} == 1 ]]; then
-    apt upgrade -y
-  fi
+  # if [[ ${install_alist} == 1 ]]; then
+  #   apt upgrade -y
+  # fi
   colorEcho ${INFO} "Installing all necessary Software"
-  apt-get install sudo socat git curl xz-utils wget apt-transport-https gnupg lsb-release unzip resolvconf ntpdate systemd dbus ca-certificates locales iptables software-properties-common cron e2fsprogs less neofetch npm -y #libcap2-bin
+  apt-get install sudo git curl xz-utils wget apt-transport-https gnupg lsb-release unzip resolvconf ntpdate systemd dbus ca-certificates locales iptables software-properties-common cron e2fsprogs less neofetch npm -y #libcap2-bin
   sh -c 'echo "y\n\ny\ny\n" | DEBIAN_FRONTEND=noninteractive apt-get install ntp -q -y'
   clear
 }
@@ -304,11 +305,11 @@ install_moudles() {
     source docker.sh
     install_docker
   fi
-  if [[ ${install_php} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/php.sh
-    source php.sh
-    install_php
-  fi
+  # if [[ ${install_php} == 1 ]]; then
+  #   curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/php.sh
+  #   source php.sh
+  #   install_php
+  # fi
   # if [[ ${install_mariadb} == 1 ]]; then
   #   curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/mariadb.sh
   #   source mariadb.sh
@@ -324,11 +325,11 @@ install_moudles() {
     source freenom.sh
     install_freenom
   fi
-  if [[ ${install_mongodb} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/mongodb.sh
-    source mongodb.sh
-    install_mongodb
-  fi
+  # if [[ ${install_mongodb} == 1 ]]; then
+  #   curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/mongodb.sh
+  #   source mongodb.sh
+  #   install_mongodb
+  # fi
   if [[ ${install_grpc} == 1 ]]; then
     curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/grpc.sh
     source grpc.sh
@@ -395,11 +396,11 @@ install_moudles() {
     source rss.sh
     install_rss
   fi
-  if [[ ${install_speedtest} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/speedtest.sh
-    source speedtest.sh
-    install_speedtest
-  fi
+  # if [[ ${install_speedtest} == 1 ]]; then
+  #   curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/speedtest.sh
+  #   source speedtest.sh
+  #   install_speedtest
+  # fi
   if [[ ${install_tor} == 1 ]]; then
     curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/tor.sh
     source tor.sh
@@ -435,14 +436,14 @@ install_moudles() {
     source hexo.sh
     install_hexo
   fi
-  if [[ ${install_alist} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/alist.sh
-    source alist.sh
-    install_alist
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/nodejs.sh
-    source nodejs.sh
-    install_nodejs
-  fi
+  # if [[ ${install_alist} == 1 ]]; then
+  #   curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/alist.sh
+  #   source alist.sh
+  #   install_alist
+  #   curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/nodejs.sh
+  #   source nodejs.sh
+  #   install_nodejs
+  # fi
   # Install Trojan-gfw
   curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/trojan.sh
   source trojan.sh
@@ -580,32 +581,33 @@ MasterMenu() {
     nginx_config
     clean_env
     # 初始化Nextcloud
-    if [[ ${install_nextcloud} == 1 ]] && [[ ${nextcloud_installed} != 1 ]]; then
-      # docker restart nextcloud
-      curl 127.0.0.1:12222
-      sleep 10s
-      cd
+    curl 127.0.0.1:12222
+    sleep 10s
+    if [[ ${install_nextcloud} == 1 ]] && [[ -f ./usr/share/nginx/miniflux/nextcloud/config/config.php ]]; then
+
       ## Delete last line
-      mkdir -p ./dockercontainer/nextcloud
-      docker cp nextcloud:/var/www/html/config/config.php ./dockercontainer/nextcloud
-      systemctl stop docker.service
-      sed -i '$d' ./dockercontainer/nextcloud/config.php
-      echo "  'default_phone_region' => 'CN'," >>./dockercontainer/nextcloud/config.php
-      echo "  'trusted_domains' =>" >>./dockercontainer/nextcloud/config.php
-      echo "  array (" >>./dockercontainer/nextcloud/config.php
-      echo "    0 => '127.0.0.1'," >>./dockercontainer/nextcloud/config.php
-      echo "    1 => 'xx.xx.com'," >>./dockercontainer/nextcloud/config.php
-      echo "    2 => 'www.xx.xx.com'," >>./dockercontainer/nextcloud/config.php
-      echo "    3 => 'www.xx.xx:12222'," >>./dockercontainer/nextcloud/config.php
-      echo "  )," >>./dockercontainer/nextcloud/config.php
-      echo "  'forcessl' => true," >>./dockercontainer/nextcloud/config.php
-      echo "  'overwriteprotocol' => 'https'," >>./dockercontainer/nextcloud/config.php
-      echo ");" >>./dockercontainer/nextcloud/config.php
-      chmod 777 ./dockercontainer/nextcloud/config.php
+      # mkdir -p ./dockercontainer/nextcloud
+      # docker cp nextcloud:/var/www/html/config/config.php ./dockercontainer/nextcloud
+      # systemctl stop docker.service
+      sed -i '$d' ./usr/share/nginx/miniflux/nextcloud/config/config.php
+      echo "  'default_phone_region' => 'CN'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+      echo "  'trusted_domains' =>" >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+      # echo "  array (" >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+      # echo "    0 => '127.0.0.1'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+      # echo "    1 => 'xx.xx.com'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+      # echo "    2 => 'www.xx.xx.com'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+      # echo "    3 => 'www.xx.xx:12222'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+      # echo "  )," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+      # echo "  'forcessl' => true," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+      echo "  'overwriteprotocol' => 'https'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+      echo ");" >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+      chmod 777 ./usr/share/nginx/miniflux/nextcloud/config/config.php
+      echo "修改完毕"
     fi
-    docker cp ./dockercontainer/nextcloud/config.php nextcloud:/var/www/html/config/config.php
-    systemctl start docker.service
-    ## 输出结果
+    # docker cp ./usr/share/nginx/miniflux/nextcloud/config/config.php nextcloud:/var/www/html/config/config.php
+    # systemctl start docker.service
+
+    # 输出结果
     echo "nameserver 1.1.1.1" >/etc/resolv.conf
     echo "nameserver 1.0.0.1" >>/etc/resolv.conf
     curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/output.sh

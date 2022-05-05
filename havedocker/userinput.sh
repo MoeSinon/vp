@@ -21,9 +21,9 @@ userinput_standard() {
   if [[ -z ${check_dns} ]]; then
     check_dns="off"
   fi
-  if [[ -z ${check_speed} ]]; then
-    check_speed="off"
-  fi
+  # if [[ -z ${check_speed} ]]; then
+  #   check_speed="off"
+  # fi
   if [[ -z ${check_cloud} ]]; then
     check_cloud="on"
   fi
@@ -44,7 +44,7 @@ userinput_standard() {
     "Back" "返回上级菜单(Back to main menu)" off \
     "trojan" "Trojan-GFW+TCP-BBR" on \
     "grpc" "Vless+gRPC(支持CDN)" off \
-    "alist" "alist网盘管理器" off \
+    "alist" "alist网盘管理器" on \
     "speed" "Speedtest(测试本地网络到VPS的延迟及带宽)" ${check_speed} \
     "port" "自定义Trojan-GFW/Vless(grpc)端口" off \
     "hexo" "Hexo Blog" on \
@@ -65,10 +65,10 @@ userinput_standard() {
       install_bbr=1
       install_freenom=0
       ;;
-    alist)
-      # install_hexo=0
-      install_alist=1
-      ;;
+    # alist)
+    #   # install_hexo=0
+    #   install_alist=1
+    #   ;;
     hexo)
       install_hexo=1
       # install_alist=0
@@ -82,11 +82,11 @@ userinput_standard() {
       ;;
     net)
       install_netdata=1
-      ;;
-    speed)
-      check_speed="on"
-      install_speedtest=1
-      install_php=1
+      # ;;
+      # speed)
+      #   check_speed="on"
+      #   install_speedtest=1
+      #   install_php=1
       # ;;
       # nextcloud)
       #   install_nextcloud=1
@@ -99,7 +99,7 @@ userinput_standard() {
       install_rss=1
       install_docker=1
       install_nextcloud=1
-      # install_redis=1
+      install_alist=1
       install_freenom=0
       ;;
     fail2ban)
@@ -205,9 +205,9 @@ userinput_full() {
   if [[ -z ${check_file} ]]; then
     check_file="off"
   fi
-  if [[ -z ${check_speed} ]]; then
-    check_speed="off"
-  fi
+  # if [[ -z ${check_speed} ]]; then
+  #   check_speed="off"
+  # fi
   # if [[ -z ${check_mariadb} ]]; then
   #   check_mariadb="off"
   # fi
@@ -282,10 +282,10 @@ userinput_full() {
       install_trojan=1
       install_bbr=1
       ;;
-    alist)
-      # install_hexo=0
-      install_alist=1
-      ;;
+    # alist)
+    #   # install_hexo=0
+    #   install_alist=1
+    #   ;;
     hexo)
       install_hexo=1
       # install_alist=0
@@ -335,7 +335,7 @@ userinput_full() {
       install_docker=1
       install_nextcloud=1
       install_freenom=0
-      # install_redis=1
+      install_alist=1
       ;;
     qbt)
       check_tracker="on"
@@ -355,11 +355,11 @@ userinput_full() {
       check_rclone="on"
       install_rclone=1
       ;;
-    speed)
-      check_speed="on"
-      install_speedtest=1
-      install_php=1
-      ;;
+    # speed)
+    #   check_speed="on"
+    #   install_speedtest=1
+    #   install_php=1
+    #   ;;
     fail2ban)
       check_fail2ban="on"
       install_fail2ban=1

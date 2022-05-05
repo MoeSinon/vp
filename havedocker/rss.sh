@@ -45,14 +45,17 @@ else
   echo "CREATE DATABASE IF NOT EXISTS nextcloud;" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
   echo "CREATE DATABASE IF NOT EXISTS netdata;" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
   echo "CREATE DATABASE IF NOT EXISTS roundcubemail;" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
+  echo "CREATE DATABASE IF NOT EXISTS typecho;" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
   echo "CREATE USER IF NOT EXISTS 'nextcloud'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
   echo "CREATE USER IF NOT EXISTS 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
   echo "CREATE USER IF NOT EXISTS 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
   echo "CREATE USER IF NOT EXISTS 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
+  echo "CREATE USER IF NOT EXISTS 'typecho'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
   echo "GRANT ALL PRIVILEGES ON *.* TO 'nextcloud'@'localhost';" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
   echo "GRANT ALL PRIVILEGES ON *.* TO 'netdata'@'localhost';" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
   echo "GRANT ALL PRIVILEGES ON *.* TO 'trojan'@'localhost';" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
   echo "GRANT ALL PRIVILEGES ON *.* TO 'roundcube'@'localhost';" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'typecho'@'localhost';" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
   echo "FLUSH PRIVILEGES;" >>/usr/share/nginx/miniflux/mariadbinit/init.sql
   chmod 777 /usr/share/nginx/miniflux/mariadbinit/init.sql
 fi
@@ -144,7 +147,7 @@ services:
       start_period: 30s
 
   nextcloud:
-    image: nextcloud:apache
+    image: nextcloud:latest
     container_name: nextcloud
     restart: always
     depends_on:
@@ -154,12 +157,11 @@ services:
       - REDIS_HOST=redis
       - UID=1000
       - GID=1000
-      - UPLOAD_MAX_SIZE=10G
-      - APC_SHM_SIZE=128M
-      - OPCACHE_MEM_SIZE=128
-      - CRON_PERIOD=15m
+      - PHP_UPLOAD_LIMIT=10G
+      - NEXTCLOUD_TRUSTED_DOMAINS='localhost' '192.168.0.0'
       - TZ=Aisa/Shanghai
-      - DOMAIN=https://${domain}
+      - OVERWRITEPROTOCOL='https'
+      # - DOMAIN=https://${domain}
       - DB_TYPE=mysql
       - DB_NAME=nextcloud
       - DB_USER=nextcloud
@@ -170,10 +172,10 @@ services:
     ports:
       - 12222:80
     volumes:
-      - nextcloud:/var/www/html
-      # - "/nextcloud/config/config.php:/var/www/html/data"
-      # - "/usr/share/nginx/nextcloud/config:/var/www/html/config" 
-      #- "/usr/share/miniflux/nginx/nextcloud/apps:/var/www/html/custom_apps"
+      # - nextcloud:/var/www/html
+      - "/nextcloud/data:/var/www/html/data"
+      - "/nextcloud/config:/var/www/html/config" 
+      - "/nextcloud/apps:/var/www/html/custom_apps"
 
   db:
     image: mariadb:latest
@@ -191,19 +193,33 @@ services:
       # - MYSQL_USER=nextcloud
       # - MYSQL_PASSWORD="${password1}"
       - TZ="Asia/Shanghai"
-    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--default-storage-engine=innodb','--max-connections=1000','--max-connections=1000']
+    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--default-storage-engine=innodb','--max-connections=1000','--max-connections=1000','--binlog-format=ROW']
     healthcheck:
       test: ["CMD-SHELL", 'mysqladmin ping']
       interval: 20s
       start_period: 10s
       timeout: 10s
       retries: 3
-volumes:
-  nextcloud:
+
+  alist:
+    image: xhofe/alist:v2
+    container_name: alist
+    restart: always
+    # environment:
+    #   - PUID=1000
+    #   - PGID=1000    
+    ports:
+      - 5244:5244
+    volumes:
+      - /alist:/opt/alist/data
+# volumes:
+#   nextcloud:
 EOF
   sed -i "s/adminadmin/${password1}/g" docker-compose.yml
   docker-compose build --pull
   docker-compose up -d
+  sleep 10
+  docker logs alist
   # usermod -a -G redis www-data
   # mysql -u root -e "CREATE DATABASE nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
   # mysql -u root -e "create user 'nextcloud'@'localhost' IDENTIFIED BY '${password1}';"
