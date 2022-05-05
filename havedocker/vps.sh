@@ -601,7 +601,7 @@ MasterMenu() {
       echo ");" >>./dockercontainer/nextcloud/config.php
       chmod 777 ./dockercontainer/nextcloud/config.php
     fi
-    docker cp ./dockercontainer/nextcloud/config.php nextcloud:/config/config.php
+    docker cp ./dockercontainer/nextcloud/config.php nextcloud:/var/www/html/config/config.php
     systemctl start docker.service
     ## 输出结果
     echo "nameserver 1.1.1.1" >/etc/resolv.conf
