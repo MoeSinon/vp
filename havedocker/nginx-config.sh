@@ -110,7 +110,7 @@ EOF
         proxy_set_header X-Forwarded-Proto \$scheme;
         proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection upgrade;
-        proxy_pass http://127.0.0.1:12222/nextcloud/; 
+        proxy_pass http://127.0.0.1:12222/; 
         expires 1m;
 
         # location = /nextcloud/ {
