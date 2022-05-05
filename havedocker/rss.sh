@@ -7,6 +7,7 @@ set +e
 cd /usr/share/nginx/
 mkdir miniflux
 cd /usr/share/nginx/miniflux
+mkdir mariadbinit
 mkdir redis
 wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /usr/share/nginx/miniflux/redis/
 sed -i "s/appendonly no/appendonly yes/g" /usr/share/nginx/miniflux/redis/redis.conf
@@ -18,35 +19,37 @@ else
   echo "unixsocketperm 777" >>/usr/share/nginx/miniflux/redis/redis.conf
   echo "redis写入执行完毕"
 fi
-if [[ -f /usr/share/nginx/miniflux/kk.sql ]]; then
+if [[ -f /mariadbinit/init.sql ]]; then
   echo "mariadb服务器配置文件已经存在，正在跳过，执行安装"
 else
-  touch /usr/share/nginx/miniflux/kk.sql
-  # echo "mysql -u root" >/usr/share/nginx/miniflux/kk.sql
-  # # echo "CREATE DATABASE trojan CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >/usr/share/nginx/miniflux/kk.sql
-  # echo "CREATE DATABASE netdata CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/usr/share/nginx/miniflux/kk.sql
-  # # echo "CREATE DATABASE roundcubemail CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/usr/share/nginx/miniflux/kk.sql
-  # echo "CREATE USER 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
-  # # echo "CREATE USER 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
-  # # echo "CREATE USER 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
-  # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'netdata'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
-  # # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'trojan'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
-  # # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'roundcube'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
-  # echo "FLUSH PRIVILEGES;" >>/usr/share/nginx/miniflux/kk.sql
+  touch /mariadbinit/init.sql
+  chmod 777 /mariadbinit/init.sql
+  # echo "mysql -u root" >/mariadbinit/init.sql
+  # # echo "CREATE DATABASE trojan CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >/mariadbinit/init.sql
+  # echo "CREATE DATABASE netdata CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/mariadbinit/init.sql
+  # # echo "CREATE DATABASE roundcubemail CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >>/mariadbinit/init.sql
+  # echo "CREATE USER 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/mariadbinit/init.sql
+  # # echo "CREATE USER 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/mariadbinit/init.sql
+  # # echo "CREATE USER 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/mariadbinit/init.sql
+  # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'netdata'@'localhost';" >>/mariadbinit/init.sql
+  # # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'trojan'@'localhost';" >>/mariadbinit/init.sql
+  # # echo "GRANT CREATE, ALTER, INDEX, LOCK TABLES, REFERENCES, UPDATE, DELETE, DROP, SELECT, INSERT ON *.* TO 'roundcube'@'localhost';" >>/mariadbinit/init.sql
+  # echo "FLUSH PRIVILEGES;" >>/mariadbinit/init.sql
 
-  echo "CREATE DATABASE IF NOT EXISTS trojan;" >/usr/share/nginx/miniflux/kk.sql
-  echo "CREATE DATABASE IF NOT EXISTS nextcloud;" >>/usr/share/nginx/miniflux/kk.sql
-  echo "CREATE DATABASE IF NOT EXISTS netdata;" >>/usr/share/nginx/miniflux/kk.sql
-  echo "CREATE DATABASE IF NOT EXISTS roundcubemail;" >>/usr/share/nginx/miniflux/kk.sql
-  echo "CREATE USER IF NOT EXISTS 'nextcloud'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
-  echo "CREATE USER IF NOT EXISTS 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
-  echo "CREATE USER IF NOT EXISTS 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
-  echo "CREATE USER IF NOT EXISTS 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/share/nginx/miniflux/kk.sql
-  echo "GRANT ALL PRIVILEGES ON *.* TO 'nextcloud'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
-  echo "GRANT ALL PRIVILEGES ON *.* TO 'netdata'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
-  echo "GRANT ALL PRIVILEGES ON *.* TO 'trojan'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
-  echo "GRANT ALL PRIVILEGES ON *.* TO 'roundcube'@'localhost';" >>/usr/share/nginx/miniflux/kk.sql
-  echo "FLUSH PRIVILEGES;" >>/usr/share/nginx/miniflux/kk.sql
+  echo "CREATE DATABASE IF NOT EXISTS trojan;" >/mariadbinit/init.sql
+  echo "CREATE DATABASE IF NOT EXISTS nextcloud;" >>/mariadbinit/init.sql
+  echo "CREATE DATABASE IF NOT EXISTS netdata;" >>/mariadbinit/init.sql
+  echo "CREATE DATABASE IF NOT EXISTS roundcubemail;" >>/mariadbinit/init.sql
+  echo "CREATE USER IF NOT EXISTS 'nextcloud'@'localhost' IDENTIFIED BY '${password1}';" >>/mariadbinit/init.sql
+  echo "CREATE USER IF NOT EXISTS 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/mariadbinit/init.sql
+  echo "CREATE USER IF NOT EXISTS 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/mariadbinit/init.sql
+  echo "CREATE USER IF NOT EXISTS 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/mariadbinit/init.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'nextcloud'@'localhost';" >>/mariadbinit/init.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'netdata'@'localhost';" >>/mariadbinit/init.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'trojan'@'localhost';" >>/mariadbinit/init.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'roundcube'@'localhost';" >>/mariadbinit/init.sql
+  echo "FLUSH PRIVILEGES;" >>/mariadbinit/init.sql
+  chmod 777 /mariadbinit/init.sql
 fi
 
 install_rss() {
@@ -103,12 +106,12 @@ services:
       - "8280:8080"
     depends_on:
       - postgresqldb
-    # volumes:
-    #   - /miniflux-data/db_socket:/socket/postgresql
+    volumes:
+      - /miniflux-data/miniflux_socket:/socket/postgresql
     environment:
     #新版不建议在套接字中指定主机
       - TZ=Aisa/Shanghai
-      - DATABASE_URL=user=miniflux password=adminadmin dbname=miniflux sslmode=disable host=miniflux_socket
+      - DATABASE_URL=user=miniflux password=adminadmin dbname=miniflux sslmode=disable host=/socket/postgresql port=5432
       - BASE_URL=https://${domain}/miniflux/
       - RUN_MIGRATIONS=1
       - CREATE_ADMIN=1
@@ -129,7 +132,7 @@ services:
       - POSTGRES_DB=miniflux
     volumes:
       - /miniflux-data/db:/var/lib/postgresql/data
-      - miniflux_socket:/var/run/postgresql
+      - /miniflux-data/miniflux_socket:/var/run/postgresql
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "miniflux" ]
       interval: 10s
@@ -168,20 +171,20 @@ services:
       #- "/usr/share/miniflux/nginx/nextcloud/apps:/var/www/html/custom_apps"
 
   db:
-    image: mariadb:10.5
+    image: mariadb:latest
     container_name: mariadb
     restart: unless-stopped
     volumes:
-      - /mariadb-db:/var/lib/mysql
-      - /kk.sql:/docker-entrypoint-initdb.d/kk.sql
+      - /mariadb:/var/lib/mysql
+      - ./mariadbinit:/docker-entrypoint-initdb.d
       # - /etc/localtime:/etc/localtime
     ports:
       - 3306:3306
     environment:
       - MYSQL_ROOT_PASSWORD="${password1}"
-      - MYSQL_DATABASE=nextcloud
-      - MYSQL_USER=nextcloud
-      - MYSQL_PASSWORD="${password1}"
+      # - MYSQL_DATABASE=init
+      # - MYSQL_USER=nextcloud
+      # - MYSQL_PASSWORD="${password1}"
       - TZ="Asia/Shanghai"
     command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--default-storage-engine=innodb','--max-connections=1000','--max-connections=1000']
     healthcheck:
@@ -190,8 +193,6 @@ services:
       start_period: 10s
       timeout: 10s
       retries: 3
-volumes:      
-  miniflux_socket:
 EOF
   sed -i "s/adminadmin/${password1}/g" docker-compose.yml
   docker-compose build --pull
