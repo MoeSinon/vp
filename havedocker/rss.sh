@@ -158,7 +158,7 @@ services:
       - OPCACHE_MEM_SIZE=128
       - CRON_PERIOD=15m
       - TZ=Aisa/Shanghai
-      - DOMAIN=https://${domain}/nextcloud/
+      # - DOMAIN=https://${domain}
       - DB_TYPE=mysql
       - DB_NAME=nextcloud
       - DB_USER=nextcloud
@@ -169,7 +169,7 @@ services:
     ports:
       - 12222:80
     volumes:
-      - /nextcloud:/var/www/html
+      - nextcloud:/var/www/html
       # - "/nextcloud/config/config.php:/var/www/html/data"
       # - "/usr/share/nginx/nextcloud/config:/var/www/html/config" 
       #- "/usr/share/miniflux/nginx/nextcloud/apps:/var/www/html/custom_apps"
@@ -197,6 +197,8 @@ services:
       start_period: 10s
       timeout: 10s
       retries: 3
+volumes:
+  nextcloud:
 EOF
   sed -i "s/adminadmin/${password1}/g" docker-compose.yml
   docker-compose build --pull

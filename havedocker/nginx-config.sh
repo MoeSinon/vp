@@ -104,58 +104,60 @@ EOF
         add_header X-Robots-Tag                         "none"          always;
         add_header X-XSS-Protection                     "1; mode=block" always;
         #fastcgi_hide_header X-Powered-By;
-        index index.php index.html /nextcloud/index.php\$request_uri;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header Host $http_host;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        # index index.php index.html /nextcloud/index.php\$request_uri;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header Host \$http_host;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection upgrade;
         proxy_pass http://127.0.0.1:12222/nextcloud/; 
         expires 1m;
 
-        location = /nextcloud/ {
-            if ( \$http_user_agent ~ ^DavClnt ) {
-                return 302 /nextcloud/remote.php/webdav/\$is_args\$args;
-            }
-        }
+        # location = /nextcloud/ {
+        #     if ( \$http_user_agent ~ ^DavClnt ) {
+        #         return 302 /nextcloud/remote.php/webdav/\$is_args\$args;
+        #     }
+        # }
 
-        location ~ ^/nextcloud/(?:build|tests|config|lib|3rdparty|templates|data)(?:\$|/)    { return 404; }
-        location ~ ^/nextcloud/(?:\.|autotest|occ|issue|indie|db_|console)                { return 404; }
+        # location ~ ^/nextcloud/(?:build|tests|config|lib|3rdparty|templates|data)(?:\$|/)    { return 404; }
+        # location ~ ^/nextcloud/(?:\.|autotest|occ|issue|indie|db_|console)                { return 404; }
 
-        location ~ \.php(?:\$|/) {
-            fastcgi_split_path_info ^(.+?\.php)(/.*)\$;
-            set \$path_info \$fastcgi_path_info;
+        # location ~ \.php(?:\$|/) {
+        #     fastcgi_split_path_info ^(.+?\.php)(/.*)\$;
+        #     set \$path_info \$fastcgi_path_info;
 
-            try_files \$fastcgi_script_name =404;
+        #     try_files \$fastcgi_script_name =404;
 
-            include fastcgi_params;
-            fastcgi_param SCRIPT_FILENAME \$request_filename;
-            fastcgi_param PATH_INFO \$path_info;
-            fastcgi_param HTTPS on;
+        #     include fastcgi_params;
+        #     fastcgi_param SCRIPT_FILENAME \$request_filename;
+        #     fastcgi_param PATH_INFO \$path_info;
+        #     fastcgi_param HTTPS on;
 
-            fastcgi_param modHeadersAvailable true;
-            fastcgi_param front_controller_active true;
-            fastcgi_pass unix:/run/php/php8.0-fpm.sock;
+        #     fastcgi_param modHeadersAvailable true;
+        #     fastcgi_param front_controller_active true;
+        #     fastcgi_pass unix:/run/php/php8.0-fpm.sock;
 
-            fastcgi_intercept_errors on;
-            fastcgi_request_buffering off;
-            fastcgi_read_timeout 600s;
-        }
+        #     fastcgi_intercept_errors on;
+        #     fastcgi_request_buffering off;
+        #     fastcgi_read_timeout 600s;
+        # }
 
-        location ~ \.(?:css|js|svg|gif)\$ {
-            try_files \$uri /nextcloud/index.php\$request_uri;
-            expires 6M;
-            access_log off;
-        }
+    #     location ~ \.(?:css|js|svg|gif)\$ {
+    #         try_files \$uri /nextcloud/index.php\$request_uri;
+    #         expires 6M;
+    #         access_log off;
+    #     }
 
-        location ~ \.woff2?\$ {
-            try_files \$uri /nextcloud/index.php\$request_uri;
-            expires 7d;
-            access_log off;
-        }
+    #     location ~ \.woff2?\$ {
+    #         try_files \$uri /nextcloud/index.php\$request_uri;
+    #         expires 7d;
+    #         access_log off;
+    #     }
 
-        location /nextcloud/ {
-            try_files \$uri \$uri/ /nextcloud/index.php\$request_uri;
-        }
-    }
+    #     location /nextcloud/ {
+    #         try_files \$uri \$uri/ /nextcloud/index.php\$request_uri;
+    #     }
+    # }
 EOF
     fi
     if [[ $install_grpc == 1 ]]; then
