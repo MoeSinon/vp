@@ -582,28 +582,28 @@ MasterMenu() {
     clean_env
     # 初始化Nextcloud
     curl 127.0.0.1:12222
-    sleep 10s
-    if [[ ${install_nextcloud} == 1 ]] && [[ -f ./usr/share/nginx/miniflux/nextcloud/config/config.php ]]; then
+    # sleep 10s
+    # if [[ ${install_nextcloud} == 1 ]] && [[ -f ./usr/share/nginx/miniflux/nextcloud/config/config.php ]]; then
 
-      ## Delete last line
-      # mkdir -p ./dockercontainer/nextcloud
-      # docker cp nextcloud:/var/www/html/config/config.php ./dockercontainer/nextcloud
-      # systemctl stop docker.service
-      sed -i '$d' ./usr/share/nginx/miniflux/nextcloud/config/config.php
-      echo "  'default_phone_region' => 'CN'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-      # echo "  'trusted_domains' =>" >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-      # echo "  array (" >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-      # echo "    0 => '127.0.0.1'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-      # echo "    1 => 'xx.xx.com'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-      # echo "    2 => 'www.xx.xx.com'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-      # echo "    3 => 'www.xx.xx:12222'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-      # echo "  )," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-      # echo "  'forcessl' => true," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-      echo "  'overwriteprotocol' => 'https'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-      echo ");" >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-      chmod 777 ./usr/share/nginx/miniflux/nextcloud/config/config.php
-      echo "修改完毕"
-    fi
+    ## Delete last line
+    # mkdir -p ./dockercontainer/nextcloud
+    # docker cp nextcloud:/var/www/html/config/config.php ./dockercontainer/nextcloud
+    # systemctl stop docker.service
+    # sed -i '$d' ./usr/share/nginx/miniflux/nextcloud/config/config.php
+    # echo "  'default_phone_region' => 'CN'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+    # echo "  'trusted_domains' =>" >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+    # echo "  array (" >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+    # echo "    0 => '127.0.0.1'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+    # echo "    1 => 'xx.xx.com'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+    # echo "    2 => 'www.xx.xx.com'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+    # echo "    3 => 'www.xx.xx:12222'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+    # echo "  )," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+    # echo "  'forcessl' => true," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+    # echo "  'overwriteprotocol' => 'https'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+    # echo ");" >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+    # chmod 777 ./usr/share/nginx/miniflux/nextcloud/config/config.php
+    # echo "修改完毕"
+    # fi
     # docker cp ./usr/share/nginx/miniflux/nextcloud/config/config.php nextcloud:/var/www/html/config/config.php
     # systemctl start docker.service
 
