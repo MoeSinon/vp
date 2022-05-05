@@ -12,7 +12,7 @@ if [[ -f /usr/share/nginx/miniflux/redis/redis.conf ]]; then
 else
   cd /usr/share/nginx/miniflux/
   mkdir redis
-  wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /usr/share/nginx/miniflux/redis/
+  wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /usr/share/nginx/miniflux/redis
   sed -i "s/appendonly no/appendonly yes/g" /usr/share/nginx/miniflux/redis/redis.conf
   if grep -q "unixsocket /var/run/redis/redis.sock" /usr/share/nginx/miniflux/redis/redis.conf; then
     :
