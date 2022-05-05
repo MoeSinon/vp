@@ -6,22 +6,27 @@ set +e
 
 cd /usr/share/nginx/
 mkdir miniflux
-cd /usr/share/nginx/miniflux
-mkdir mariadbinit
-mkdir redis
-wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /usr/share/nginx/miniflux/redis/
-sed -i "s/appendonly no/appendonly yes/g" /usr/share/nginx/miniflux/redis/redis.conf
-if grep -q "unixsocket /var/run/redis/redis.sock" /usr/share/nginx/miniflux/redis/redis.conf; then
-  :
+
+if [[ -f /usr/share/nginx/miniflux/redis/redis.conf ]]; then
+  echo "redis已存在并写入执行完毕"
 else
-  echo "" >>/usr/share/nginx/miniflux/redis/redis.conf
-  echo "unixsocket /var/run/redis/redis.sock" >>/usr/share/nginx/miniflux/redis/redis.conf
-  echo "unixsocketperm 777" >>/usr/share/nginx/miniflux/redis/redis.conf
-  echo "redis写入执行完毕"
+  mkdir redis
+  wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /usr/share/nginx/miniflux/redis/
+  sed -i "s/appendonly no/appendonly yes/g" /usr/share/nginx/miniflux/redis/redis.conf
+  if grep -q "unixsocket /var/run/redis/redis.sock" /usr/share/nginx/miniflux/redis/redis.conf; then
+    :
+  else
+    echo "" >>/usr/share/nginx/miniflux/redis/redis.conf
+    echo "unixsocket /var/run/redis/redis.sock" >>/usr/share/nginx/miniflux/redis/redis.conf
+    echo "unixsocketperm 777" >>/usr/share/nginx/miniflux/redis/redis.conf
+    echo "redis写入执行完毕"
+  fi
 fi
+
 if [[ -f /usr/share/nginx/miniflux/mariadbinit/init.sql ]]; then
   echo "mariadb服务器配置文件已经存在，正在跳过，执行安装"
 else
+  mkdir mariadbinit
   touch /usr/share/nginx/miniflux/mariadbinit/init.sql
   # echo "mysql -u root" >/mariadbinit/init.sql
   # # echo "CREATE DATABASE trojan CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >/mariadbinit/init.sql
