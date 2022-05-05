@@ -10,6 +10,7 @@ mkdir miniflux
 if [[ -f /usr/share/nginx/miniflux/redis/redis.conf ]]; then
   echo "redis已存在并写入执行完毕"
 else
+  cd /usr/share/nginx/miniflux/
   mkdir redis
   wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /usr/share/nginx/miniflux/redis/
   sed -i "s/appendonly no/appendonly yes/g" /usr/share/nginx/miniflux/redis/redis.conf
