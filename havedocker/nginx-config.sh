@@ -157,7 +157,7 @@ EOF
     #     location /nextcloud/ {
     #         try_files \$uri \$uri/ /nextcloud/index.php\$request_uri;
     #     }
-    # }
+    }
 EOF
     fi
     if [[ $install_grpc == 1 ]]; then

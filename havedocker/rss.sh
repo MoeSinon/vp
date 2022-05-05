@@ -159,7 +159,7 @@ services:
       - OPCACHE_MEM_SIZE=128
       - CRON_PERIOD=15m
       - TZ=Aisa/Shanghai
-      # - DOMAIN=https://${domain}
+      - DOMAIN=https://${domain}
       - DB_TYPE=mysql
       - DB_NAME=nextcloud
       - DB_USER=nextcloud

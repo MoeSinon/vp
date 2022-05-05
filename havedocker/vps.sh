@@ -285,7 +285,9 @@ install_initial() {
 install_base() {
   set +e
   TERM=ansi whiptail --title "安装中" --infobox "安装基础软件中..." 7 68
-  apt upgrade -y
+  if [[ ${install_alist} == 1 ]]; then
+    apt upgrade -y
+  fi
   colorEcho ${INFO} "Installing all necessary Software"
   apt-get install sudo socat git curl xz-utils wget apt-transport-https gnupg lsb-release unzip resolvconf ntpdate systemd dbus ca-certificates locales iptables software-properties-common cron e2fsprogs less neofetch npm -y #libcap2-bin
   sh -c 'echo "y\n\ny\ny\n" | DEBIAN_FRONTEND=noninteractive apt-get install ntp -q -y'
