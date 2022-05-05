@@ -67,7 +67,7 @@ EOF
     if [[ $install_alist == 1 ]]; then
         echo "  location /alist/ {" >>/etc/nginx/conf.d/default.conf
         echo "    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" >>/etc/nginx/conf.d/default.conf
-        echo "    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" >>/etc/nginx/conf.d/default.conf
+        # echo "    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" >>/etc/nginx/conf.d/default.conf
         echo "    proxy_redirect off;" >>/etc/nginx/conf.d/default.conf
         echo "    client_max_body_size 20000m;" >>/etc/nginx/conf.d/default.conf
         echo "    proxy_set_header X-Forwarded-Host \$http_host;" >>/etc/nginx/conf.d/default.conf
@@ -92,8 +92,8 @@ EOF
 
     location ^~ /nextcloud/ {
         # root /usr/share/nginx/;
-        client_body_temp_path /usr/share/nginx/tmp/ 1 2;
-        client_max_body_size 0;
+        # client_body_temp_path /usr/share/nginx/tmp/ 1 2;
+        # client_max_body_size 0;
         fastcgi_buffers 64 4K;
         add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload;" always;
         add_header Referrer-Policy                      "no-referrer"   always;

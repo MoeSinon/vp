@@ -155,13 +155,13 @@ services:
       - redis
     environment:
       - REDIS_HOST=redis
-      - UID=1000
-      - GID=1000
+      - PUID=1000
+      - PGID=1000
       - PHP_UPLOAD_LIMIT=10G
       - NEXTCLOUD_TRUSTED_DOMAINS='localhost' '192.168.0.0'
       - TZ=Aisa/Shanghai
       - OVERWRITEPROTOCOL='https'
-      # - DOMAIN=https://${domain}
+      # - DOMAIN=https://${domain}/
       - DB_TYPE=mysql
       - DB_NAME=nextcloud
       - DB_USER=nextcloud
@@ -173,16 +173,16 @@ services:
       - 12222:80
     volumes:
       # - nextcloud:/var/www/html
-      - "/nextcloud/data:/var/www/html/data"
-      - "/nextcloud/config:/var/www/html/config" 
-      - "/nextcloud/apps:/var/www/html/custom_apps"
+      - "/usr/share/nginx/miniflux/nextcloud/data:/var/www/html/data"
+      - "/usr/share/nginx/miniflux/nextcloud/config:/var/www/html/config" 
+      - "/usr/share/nginx/miniflux/nextcloud/apps:/var/www/html/custom_apps"
 
   db:
     image: mariadb:latest
     container_name: mariadb
     restart: unless-stopped
     volumes:
-      - /mariadb:/var/lib/mysql
+      - /usr/share/nginx/miniflux/mariadb:/var/lib/mysql
       - /usr/share/nginx/miniflux/mariadbinit:/docker-entrypoint-initdb.d
       # - /etc/localtime:/etc/localtime
     ports:
@@ -211,7 +211,7 @@ services:
     ports:
       - 5244:5244
     volumes:
-      - /alist:/opt/alist/data
+      - /usr/share/nginx/miniflux/alist:/opt/alist/data
 # volumes:
 #   nextcloud:
 EOF
@@ -220,6 +220,12 @@ EOF
   docker-compose up -d
   sleep 10
   docker logs alist
+  chmod 777 ./usr/share/nginx/miniflux/nextcloud/data
+  chmod 777 ./usr/share/nginx/miniflux/nextcloud/config
+  chmod 777 ./usr/share/nginx/miniflux/nextcloud/apps
+  chmod 777 ./usr/share/nginx/miniflux/mariadb
+  chmod 777 ./usr/share/nginx/miniflux/alist
+
   # usermod -a -G redis www-data
   # mysql -u root -e "CREATE DATABASE nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
   # mysql -u root -e "create user 'nextcloud'@'localhost' IDENTIFIED BY '${password1}';"
