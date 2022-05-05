@@ -591,7 +591,7 @@ MasterMenu() {
       # systemctl stop docker.service
       sed -i '$d' ./usr/share/nginx/miniflux/nextcloud/config/config.php
       echo "  'default_phone_region' => 'CN'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-      echo "  'trusted_domains' =>" >>./usr/share/nginx/miniflux/nextcloud/config/config.php
+      # echo "  'trusted_domains' =>" >>./usr/share/nginx/miniflux/nextcloud/config/config.php
       # echo "  array (" >>./usr/share/nginx/miniflux/nextcloud/config/config.php
       # echo "    0 => '127.0.0.1'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
       # echo "    1 => 'xx.xx.com'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
