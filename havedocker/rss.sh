@@ -211,7 +211,7 @@ services:
     ports:
       - 5244:5244
     volumes:
-      - /usr/share/nginx/alist:/opt/alist/
+      - /usr/share/nginx/alist:/opt/alist/config
 # volumes:
 #   nextcloud:
 EOF
