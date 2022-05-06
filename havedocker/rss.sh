@@ -155,8 +155,8 @@ services:
       - redis
     environment:
       - REDIS_HOST=redis
-      - PUID=1000
-      - PGID=1000
+      # - PUID=1000
+      # - PGID=1000
       - PHP_UPLOAD_LIMIT=10G
       - NEXTCLOUD_TRUSTED_DOMAINS='localhost' '192.168.0.0'
       - TZ=Aisa/Shanghai
@@ -211,7 +211,7 @@ services:
     ports:
       - 5244:5244
     volumes:
-      - /usr/share/nginx/alist:/opt/alist
+      - /usr/share/nginx/alist:/opt/alist/data
 # volumes:
 #   nextcloud:
 EOF
