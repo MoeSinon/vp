@@ -202,7 +202,7 @@ services:
       retries: 3
 
   alist:
-    image: xhofe/alist:v2
+    image: xhofe/alist:latest
     container_name: alist
     restart: always
     # environment:
@@ -220,11 +220,11 @@ EOF
   docker-compose up -d
   sleep 10
   docker logs alist
-  chmod 777 ./usr/share/nginx/nextcloud
+  chmod 777 /usr/share/nginx/nextcloud
   # chmod 777 ./usr/share/nginx/miniflux/nextcloud/config
   # chmod 777 ./usr/share/nginx/miniflux/nextcloud/apps
-  chmod 777 ./usr/share/nginx/miniflux/mariadb
-  chmod 777 ./usr/share/nginx/alist
+  chmod 777 /usr/share/nginx/miniflux/mariadb
+  chmod 777 /usr/share/nginx/alist
 
   # usermod -a -G redis www-data
   # mysql -u root -e "CREATE DATABASE nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
