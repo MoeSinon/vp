@@ -159,7 +159,7 @@ services:
       # - UID=1000
       # - GID=1000
       - PHP_UPLOAD_LIMIT=10G
-      - NEXTCLOUD_TRUSTED_DOMAINS='localhost' '192.168.0.0' '172.18.0.1'
+      - NEXTCLOUD_TRUSTED_DOMAINS='localhost' '172.18.0.9' '172.18.0.0'
       - TZ=Aisa/Shanghai
       - OVERWRITEPROTOCOL='https'
       # - DOMAIN=https://${domain}/
