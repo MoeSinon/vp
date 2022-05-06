@@ -172,10 +172,10 @@ services:
     ports:
       - 12222:80
     volumes:
-      # - nextcloud:/var/www/html
-      - "/usr/share/nginx/miniflux/nextcloud/data:/var/www/html/data"
-      - "/usr/share/nginx/miniflux/nextcloud/config:/var/www/html/config" 
-      - "/usr/share/nginx/miniflux/nextcloud/apps:/var/www/html/custom_apps"
+      - /usr/share/nginx/nextcloud:/var/www/html
+      # - "/usr/share/nginx/miniflux/nextcloud/data:/var/www/html/data"
+      # - "/usr/share/nginx/miniflux/nextcloud/config:/var/www/html/config" 
+      # - "/usr/share/nginx/miniflux/nextcloud/apps:/var/www/html/custom_apps"
 
   db:
     image: mariadb:latest
@@ -211,7 +211,7 @@ services:
     ports:
       - 5244:5244
     volumes:
-      - /usr/share/nginx/miniflux/alist:/opt/alist/data
+      - /usr/share/nginx/alist:/opt/alist
 # volumes:
 #   nextcloud:
 EOF
@@ -220,11 +220,11 @@ EOF
   docker-compose up -d
   sleep 10
   docker logs alist
-  chmod 777 ./usr/share/nginx/miniflux/nextcloud/data
-  chmod 777 ./usr/share/nginx/miniflux/nextcloud/config
-  chmod 777 ./usr/share/nginx/miniflux/nextcloud/apps
+  chmod 777 ./usr/share/nginx/nextcloud
+  # chmod 777 ./usr/share/nginx/miniflux/nextcloud/config
+  # chmod 777 ./usr/share/nginx/miniflux/nextcloud/apps
   chmod 777 ./usr/share/nginx/miniflux/mariadb
-  chmod 777 ./usr/share/nginx/miniflux/alist
+  chmod 777 ./usr/share/nginx/alist
 
   # usermod -a -G redis www-data
   # mysql -u root -e "CREATE DATABASE nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
