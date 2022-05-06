@@ -150,15 +150,16 @@ services:
     image: nextcloud:latest
     container_name: nextcloud
     restart: always
+    user: "1000:1000"
     depends_on:
       - db
       - redis
     environment:
       - REDIS_HOST=redis
-      # - PUID=1000
-      # - PGID=1000
+      # - UID=1000
+      # - GID=1000
       - PHP_UPLOAD_LIMIT=10G
-      - NEXTCLOUD_TRUSTED_DOMAINS='localhost' '192.168.0.0'
+      - NEXTCLOUD_TRUSTED_DOMAINS='localhost' '192.168.0.0' '172.18.0.1'
       - TZ=Aisa/Shanghai
       - OVERWRITEPROTOCOL='https'
       # - DOMAIN=https://${domain}/
@@ -205,6 +206,7 @@ services:
     image: xhofe/alist:v2
     container_name: alist
     restart: always
+    user: "1000:1000"
     # environment:
     #   - PUID=1000
     #   - PGID=1000    

@@ -57,6 +57,26 @@ server {
     }
 EOF
 
+    # if [[ $install_hexo == 1 ]]; then
+    #     echo "  location / {" >>/etc/nginx/conf.d/default.conf
+    #     echo "    #proxy_pass http://127.0.0.1:4000/; # Hexo server" >>/etc/nginx/conf.d/default.conf
+    #     echo "    root /usr/share/nginx/hexo/public/; # Hexo public content" >>/etc/nginx/conf.d/default.conf
+    #     echo "    #error_page 404  /404.html;" >>/etc/nginx/conf.d/default.conf
+    #     echo "  }" >>/etc/nginx/conf.d/default.conf
+    # fi
+    # if [[ $install_alist == 1 ]]; then
+    #     echo "  location /alist/ {" >>/etc/nginx/conf.d/default.conf
+    #     echo "    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" >>/etc/nginx/conf.d/default.conf
+    #     # echo "    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" >>/etc/nginx/conf.d/default.conf
+    #     echo "    proxy_redirect off;" >>/etc/nginx/conf.d/default.conf
+    #     echo "    client_max_body_size 20000m;" >>/etc/nginx/conf.d/default.conf
+    #     echo "    proxy_set_header X-Forwarded-Host \$http_host;" >>/etc/nginx/conf.d/default.conf
+    #     echo "    proxy_set_header Upgrade \$http_upgrade;" >>/etc/nginx/conf.d/default.conf
+    #     echo "    proxy_set_header X-Real-IP \$remote_addr;" >>/etc/nginx/conf.d/default.conf
+    #     echo "    proxy_set_header If-Range \$http_if_range;" >>/etc/nginx/conf.d/default.conf
+    #     echo "    proxy_pass http://127.0.0.1:5244/;" >>/etc/nginx/conf.d/default.conf
+    #     echo "  }" >>/etc/nginx/conf.d/default.conf
+    # fi
     if [[ $install_hexo == 1 ]]; then
         echo "  location / {" >>/etc/nginx/conf.d/default.conf
         echo "    #proxy_pass http://127.0.0.1:4000/; # Hexo server" >>/etc/nginx/conf.d/default.conf
@@ -65,19 +85,13 @@ EOF
         echo "  }" >>/etc/nginx/conf.d/default.conf
     fi
     if [[ $install_alist == 1 ]]; then
-        echo "  location /alist/ {" >>/etc/nginx/conf.d/default.conf
-        echo "    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" >>/etc/nginx/conf.d/default.conf
-        # echo "    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" >>/etc/nginx/conf.d/default.conf
-        echo "    proxy_redirect off;" >>/etc/nginx/conf.d/default.conf
-        echo "    client_max_body_size 20000m;" >>/etc/nginx/conf.d/default.conf
-        echo "    proxy_set_header X-Forwarded-Host \$http_host;" >>/etc/nginx/conf.d/default.conf
-        echo "    proxy_set_header Upgrade \$http_upgrade;" >>/etc/nginx/conf.d/default.conf
-        echo "    proxy_set_header X-Real-IP \$remote_addr;" >>/etc/nginx/conf.d/default.conf
-        echo "    proxy_set_header If-Range \$http_if_range;" >>/etc/nginx/conf.d/default.conf
+        echo "  location / {" >>/etc/nginx/conf.d/default.conf
+        echo "    #access_log off;" >>/etc/nginx/conf.d/default.conf
+        echo "    client_max_body_size 0;" >>/etc/nginx/conf.d/default.conf
+        echo "    proxy_set_header X-Forwarded-Proto https;" >>/etc/nginx/conf.d/default.conf
         echo "    proxy_pass http://127.0.0.1:5244/;" >>/etc/nginx/conf.d/default.conf
         echo "  }" >>/etc/nginx/conf.d/default.conf
     fi
-
     if [[ $install_rss == 1 ]]; then
         echo "    include /etc/nginx/conf.d/nextcloud.conf;" >>/etc/nginx/conf.d/default.conf
         touch /etc/nginx/conf.d/nextcloud.conf
@@ -119,8 +133,8 @@ EOF
         #     }
         # }
 
-        # location ~ ^/nextcloud/(?:build|tests|config|lib|3rdparty|templates|data)(?:\$|/)    { return 404; }
-        # location ~ ^/nextcloud/(?:\.|autotest|occ|issue|indie|db_|console)                { return 404; }
+        location ~ ^/nextcloud/(?:build|tests|config|lib|3rdparty|templates|data)(?:\$|/)    { return 404; }
+        location ~ ^/nextcloud/(?:\.|autotest|occ|issue|indie|db_|console)                { return 404; }
 
         # location ~ \.php(?:\$|/) {
         #     fastcgi_split_path_info ^(.+?\.php)(/.*)\$;
@@ -142,21 +156,21 @@ EOF
         #     fastcgi_read_timeout 600s;
         # }
 
-    #     location ~ \.(?:css|js|svg|gif)\$ {
-    #         try_files \$uri /nextcloud/index.php\$request_uri;
-    #         expires 6M;
-    #         access_log off;
-    #     }
+        location ~ \.(?:css|js|svg|gif)\$ {
+            try_files \$uri /nextcloud/index.php\$request_uri;
+            expires 6M;
+            access_log off;
+        }
 
-    #     location ~ \.woff2?\$ {
-    #         try_files \$uri /nextcloud/index.php\$request_uri;
-    #         expires 7d;
-    #         access_log off;
-    #     }
+        location ~ \.woff2?\$ {
+            try_files \$uri /nextcloud/index.php\$request_uri;
+            expires 7d;
+            access_log off;
+        }
 
-    #     location /nextcloud/ {
-    #         try_files \$uri \$uri/ /nextcloud/index.php\$request_uri;
-    #     }
+        # location /nextcloud/ {
+        #     try_files \$uri \$uri/ /nextcloud/index.php\$request_uri;
+        # }
     }
 EOF
     fi
