@@ -13,6 +13,7 @@ if [[ -f /usr/nginx/dockereverything/redis/redis.conf ]]; then
 else
   cd /usr/dockereverything/
   mkdir -p /redis/data
+  sleep 2
   wget https://raw.githubusercontent.com/redis/redis/6.2/redis.conf && mv redis.conf /usr/dockereverything/redis/data
   sed -i "s/appendonly no/appendonly yes/g" /usr/dockereverything/redis/data/redis.conf
   # if grep -q "unixsocket /var/run/redis/redis.sock" /usr/dockereverything/redis/redis.conf; then
@@ -155,7 +156,7 @@ services:
       - DB_TYPE=mysql
       - DB_NAME=nextcloud
       - DB_USER=nextcloud
-      - DB_PASSWORD=nextcloud
+      - DB_PASSWORD=${password1}
       - NEXTCLOUD_ADMIN_USER=admin
       - NEXTCLOUD_ADMIN_PASSWORD=nextcloud
       - DB_HOST=mariadb
@@ -189,7 +190,7 @@ services:
       - MYSQL_ROOT_PASSWORD="${password1}"
       # - MYSQL_DATABASE=init
       # - MYSQL_USER=nextcloud
-      # - MYSQL_PASSWORD="${password1}"
+      - MYSQL_PASSWORD="${password1}"
       - TZ="Asia/Shanghai"
     command: 
       [
@@ -309,12 +310,12 @@ EOF
     TELEGRAM_BOT_TOKEN=$(whiptail --inputbox --nocancel "请輸入你的TELEGRAM_BOT_TOKEN | Please enter your TELEGRAM_BOT_TOKEN" 8 68 --title "TELEGRAM_BOT_TOKEN input" 3>&1 1>&2 2>&3)
   done
   clear
-  cd /usr/dockereverything
-  sed -i "s/FREENOM_USERNAME=''/FREENOM_USERNAME=${idcard}/g" /usr/dockereverything/conf/.env
-  sed -i "s/FREENOM_PASSWORD=''/FREENOM_PASSWORD=${passw}/g" /usr/dockereverything/conf/.env
-  sed -i "s/TELEGRAM_CHAT_ID=''/TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}/g" /usr/dockereverything/conf/.env
-  sed -i "s/TELEGRAM_BOT_TOKEN=''/TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}/g" /usr/dockereverything/conf/.env
-  sed -i "s/TELEGRAM_BOT_ENABLE=0/TELEGRAM_BOT_ENABLE=1/g" /usr/dockereverything/conf/.env
-  sed -i "s/NOTICE_FREQ=1/NOTICE_FREQ=0/g" /usr/dockereverything/conf/.env
+  cd /usr/dockereverything/freenom
+  sed -i "s/FREENOM_USERNAME=''/FREENOM_USERNAME=${idcard}/g" /usr/dockereverything/freenom/conf/.env
+  sed -i "s/FREENOM_PASSWORD=''/FREENOM_PASSWORD=${passw}/g" /usr/dockereverything/freenom/conf/.env
+  sed -i "s/TELEGRAM_CHAT_ID=''/TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}/g" /usr/dockereverything/freenom/conf/.env
+  sed -i "s/TELEGRAM_BOT_TOKEN=''/TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}/g" /usr/dockereverything/freenom/conf/.env
+  sed -i "s/TELEGRAM_BOT_ENABLE=0/TELEGRAM_BOT_ENABLE=1/g" /usr/dockereverything/freenom/conf/.env
+  sed -i "s/NOTICE_FREQ=1/NOTICE_FREQ=0/g" /usr/dockereverything/freenom/conf/.env
   # usermod -a -G redis www-data
 }
