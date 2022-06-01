@@ -338,16 +338,16 @@ MasterMenu() {
     ## 证书签发
     echo "nameserver 1.1.1.1" >/etc/resolv.conf
     echo "nameserver 1.0.0.1" >>/etc/resolv.conf
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/issuecert.sh
-    source issuecert.sh
+    # curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/issuecert.sh
+    # source issuecert.sh
     ## HTTP证书签发
-    if [[ ${httpissue} == 1 ]]; then
-      http_issue
-    fi
+    # if [[ ${httpissue} == 1 ]]; then
+    #   http_issue
+    # fi
     ## DNS API证书签发
-    if [[ ${dnsissue} == 1 ]]; then
-      dns_issue
-    fi
+    # if [[ ${dnsissue} == 1 ]]; then
+    #   dns_issue
+    # fi
     ## 具体软件安装
     install_moudles
     echo "nameserver 1.1.1.1" >/etc/resolv.conf
