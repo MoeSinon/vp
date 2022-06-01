@@ -46,7 +46,7 @@ else
   echo "GRANT ALL PRIVILEGES ON *.* TO 'roundcube'@'localhost';" >>/usr/dockereverything/mariadbinit/init.sql
   echo "GRANT ALL PRIVILEGES ON *.* TO 'npm'@'localhost';" >>/usr/dockereverything/mariadbinit/init.sql
   echo "FLUSH PRIVILEGES;" >>/usr/dockereverything/mariadbinit/init.sql
-  chmod 777 /usr/dockereverything/mariadbinit/init.sql
+  chmod -R 777 /usr/dockereverything/mariadbinit/init.sql
 fi
 
 install_dockereverything() {
