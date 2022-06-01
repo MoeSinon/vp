@@ -27,6 +27,7 @@ fi
 
 if [[ -f /usr/dockereverything/mariadbinit/init.sql ]]; then
   echo "mariadb服务器配置文件已经存在，正在跳过，执行安装"
+  chmod -R 777 /usr/dockereverything/mariadbinit/init.sql
 else
   mkdir mariadbinit
   touch /usr/dockereverything/mariadbinit/init.sql
@@ -250,7 +251,7 @@ services:
       - mariadb
     ports:
       - '80:80'
-      - '81:81'
+      - '8181:81'
       - '443:443'
     environment:
       DB_MYSQL_HOST: "mariadb"
