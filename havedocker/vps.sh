@@ -255,7 +255,7 @@ install_base() {
   #   apt upgrade -y
   # fi
   colorEcho ${INFO} "Installing all necessary Software"
-  apt-get install sudo git curl xz-utils wget apt-transport-https unzip resolvconf ntpdate systemd dbus ca-certificates locales iptables cron -y #libcap2-bin lsb-release
+  apt-get install sudo git curl xz-utils wget apt-transport-https unzip resolvconf ntpdate systemd dbus ca-certificates locales iptables cron socat -y #libcap2-bin lsb-release
   sh -c 'echo "y\n\ny\ny\n" | DEBIAN_FRONTEND=noninteractive apt-get install ntp -q -y'
   clear
 }
