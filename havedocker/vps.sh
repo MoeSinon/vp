@@ -118,29 +118,12 @@ prasejson() {
   "domain": "$domain",
   "password1": "$password1",
   "password2": "$password2",
-  "qbtpath": "$qbtpath",
-  "trackerpath": "$trackerpath",
-  "trackerstatuspath": "$trackerstatuspath",
-  "ariapath": "$ariapath",
-  "ariapasswd": "$ariapasswd",
   "filepath": "$filepath",
   "check_trojan": "$check_trojan",
   "check_dns": "$check_dns",
-  "check_rss": "$check_rss",
-  "check_qbt": "$check_qbt",
-  "check_aria": "$check_aria",
+  "check_dockereverything": "$check_dockereverything",
   "check_file": "$check_file",
-  # "check_speed": "$check_speed",
-  # "check_mariadb": "$check_mariadb",
   "check_fail2ban": "$check_fail2ban",
-  "check_mail": "$check_mail",
-  "check_qbt_origin": "$check_qbt_origin",
-  "check_tracker": "$check_tracker",
-  "check_cloud": "$check_cloud",
-  "check_tor": "$check_tor",
-  "check_ss": "$check_ss",
-  "check_echo": "$check_echo",
-  "check_rclone": "$check_rclone",
   "fastopen": "${fastopen}"
 }
 EOF
@@ -152,30 +135,12 @@ readconfig() {
   trojanport="$(jq -r '.trojanport' "/root/.trojan/config.json")"
   password2="$(jq -r '.password2' "/root/.trojan/config.json")"
   password1="$(jq -r '.password1' "/root/.trojan/config.json")"
-  qbtpath="$(jq -r '.qbtpath' "/root/.trojan/config.json")"
-  trackerpath="$(jq -r '.trackerpath' "/root/.trojan/config.json")"
-  trackerstatuspath="$(jq -r '.username' "/root/.trojan/config.json")"
-  ariapath="$(jq -r '.ariapath' "/root/.trojan/config.json")"
-  ariapasswd="$(jq -r '.ariapasswd' "/root/.trojan/config.json")"
   filepath="$(jq -r '.filepath' "/root/.trojan/config.json")"
   check_trojan="$(jq -r '.check_trojan' "/root/.trojan/config.json")"
   check_dns="$(jq -r '.check_dns' "/root/.trojan/config.json")"
-  check_rss="$(jq -r '.check_rss' "/root/.trojan/config.json")"
-  check_qbt="$(jq -r '.check_qbt' "/root/.trojan/config.json")"
-  check_aria="$(jq -r '.check_aria' "/root/.trojan/config.json")"
+  check_dockereverything="$(jq -r '.check_dockereverything' "/root/.trojan/config.json")"
   check_file="$(jq -r '.check_file' "/root/.trojan/config.json")"
-  # check_speed="$(jq -r '.check_speed' "/root/.trojan/config.json")"
-  # check_mariadb="$(jq -r '.check_mariadb' "/root/.trojan/config.json")"
   check_fail2ban="$(jq -r '.check_fail2ban' "/root/.trojan/config.json")"
-  check_mail="$(jq -r '.check_mail' "/root/.trojan/config.json")"
-  check_qbt_origin="$(jq -r '.check_qbt_origin' "/root/.trojan/config.json")"
-  check_tracker="$(jq -r '.check_tracker' "/root/.trojan/config.json")"
-  check_cloud="$(jq -r '.check_cloud' "/root/.trojan/config.json")"
-  check_tor="$(jq -r '.check_tor' "/root/.trojan/config.json")"
-  check_chat="$(jq -r '.check_chat' "/root/.trojan/config.json")"
-  check_ss="$(jq -r '.check_ss' "/root/.trojan/config.json")"
-  check_echo="$(jq -r '.check_echo' "/root/.trojan/config.json")"
-  check_rclone="$(jq -r '.check_rclone' "/root/.trojan/config.json")"
   fastopen="$(jq -r '.fastopen' "/root/.trojan/config.json")"
 }
 
@@ -206,7 +171,7 @@ clean_env() {
   fi
   cd
   rm -rf /root/*.sh
-  rm -rf /usr/share/nginx/*.sh
+  # rm -rf /usr/share/nginx/*.sh
   clear
 }
 
@@ -224,11 +189,11 @@ initialize() {
       netplan apply
     fi
     apt-get update
-    apt-get install sudo whiptail curl dnsutils locales lsb-release jq -y
+    apt-get install sudo whiptail curl dnsutils locales jq -y #lsb-release
   elif cat /etc/*release | grep ^NAME | grep -q Debian; then
     dist="debian"
     apt-get update
-    apt-get install sudo whiptail curl dnsutils locales lsb-release jq -y
+    apt-get install sudo whiptail curl dnsutils locales jq -y #lsb-release
   else
     whiptail --title "操作系统不支援 OS incompatible" --msgbox "请使用Debian或者Ubuntu运行 Please use Debian or Ubuntu to run" 8 68
     echo "操作系统不支援,请使用Debian或者Ubuntu运行 Please use Debian or Ubuntu."
@@ -286,11 +251,11 @@ install_initial() {
 install_base() {
   set +e
   TERM=ansi whiptail --title "安装中" --infobox "安装基础软件中..." 7 68
-  # if [[ ${install_alist} == 1 ]]; then
+  # if [[ ${install_dockereverything} == 1 ]]; then
   #   apt upgrade -y
   # fi
   colorEcho ${INFO} "Installing all necessary Software"
-  apt-get install sudo git curl xz-utils wget apt-transport-https gnupg lsb-release unzip resolvconf ntpdate systemd dbus ca-certificates locales iptables software-properties-common cron e2fsprogs less neofetch npm -y #libcap2-bin
+  apt-get install sudo git curl xz-utils wget apt-transport-https unzip resolvconf ntpdate systemd dbus ca-certificates locales iptables cron -y #libcap2-bin lsb-release
   sh -c 'echo "y\n\ny\ny\n" | DEBIAN_FRONTEND=noninteractive apt-get install ntp -q -y'
   clear
 }
@@ -305,145 +270,21 @@ install_moudles() {
     source docker.sh
     install_docker
   fi
-  # if [[ ${install_php} == 1 ]]; then
-  #   curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/php.sh
-  #   source php.sh
-  #   install_php
-  # fi
-  # if [[ ${install_mariadb} == 1 ]]; then
-  #   curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/mariadb.sh
-  #   source mariadb.sh
-  #   install_mariadb
-  # fi
-  # if [[ ${install_redis} == 1 ]]; then
-  #   curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/redis.sh
-  #   source redis.sh
-  #   install_redis
-  # fi
-  if [[ ${install_freenom} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/freenom.sh
-    source freenom.sh
-    install_freenom
-  fi
-  # if [[ ${install_mongodb} == 1 ]]; then
-  #   curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/mongodb.sh
-  #   source mongodb.sh
-  #   install_mongodb
-  # fi
   if [[ ${install_grpc} == 1 ]]; then
     curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/grpc.sh
     source grpc.sh
     install_grpc
-  fi
-  if [[ ${install_ss_rust} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/ss-rust.sh
-    source ss-rust.sh
-    install_ss_rust
-  fi
-  if [[ ${install_aria} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/aria2.sh
-    source aria2.sh
-    install_aria2
-  fi
-  if [[ ${install_qbt_o} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/qbt_origin.sh
-    source qbt_origin.sh
-    install_qbt_o
-  fi
-  if [[ ${install_qbt_e} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/qbt.sh
-    source qbt.sh
-    install_qbt_e
-  fi
-  if [[ ${install_jellyfin} == 1 ]]; then
-    # curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/jellyfin.sh
-    #source jellyfin.sh
-    #install_jellyfin
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/emby.sh
-    source emby.sh
-    install_emby
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/sonarr.sh
-    source sonarr.sh
-    install_sonarr
   fi
   if [[ ${install_fail2ban} == 1 ]]; then
     curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/fail2ban.sh
     source fail2ban.sh
     install_fail2ban
   fi
-  if [[ ${install_filebrowser} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/filebrowser.sh
-    source filebrowser.sh
-    install_filebrowser
+  if [[ 1 == 1 ]]; then
+    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/dockereverything.sh
+    source dockereverything.sh
+    install_dockereverything
   fi
-  if [[ ${install_mail} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/mail.sh
-    source mail.sh
-    install_mail
-  fi
-  # if [[ ${install_nextcloud} == 1 ]]; then
-  #   curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/nextcloud.sh
-  #   source nextcloud.sh
-  #   install_nextcloud
-  # fi
-  if [[ ${install_rocketchat} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/rocketchat.sh
-    source rocketchat.sh
-    install_rocketchat
-  fi
-  if [[ ${install_rss} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/rss.sh
-    source rss.sh
-    install_rss
-  fi
-  # if [[ ${install_speedtest} == 1 ]]; then
-  #   curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/speedtest.sh
-  #   source speedtest.sh
-  #   install_speedtest
-  # fi
-  if [[ ${install_tor} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/tor.sh
-    source tor.sh
-    install_tor
-  fi
-  if [[ ${install_tracker} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/tracker.sh
-    source tracker.sh
-    install_tracker
-  fi
-  if [[ ${install_rclone} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/rclone.sh
-    source rclone.sh
-    install_rclone
-  fi
-  if [[ ${install_typecho} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/typecho.sh
-    source typecho.sh
-    install_typecho
-  fi
-  if [[ ${install_onedrive} == 1 ]]; then
-    curl -Ss https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/rclone_config.sh | sudo bash
-    # source rclone_config.sh
-    # install_typecho
-  fi
-  if [[ ${install_netdata} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/netdata.sh
-    source netdata.sh
-    install_netdata
-  fi
-  if [[ ${install_hexo} == 1 ]]; then
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/hexo.sh
-    source hexo.sh
-    install_hexo
-  fi
-  # if [[ ${install_alist} == 1 ]]; then
-  #   curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/alist.sh
-  #   source alist.sh
-  #   install_alist
-  #   curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/nodejs.sh
-  #   source nodejs.sh
-  #   install_nodejs
-  # fi
   # Install Trojan-gfw
   curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/trojan.sh
   source trojan.sh
@@ -456,76 +297,11 @@ install_moudles() {
 ## 主菜单
 MasterMenu() {
   Mainmenu=$(whiptail --clear --ok-button "选择完毕,下一步" --backtitle "Hi,欢迎使用VPSTOOLBOX。https://github.com/johnrosen1/vpstoolbox / https://t.me/vpstoolbox_chat。" --title "VPS ToolBox Menu" --menu --nocancel "Welcome to VPS Toolbox main menu,Please Choose an option 欢迎使用VPSTOOLBOX,请选择一个选项" 14 68 5 \
-    "Install_standard" "基础安裝(小白专用)" \
-    "Install_extend" "高级安装(老手推荐)" \
+    "Install_extend" "安裝" \
     "Benchmark" "效能测试" \
-    "Uninstall" "卸载(仅能卸载基础安装)" \
+    "Uninstall" "卸载" \
     "Exit" "退出" 3>&1 1>&2 2>&3)
   case $Mainmenu in
-  ## 基础标准安装
-  Install_standard)
-    ## 初始化安装
-    install_initial
-    echo "nameserver 1.1.1.1" >/etc/resolv.conf
-    echo "nameserver 1.0.0.1" >>/etc/resolv.conf
-    ## 用户输入
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/userinput.sh
-    source userinput.sh
-    userinput_standard
-    ## 检测证书是否已存在
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/detectcert.sh
-    source detectcert.sh
-    detectcert
-    ## 开始安装
-    TERM=ansi whiptail --title "开始安装" --infobox "安装开始,请不要按任何按键直到安装完成(Please do not press any button until the installation is completed)!" 7 68
-    colorEcho ${INFO} "安装开始,请不要按任何按键直到安装完成(Please do not press any button until the installation is completed)!"
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/system-upgrade.sh
-    source system-upgrade.sh
-    upgrade_system
-    ## 基础软件安装
-    install_base
-    ## 开启防火墙
-    echo "nameserver 1.1.1.1" >/etc/resolv.conf
-    echo "nameserver 1.0.0.1" >>/etc/resolv.conf
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/firewall.sh
-    source firewall.sh
-    openfirewall
-    ## 安装NGINX
-    echo "nameserver 1.1.1.1" >/etc/resolv.conf
-    echo "nameserver 1.0.0.1" >>/etc/resolv.conf
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/nginx.sh
-    source nginx.sh
-    install_nginx
-    ## 证书签发
-    echo "nameserver 1.1.1.1" >/etc/resolv.conf
-    echo "nameserver 1.0.0.1" >>/etc/resolv.conf
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/issuecert.sh
-    source issuecert.sh
-    ## HTTP证书签发
-    if [[ ${httpissue} == 1 ]]; then
-      http_issue
-    fi
-    ## DNS API证书签发
-    if [[ ${dnsissue} == 1 ]]; then
-      dns_issue
-    fi
-    ## 具体软件安装
-    install_moudles
-    echo "nameserver 1.1.1.1" >/etc/resolv.conf
-    echo "nameserver 1.0.0.1" >>/etc/resolv.conf
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/nginx-config.sh
-    source nginx-config.sh
-    nginx_config
-    clean_env
-    echo "nameserver 1.1.1.1" >/etc/resolv.conf
-    echo "nameserver 1.0.0.1" >>/etc/resolv.conf
-    ## 输出结果
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/output.sh
-    source output.sh
-    prase_output
-    rm output.sh
-    exit 0
-    ;;
   ## 扩展安装
   Install_extend)
     ## 初始化安装
@@ -555,10 +331,10 @@ MasterMenu() {
     curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/firewall.sh
     source firewall.sh
     openfirewall
-    ## 安装NGINX
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/nginx.sh
-    source nginx.sh
-    install_nginx
+    # ## 安装NGINX
+    # curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/nginx.sh
+    # source nginx.sh
+    # install_nginx
     ## 证书签发
     echo "nameserver 1.1.1.1" >/etc/resolv.conf
     echo "nameserver 1.0.0.1" >>/etc/resolv.conf
@@ -576,36 +352,13 @@ MasterMenu() {
     install_moudles
     echo "nameserver 1.1.1.1" >/etc/resolv.conf
     echo "nameserver 1.0.0.1" >>/etc/resolv.conf
-    curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/nginx-config.sh
-    source nginx-config.sh
-    nginx_config
+    # curl --retry 5 -LO https://raw.githubusercontent.com/MoeSinon/vp/master/havedocker/nginx-config.sh
+    # source nginx-config.sh
+    # nginx_config
     clean_env
     # 初始化Nextcloud
     curl 127.0.0.1:12222
-    # sleep 10s
-    # if [[ ${install_nextcloud} == 1 ]] && [[ -f ./usr/share/nginx/miniflux/nextcloud/config/config.php ]]; then
-
-    ## Delete last line
-    # mkdir -p ./dockercontainer/nextcloud
-    # docker cp nextcloud:/var/www/html/config/config.php ./dockercontainer/nextcloud
-    # systemctl stop docker.service
-    # sed -i '$d' ./usr/share/nginx/miniflux/nextcloud/config/config.php
-    # echo "  'default_phone_region' => 'CN'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-    # echo "  'trusted_domains' =>" >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-    # echo "  array (" >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-    # echo "    0 => '127.0.0.1'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-    # echo "    1 => 'xx.xx.com'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-    # echo "    2 => 'www.xx.xx.com'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-    # echo "    3 => 'www.xx.xx:12222'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-    # echo "  )," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-    # echo "  'forcessl' => true," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-    # echo "  'overwriteprotocol' => 'https'," >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-    # echo ");" >>./usr/share/nginx/miniflux/nextcloud/config/config.php
-    # chmod 777 ./usr/share/nginx/miniflux/nextcloud/config/config.php
-    # echo "修改完毕"
-    # fi
-    # docker cp ./usr/share/nginx/miniflux/nextcloud/config/config.php nextcloud:/var/www/html/config/config.php
-    # systemctl start docker.service
+    sleep 20s
 
     # 输出结果
     echo "nameserver 1.1.1.1" >/etc/resolv.conf

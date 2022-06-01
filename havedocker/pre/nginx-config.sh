@@ -56,46 +56,56 @@ server {
       root /usr/share/nginx/;
     }
 EOF
+    echo "    location /rsshub/ {" >>/etc/nginx/conf.d/default.conf
+    echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+    echo "        proxy_redirect off;" >>/etc/nginx/conf.d/default.conf
+    echo "        proxy_pass http://127.0.0.1:1200/;" >>/etc/nginx/conf.d/default.conf
+    echo "        }" >>/etc/nginx/conf.d/default.conf
 
-    # if [[ $install_hexo == 1 ]]; then
-    #     echo "  location / {" >>/etc/nginx/conf.d/default.conf
-    #     echo "    #proxy_pass http://127.0.0.1:4000/; # Hexo server" >>/etc/nginx/conf.d/default.conf
-    #     echo "    root /usr/share/nginx/hexo/public/; # Hexo public content" >>/etc/nginx/conf.d/default.conf
-    #     echo "    #error_page 404  /404.html;" >>/etc/nginx/conf.d/default.conf
-    #     echo "  }" >>/etc/nginx/conf.d/default.conf
-    # fi
-    # if [[ $install_alist == 1 ]]; then
-    #     echo "  location /alist/ {" >>/etc/nginx/conf.d/default.conf
-    #     echo "    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" >>/etc/nginx/conf.d/default.conf
-    #     # echo "    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" >>/etc/nginx/conf.d/default.conf
-    #     echo "    proxy_redirect off;" >>/etc/nginx/conf.d/default.conf
-    #     echo "    client_max_body_size 20000m;" >>/etc/nginx/conf.d/default.conf
-    #     echo "    proxy_set_header X-Forwarded-Host \$http_host;" >>/etc/nginx/conf.d/default.conf
-    #     echo "    proxy_set_header Upgrade \$http_upgrade;" >>/etc/nginx/conf.d/default.conf
-    #     echo "    proxy_set_header X-Real-IP \$remote_addr;" >>/etc/nginx/conf.d/default.conf
-    #     echo "    proxy_set_header If-Range \$http_if_range;" >>/etc/nginx/conf.d/default.conf
-    #     echo "    proxy_pass http://127.0.0.1:5244/;" >>/etc/nginx/conf.d/default.conf
-    #     echo "  }" >>/etc/nginx/conf.d/default.conf
-    # fi
-    if [[ $install_hexo == 1 ]]; then
-        echo "  location / {" >>/etc/nginx/conf.d/default.conf
-        echo "    #proxy_pass http://127.0.0.1:4000/; # Hexo server" >>/etc/nginx/conf.d/default.conf
-        echo "    root /usr/share/nginx/hexo/public/; # Hexo public content" >>/etc/nginx/conf.d/default.conf
-        echo "    #error_page 404  /404.html;" >>/etc/nginx/conf.d/default.conf
-        echo "  }" >>/etc/nginx/conf.d/default.conf
-    fi
-    if [[ $install_alist == 1 ]]; then
-        echo "  location / {" >>/etc/nginx/conf.d/default.conf
-        echo "    #access_log off;" >>/etc/nginx/conf.d/default.conf
-        echo "    client_max_body_size 0;" >>/etc/nginx/conf.d/default.conf
-        echo "    proxy_set_header X-Forwarded-Proto https;" >>/etc/nginx/conf.d/default.conf
-        echo "    proxy_pass http://127.0.0.1:5244/;" >>/etc/nginx/conf.d/default.conf
-        echo "  }" >>/etc/nginx/conf.d/default.conf
-    fi
-    if [[ $install_rss == 1 ]]; then
-        echo "    include /etc/nginx/conf.d/nextcloud.conf;" >>/etc/nginx/conf.d/default.conf
-        touch /etc/nginx/conf.d/nextcloud.conf
-        cat <<EOF >/etc/nginx/conf.d/nextcloud.conf
+
+    echo "    location /miniflux/ {" >>/etc/nginx/conf.d/default.conf
+    echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+    echo "        client_max_body_size 0;" >>/etc/nginx/conf.d/default.conf
+    echo "        proxy_set_header Host ${domain};" >>/etc/nginx/conf.d/default.conf
+    echo "        proxy_set_header X-Forwarded-Proto https;" >>/etc/nginx/conf.d/default.conf
+    echo "        proxy_pass http://127.0.0.1:8280/miniflux/;" >>/etc/nginx/conf.d/default.conf
+    echo "        }" >>/etc/nginx/conf.d/default.conf
+
+    echo "  location ^~ /blog/ {" >>/etc/nginx/conf.d/default.conf
+    echo "    proxy_pass http://127.0.0.1:4000/; # Hexo server" >>/etc/nginx/conf.d/default.conf
+    echo "    proxy_set_header Host ${domain};" >>/etc/nginx/conf.d/default.conf
+    echo "    proxy_set_header X-Forwarded-Proto https;" >>/etc/nginx/conf.d/default.conf
+    echo "    error_page 404  /404.html;" >>/etc/nginx/conf.d/default.conf
+    echo "    }" >>/etc/nginx/conf.d/default.conf
+
+    echo "  location ^~ /alist/ {" >>/etc/nginx/conf.d/default.conf
+    echo "    #access_log off;" >>/etc/nginx/conf.d/default.conf
+    echo "    client_max_body_size 0;" >>/etc/nginx/conf.d/default.conf
+    echo "    proxy_set_header Host ${domain};" >>/etc/nginx/conf.d/default.conf
+    echo "    proxy_set_header X-Forwarded-Proto https;" >>/etc/nginx/conf.d/default.conf
+    echo "    proxy_pass http://127.0.0.1:5244/;" >>/etc/nginx/conf.d/default.conf
+    echo "    }" >>/etc/nginx/conf.d/default.conf
+
+    echo "    location ~ /${password1}_netdata/(?<ndpath>.*) {" >>/etc/nginx/conf.d/default.conf
+    echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
+    echo "        proxy_cache off;" >>/etc/nginx/conf.d/default.conf
+    echo "        proxy_redirect off;" >>/etc/nginx/conf.d/default.conf
+    echo "        proxy_set_header Host \$host;" >>/etc/nginx/conf.d/default.conf
+    echo "        proxy_set_header X-Forwarded-Host \$host;" >>/etc/nginx/conf.d/default.conf
+    echo "        proxy_set_header X-Forwarded-Server \$host;" >>/etc/nginx/conf.d/default.conf
+    echo "        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" >>/etc/nginx/conf.d/default.conf
+    echo "        proxy_pass_request_headers on;" >>/etc/nginx/conf.d/default.conf
+    echo '        proxy_set_header Connection "keep-alive";' >>/etc/nginx/conf.d/default.conf
+    echo "        proxy_store off;" >>/etc/nginx/conf.d/default.conf
+    echo "        proxy_pass http://127.0.0.1:19999/\$ndpath\$is_args\$args;" >>/etc/nginx/conf.d/default.conf
+    echo "        gzip on;" >>/etc/nginx/conf.d/default.conf
+    echo "        gzip_proxied any;" >>/etc/nginx/conf.d/default.conf
+    echo "        gzip_types *;" >>/etc/nginx/conf.d/default.conf
+    echo "        }" >>/etc/nginx/conf.d/default.conf
+
+    echo "    include /etc/nginx/conf.d/nextcloud.conf;" >>/etc/nginx/conf.d/default.conf
+    touch /etc/nginx/conf.d/nextcloud.conf
+    cat <<EOF >/etc/nginx/conf.d/nextcloud.conf
 
 # https://docs.nextcloud.com/server/23/admin_manual/installation/nginx.html
 
@@ -107,7 +117,7 @@ EOF
     location ^~ /nextcloud/ {
         # root /usr/share/nginx/;
         # client_body_temp_path /usr/share/nginx/tmp/ 1 2;
-        # client_max_body_size 0;
+        client_max_body_size 0;
         fastcgi_buffers 64 4K;
         add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload;" always;
         add_header Referrer-Policy                      "no-referrer"   always;
@@ -156,17 +166,17 @@ EOF
         #     fastcgi_read_timeout 600s;
         # }
 
-        location ~ \.(?:css|js|svg|gif)\$ {
-            try_files \$uri /nextcloud/index.php\$request_uri;
-            expires 6M;
-            access_log off;
-        }
+        # location ~ \.(?:css|js|svg|gif)\$ {
+        #     try_files \$uri /nextcloud/index.php\$request_uri;
+        #     expires 6M;
+        #     access_log off;
+        # }
 
-        location ~ \.woff2?\$ {
-            try_files \$uri /nextcloud/index.php\$request_uri;
-            expires 7d;
-            access_log off;
-        }
+        # location ~ \.woff2?\$ {
+        #     try_files \$uri /nextcloud/index.php\$request_uri;
+        #     expires 7d;
+        #     access_log off;
+        # }
 
         # location /nextcloud/ {
         #     try_files \$uri \$uri/ /nextcloud/index.php\$request_uri;
@@ -429,22 +439,6 @@ EOF
         echo "        }" >>/etc/nginx/conf.d/default.conf
         echo "        }" >>/etc/nginx/conf.d/default.conf
     fi
-    if [[ $install_rss == 1 ]] || [[ $install_jellyfin == 1 ]]; then
-        echo "    location /rsshub/ {" >>/etc/nginx/conf.d/default.conf
-        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
-        echo "        proxy_redirect off;" >>/etc/nginx/conf.d/default.conf
-        echo "        proxy_pass http://127.0.0.1:1200/;" >>/etc/nginx/conf.d/default.conf
-        echo "        }" >>/etc/nginx/conf.d/default.conf
-    fi
-    if [[ $install_rss == 1 ]]; then
-        echo "    location /miniflux/ {" >>/etc/nginx/conf.d/default.conf
-        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
-        echo "        client_max_body_size 0;" >>/etc/nginx/conf.d/default.conf
-        echo "        proxy_set_header Host ${domain};" >>/etc/nginx/conf.d/default.conf
-        echo "        proxy_set_header X-Forwarded-Proto https;" >>/etc/nginx/conf.d/default.conf
-        echo "        proxy_pass http://127.0.0.1:8280/miniflux/;" >>/etc/nginx/conf.d/default.conf
-        echo "        }" >>/etc/nginx/conf.d/default.conf
-    fi
     if [[ $install_aria == 1 ]]; then
         echo "    location $ariapath {" >>/etc/nginx/conf.d/default.conf
         echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
@@ -498,26 +492,25 @@ EOF
         echo "        proxy_pass http://127.0.0.1:6969;" >>/etc/nginx/conf.d/default.conf
         echo "        }" >>/etc/nginx/conf.d/default.conf
     fi
-    if [[ $install_netdata == 1 ]]; then
-        echo "    location ~ /${password1}_netdata/(?<ndpath>.*) {" >>/etc/nginx/conf.d/default.conf
-        echo "        #access_log off;" >>/etc/nginx/conf.d/default.conf
-        echo "        proxy_cache off;" >>/etc/nginx/conf.d/default.conf
-        echo "        proxy_redirect off;" >>/etc/nginx/conf.d/default.conf
-        echo "        proxy_set_header Host \$host;" >>/etc/nginx/conf.d/default.conf
-        echo "        proxy_set_header X-Forwarded-Host \$host;" >>/etc/nginx/conf.d/default.conf
-        echo "        proxy_set_header X-Forwarded-Server \$host;" >>/etc/nginx/conf.d/default.conf
-        echo "        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;" >>/etc/nginx/conf.d/default.conf
-        echo "        proxy_pass_request_headers on;" >>/etc/nginx/conf.d/default.conf
-        echo '        proxy_set_header Connection "keep-alive";' >>/etc/nginx/conf.d/default.conf
-        echo "        proxy_store off;" >>/etc/nginx/conf.d/default.conf
-        echo "        proxy_pass http://netdata/\$ndpath\$is_args\$args;" >>/etc/nginx/conf.d/default.conf
-        echo "        gzip on;" >>/etc/nginx/conf.d/default.conf
-        echo "        gzip_proxied any;" >>/etc/nginx/conf.d/default.conf
-        echo "        gzip_types *;" >>/etc/nginx/conf.d/default.conf
-        echo "        }" >>/etc/nginx/conf.d/default.conf
-    fi
     echo "}" >>/etc/nginx/conf.d/default.conf
     echo "" >>/etc/nginx/conf.d/default.conf
+
+    echo "server { #For Netdata only !" >>/etc/nginx/conf.d/default.conf
+    echo "    listen 127.0.0.1:83 fastopen=20 reuseport;" >>/etc/nginx/conf.d/default.conf
+    echo "    location /stub_status {" >>/etc/nginx/conf.d/default.conf
+    echo "    access_log off;" >>/etc/nginx/conf.d/default.conf
+    echo "    stub_status;" >>/etc/nginx/conf.d/default.conf
+    echo "    }" >>/etc/nginx/conf.d/default.conf
+    echo "    location ~ ^/(status|ping)\$ {" >>/etc/nginx/conf.d/default.conf
+    echo "    access_log off;" >>/etc/nginx/conf.d/default.conf
+    echo "    allow 127.0.0.1;" >>/etc/nginx/conf.d/default.conf
+    echo "    fastcgi_param SCRIPT_FILENAME \$request_filename;" >>/etc/nginx/conf.d/default.conf
+    echo "    }" >>/etc/nginx/conf.d/default.conf
+    echo "}" >>/etc/nginx/conf.d/default.conf
+    echo "upstream netdata {" >>/etc/nginx/conf.d/default.conf
+    echo "    server 127.0.0.1:19999;" >>/etc/nginx/conf.d/default.conf
+    echo "    keepalive 64;" >>/etc/nginx/conf.d/default.conf
+    echo "}" >>/etc/nginx/conf.d/default.conf
 
     if [[ ${ipissue} == 1 ]]; then
         echo good

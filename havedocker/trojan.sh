@@ -52,8 +52,8 @@ EOF
     ],
     "log_level": 2,
     "ssl": {
-        "cert": "/etc/certs/${domain}_ecc/fullchain.cer",
-        "key": "/etc/certs/${domain}_ecc/${domain}.key",
+        "cert": "/usr/dockereverything/nginx/letsencrypt/${domain}_ecc/fullchain.cer",
+        "key": "/usr/dockereverything/nginx/letsencrypt/${domain}_ecc/${domain}.key",
         "key_password": "",
         "cipher": "${cipher_server}",
         "cipher_tls13": "TLS_AES_128_GCM_SHA256:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_256_GCM_SHA384",
@@ -127,8 +127,8 @@ EOF
     ],
     "log_level": 2,
     "ssl": {
-        "cert": "/etc/certs/${domain}_ecc/fullchain.cer",
-        "key": "/etc/certs/${domain}_ecc/${domain}.key",
+        "cert": "/usr/dockereverything/nginx/letsencrypt/${domain}_ecc/fullchain.cer",
+        "key": "/usr/dockereverything/nginx/letsencrypt/${domain}_ecc/${domain}.key",
         "key_password": "",
         "cipher": "${cipher_server}",
         "cipher_tls13": "TLS_AES_128_GCM_SHA256:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_256_GCM_SHA384",

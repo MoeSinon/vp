@@ -18,35 +18,38 @@ installacme() {
 http_issue() {
   set +e
   installacme
-  rm -rf /etc/nginx/sites-available/*
-  rm -rf /etc/nginx/sites-enabled/*
-  touch /etc/nginx/conf.d/default.conf
-  cat >'/etc/nginx/conf.d/default.conf' <<EOF
-server {
-  listen       80;
-  listen       [::]:80;
-  server_name  $domain;
-  root   /usr/share/nginx/html;
-    location /.well-known/acme-challenge/ {
-      root /usr/share/nginx/;
-    }
-}
-EOF
-  systemctl restart nginx
+  cd /home
+  mkdir www
+  cd
+  #   rm -rf /etc/nginx/sites-available/*
+  #   rm -rf /etc/nginx/sites-enabled/*
+  #   touch /etc/nginx/conf.d/default.conf
+  #   cat >'/etc/nginx/conf.d/default.conf' <<EOF
+  # server {
+  #   listen       80;
+  #   listen       [::]:80;
+  #   server_name  $domain;
+  #   root   /usr/share/nginx/html;
+  #     location /.well-known/acme-challenge/ {
+  #       root /usr/share/nginx/;
+  #     }
+  # }
+  EOF
+  # systemctl restart nginx
   clear
   colorEcho ${INFO} "申请证书中"
-  ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt --issue -w /usr/share/nginx/ --cert-home /etc/certs -d $domain -k ec-256 --log --reloadcmd "systemctl restart trojan postfix dovecot nginx || true"
-  if [[ -f /etc/certs/${domain}_ecc/fullchain.cer ]] && [[ -f /etc/certs/${domain}_ecc/${domain}.key ]]; then
+  ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt --issue -w /home/www --cert-home /usr/dockereverything/nginx/letsencrypt -d $domain -k ec-256 --log --reloadcmd "systemctl restart trojan postfix dovecot nginx || true"
+  if [[ -f /usr/dockereverything/nginx/letsencrypt/${domain}_ecc/fullchain.cer ]] && [[ -f /usr/dockereverything/nginx/letsencrypt/${domain}_ecc/${domain}.key ]]; then
     :
   else
     colorEcho ${ERROR} "证书申请失败，请**检查VPS控制面板防火墙是否完全关闭**,DNS是否解析完成!!!"
     colorEcho ${ERROR} "请访问https://letsencrypt.status.io/检测Let's encrypt服务是否正常!!!"
     exit 1
   fi
-  chmod +r /etc/certs/${domain}_ecc/fullchain.cer
-  chmod +r /etc/certs/${domain}_ecc/${domain}.key
+  chmod +r /usr/dockereverything/nginx/letsencrypt/${domain}_ecc/fullchain.cer
+  chmod +r /usr/dockereverything/nginx/letsencrypt/${domain}_ecc/${domain}.key
   crontab -l >mycron
-  echo "0 0 * * * ~/.acme.sh/acme.sh --server letsencrypt --cron --cert-home /etc/certs --reloadcmd 'systemctl restart trojan postfix dovecot nginx || true' &> /root/.trojan/letcron.log 2>&1" >>mycron
+  echo "0 0 * * * ~/.acme.sh/acme.sh --server letsencrypt --cron --cert-home /usr/dockereverything/nginx/letsencrypt --reloadcmd 'systemctl restart trojan postfix dovecot nginx || true' &> /root/.trojan/letcron.log 2>&1" >>mycron
   crontab mycron
   rm mycron
 }
@@ -72,9 +75,9 @@ dns_issue() {
     export CF_Key="$CF_Key"
     export CF_Email="$CF_Email"
     installacme
-    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt --issue --dns dns_cf --cert-home /etc/certs -d $domain -k ec-256 --log --reloadcmd "systemctl reload trojan postfix dovecot nginx || true"
+    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt --issue --dns dns_cf --cert-home /usr/dockereverything/nginx/letsencrypt -d $domain -k ec-256 --log --reloadcmd "systemctl reload trojan postfix dovecot nginx || true"
     crontab -l >mycron
-    echo "0 0 * * * ~/.acme.sh/acme.sh --server letsencrypt --cron --cert-home /etc/certs --reloadcmd 'systemctl restart trojan postfix dovecot nginx || true' &> /root/.trojan/letcron.log 2>&1" >>mycron
+    echo "0 0 * * * ~/.acme.sh/acme.sh --server letsencrypt --cron --cert-home /usr/dockereverything/nginx/letsencrypt --reloadcmd 'systemctl restart trojan postfix dovecot nginx || true' &> /root/.trojan/letcron.log 2>&1" >>mycron
     crontab mycron
     rm mycron
     ;;
@@ -84,9 +87,9 @@ dns_issue() {
     done
     export Namesilo_Key="$Namesilo_Key"
     installacme
-    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt --issue --dns dns_namesilo --cert-home /etc/certs --dnssleep 1800 -d $domain -k ec-256 --log --reloadcmd "systemctl reload trojan postfix dovecot nginx || true"
+    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt --issue --dns dns_namesilo --cert-home /usr/dockereverything/nginx/letsencrypt --dnssleep 1800 -d $domain -k ec-256 --log --reloadcmd "systemctl reload trojan postfix dovecot nginx || true"
     crontab -l >mycron
-    echo "0 0 * * * ~/.acme.sh/acme.sh --server letsencrypt --cron --cert-home /etc/certs --reloadcmd 'systemctl restart trojan postfix dovecot nginx || true' &> /root/.trojan/letcron.log 2>&1" >>mycron
+    echo "0 0 * * * ~/.acme.sh/acme.sh --server letsencrypt --cron --cert-home /usr/dockereverything/nginx/letsencrypt --reloadcmd 'systemctl restart trojan postfix dovecot nginx || true' &> /root/.trojan/letcron.log 2>&1" >>mycron
     crontab mycron
     rm mycron
     ;;
@@ -98,9 +101,9 @@ dns_issue() {
     export Ali_Key="$Ali_Key"
     export Ali_Secret="$Ali_Secret"
     installacme
-    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt --issue --dns dns_ali --cert-home /etc/certs -d $domain -k ec-256 --log --reloadcmd "systemctl reload trojan postfix dovecot nginx || true"
+    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt --issue --dns dns_ali --cert-home /usr/dockereverything/nginx/letsencrypt -d $domain -k ec-256 --log --reloadcmd "systemctl reload trojan postfix dovecot nginx || true"
     crontab -l >mycron
-    echo "0 0 * * * ~/.acme.sh/acme.sh --server letsencrypt --cron --cert-home /etc/certs --reloadcmd 'systemctl restart trojan postfix dovecot nginx || true' &> /root/.trojan/letcron.log 2>&1" >>mycron
+    echo "0 0 * * * ~/.acme.sh/acme.sh --server letsencrypt --cron --cert-home /usr/dockereverything/nginx/letsencrypt --reloadcmd 'systemctl restart trojan postfix dovecot nginx || true' &> /root/.trojan/letcron.log 2>&1" >>mycron
     crontab mycron
     rm mycron
     ;;
@@ -112,9 +115,9 @@ dns_issue() {
     export DP_Id="$DP_Id"
     export DP_Key="$DP_Key"
     installacme
-    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt --issue --dns dns_dp --cert-home /etc/certs -d $domain -k ec-256 --log --reloadcmd "systemctl reload trojan postfix dovecot nginx || true"
+    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt --issue --dns dns_dp --cert-home /usr/dockereverything/nginx/letsencrypt -d $domain -k ec-256 --log --reloadcmd "systemctl reload trojan postfix dovecot nginx || true"
     crontab -l >mycron
-    echo "0 0 * * * ~/.acme.sh/acme.sh --server letsencrypt --cron --cert-home /etc/certs --reloadcmd 'systemctl restart trojan postfix dovecot nginx || true' &> /root/.trojan/letcron.log 2>&1" >>mycron
+    echo "0 0 * * * ~/.acme.sh/acme.sh --server letsencrypt --cron --cert-home /usr/dockereverything/nginx/letsencrypt --reloadcmd 'systemctl restart trojan postfix dovecot nginx || true' &> /root/.trojan/letcron.log 2>&1" >>mycron
     crontab mycron
     rm mycron
     ;;
@@ -126,9 +129,9 @@ dns_issue() {
     export CX_Key="$CX_Key"
     export CX_Secret="$CX_Secret"
     installacme
-    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt --issue --dns dns_cx --cert-home /etc/certs -d $domain -k ec-256 --log --reloadcmd "systemctl reload trojan postfix dovecot nginx || true"
+    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt --issue --dns dns_cx --cert-home /usr/dockereverything/nginx/letsencrypt -d $domain -k ec-256 --log --reloadcmd "systemctl reload trojan postfix dovecot nginx || true"
     crontab -l >mycron
-    echo "0 0 * * * ~/.acme.sh/acme.sh --server letsencrypt --cron --cert-home /etc/certs --reloadcmd 'systemctl restart trojan postfix dovecot nginx || true' &> /root/.trojan/letcron.log 2>&1" >>mycron
+    echo "0 0 * * * ~/.acme.sh/acme.sh --server letsencrypt --cron --cert-home /usr/dockereverything/nginx/letsencrypt --reloadcmd 'systemctl restart trojan postfix dovecot nginx || true' &> /root/.trojan/letcron.log 2>&1" >>mycron
     crontab mycron
     rm mycron
     ;;
@@ -140,9 +143,9 @@ dns_issue() {
     export GD_Key="$CX_Key"
     export GD_Secret="$CX_Secret"
     installacme
-    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt --issue --dns dns_gd --cert-home /etc/certs -d $domain -k ec-256 --log --reloadcmd "systemctl reload trojan postfix dovecot nginx || true"
+    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt --issue --dns dns_gd --cert-home /usr/dockereverything/nginx/letsencrypt -d $domain -k ec-256 --log --reloadcmd "systemctl reload trojan postfix dovecot nginx || true"
     crontab -l >mycron
-    echo "0 0 * * * ~/.acme.sh/acme.sh --server letsencrypt --cron --cert-home /etc/certs --reloadcmd 'systemctl restart trojan postfix dovecot nginx || true' &> /root/.trojan/letcron.log 2>&1" >>mycron
+    echo "0 0 * * * ~/.acme.sh/acme.sh --server letsencrypt --cron --cert-home /usr/dockereverything/nginx/letsencrypt --reloadcmd 'systemctl restart trojan postfix dovecot nginx || true' &> /root/.trojan/letcron.log 2>&1" >>mycron
     crontab mycron
     rm mycron
     ;;
@@ -154,9 +157,9 @@ dns_issue() {
     export Namecom_Username="$Namecom_Username"
     export Namecom_Token="$Namecom_Token"
     installacme
-    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt --issue --dns dns_namecom --cert-home /etc/certs -d $domain -k ec-256 --log --reloadcmd "systemctl reload trojan postfix dovecot nginx || true"
+    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt --issue --dns dns_namecom --cert-home /usr/dockereverything/nginx/letsencrypt -d $domain -k ec-256 --log --reloadcmd "systemctl reload trojan postfix dovecot nginx || true"
     crontab -l >mycron
-    echo "0 0 * * * ~/.acme.sh/acme.sh --server letsencrypt --cron --cert-home /etc/certs --reloadcmd 'systemctl restart trojan postfix dovecot nginx || true' &> /root/.trojan/letcron.log 2>&1" >>mycron
+    echo "0 0 * * * ~/.acme.sh/acme.sh --server letsencrypt --cron --cert-home /usr/dockereverything/nginx/letsencrypt --reloadcmd 'systemctl restart trojan postfix dovecot nginx || true' &> /root/.trojan/letcron.log 2>&1" >>mycron
     crontab mycron
     rm mycron
     ;;
@@ -168,7 +171,7 @@ dns_issue() {
 
   esac
 
-  if [[ -f /etc/certs/${domain}_ecc/fullchain.cer ]] && [[ -f /etc/certs/${domain}_ecc/${domain}.key ]]; then
+  if [[ -f /usr/dockereverything/nginx/letsencrypt/${domain}_ecc/fullchain.cer ]] && [[ -f /usr/dockereverything/nginx/letsencrypt/${domain}_ecc/${domain}.key ]]; then
     :
   else
     colorEcho ${ERROR} "DNS申请证书失败，尝试HTTP申请中."
