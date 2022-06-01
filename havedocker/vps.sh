@@ -189,7 +189,7 @@ initialize() {
       netplan apply
     fi
     apt-get update
-    apt-get install sudo whiptail curl dnsutils locales jq -y #lsb-release
+    apt-get install sudo whiptail curl dnsutils locales jq socat -y #lsb-release
   elif cat /etc/*release | grep ^NAME | grep -q Debian; then
     dist="debian"
     apt-get update
