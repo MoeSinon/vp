@@ -36,16 +36,16 @@ else
   echo "CREATE DATABASE IF NOT EXISTS netdata;" >>/usr/dockereverything/mariadbinit/init.sql
   echo "CREATE DATABASE IF NOT EXISTS roundcubemail;" >>/usr/dockereverything/mariadbinit/init.sql
   echo "CREATE DATABASE IF NOT EXISTS npm;" >>/usr/dockereverything/mariadbinit/init.sql
-  echo "CREATE USER IF NOT EXISTS 'nextcloud'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/dockereverything/mariadbinit/init.sql
-  echo "CREATE USER IF NOT EXISTS 'netdata'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/dockereverything/mariadbinit/init.sql
-  echo "CREATE USER IF NOT EXISTS 'trojan'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/dockereverything/mariadbinit/init.sql
-  echo "CREATE USER IF NOT EXISTS 'roundcube'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/dockereverything/mariadbinit/init.sql
-  echo "CREATE USER IF NOT EXISTS 'npm'@'localhost' IDENTIFIED BY '${password1}';" >>/usr/dockereverything/mariadbinit/init.sql
-  echo "GRANT ALL PRIVILEGES ON *.* TO 'nextcloud'@'localhost';" >>/usr/dockereverything/mariadbinit/init.sql
-  echo "GRANT ALL PRIVILEGES ON *.* TO 'netdata'@'localhost';" >>/usr/dockereverything/mariadbinit/init.sql
-  echo "GRANT ALL PRIVILEGES ON *.* TO 'trojan'@'localhost';" >>/usr/dockereverything/mariadbinit/init.sql
-  echo "GRANT ALL PRIVILEGES ON *.* TO 'roundcube'@'localhost';" >>/usr/dockereverything/mariadbinit/init.sql
-  echo "GRANT ALL PRIVILEGES ON *.* TO 'npm'@'localhost';" >>/usr/dockereverything/mariadbinit/init.sql
+  echo "CREATE USER IF NOT EXISTS 'nextcloud'@'%' IDENTIFIED BY '${password1}';" >>/usr/dockereverything/mariadbinit/init.sql
+  echo "CREATE USER IF NOT EXISTS 'netdata'@'%' IDENTIFIED BY '${password1}';" >>/usr/dockereverything/mariadbinit/init.sql
+  echo "CREATE USER IF NOT EXISTS 'trojan'@'%' IDENTIFIED BY '${password1}';" >>/usr/dockereverything/mariadbinit/init.sql
+  echo "CREATE USER IF NOT EXISTS 'roundcube'@'%' IDENTIFIED BY '${password1}';" >>/usr/dockereverything/mariadbinit/init.sql
+  echo "CREATE USER IF NOT EXISTS 'npm'@'%' IDENTIFIED BY '${password1}';" >>/usr/dockereverything/mariadbinit/init.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'nextcloud'@'%';" >>/usr/dockereverything/mariadbinit/init.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'netdata'@'%';" >>/usr/dockereverything/mariadbinit/init.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'trojan'@'%';" >>/usr/dockereverything/mariadbinit/init.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'roundcube'@'%';" >>/usr/dockereverything/mariadbinit/init.sql
+  echo "GRANT ALL PRIVILEGES ON *.* TO 'npm'@'%';" >>/usr/dockereverything/mariadbinit/init.sql
   echo "FLUSH PRIVILEGES;" >>/usr/dockereverything/mariadbinit/init.sql
   chmod -R 777 /usr/dockereverything/mariadbinit/init.sql
 fi
@@ -148,7 +148,7 @@ services:
       # - UID=1000
       # - GID=1000
       - PHP_UPLOAD_LIMIT=10G
-      - NEXTCLOUD_TRUSTED_DOMAINS='localhost' '172.18.0.*' '172.20.0.*'
+      - NEXTCLOUD_TRUSTED_DOMAINS='localhost' '172.18.0.*' '172.*.*.*'
       - TZ=Aisa/Shanghai
       - OVERWRITEPROTOCOL='https'
       # - DOMAIN=127.0.0.1:8281
